@@ -1,5 +1,5 @@
 
-/*
+
 
 TODO) Setting Up Development Envireonment
 
@@ -33,10 +33,10 @@ bun install react-dom@rc
 
 2) npm create vite@latest react-thapa => react => javascript => cd react-thapa => npm install => npm run dev 
 
-*/ 
 
 
-/*
+
+
 
 TODO) How to import files
 
@@ -54,10 +54,9 @@ import image from './jsimage.png'    (Image Import)
 import jsonfile from './tes.json';
 <h1>{jsonfile.stringify(jsonfile)}</h1>
 
-*/
 
 
-/*
+
 TODO) Inline CSS
 
 <p style={{margin: "1.2rem", color: "var(--bg-color)"}}>This is a paragraph </p>
@@ -66,10 +65,9 @@ TODO) Conditional Styling
 
 <h3> Ratting: <span className={rating >= 8.5 ? "super-hit" : "average"}> This is Movie Name </span> </h3>
  
-*/
 
 
-/*
+
 TODO) Add Bootstrap in React APP
 
 npm i bootstrap
@@ -91,17 +89,17 @@ App.js
 -------
 import './App.scss'
 
-*/
 
 
 
-/* 
+
+
 
 TODO) How to use React icon
 ------------------------------
 Go to  React icon => go to npm to download reat icon => search icon from react icon website , inport the icon and use it
 
-*/ 
+
 
 
 
@@ -121,7 +119,6 @@ Body
 Footer
 */
 
-/*
 
 📁 App.js
 -----------
