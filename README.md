@@ -7,3 +7,6 @@
 
 <h1><b>Password Generator</b></h1><br/>
 <img src="https://i.pinimg.com/736x/c0/e1/0c/c0e10ce96d37b06acdb8ef1467279363.jpg"/>
+
+<h1><b>Curency Converter</b></h1><br/>
+<img src="blob:https://in.pinterest.com/a7fd9604-3697-41c8-829b-a6740cfce70b"/>
