@@ -9,4 +9,4 @@
 <img src="https://i.pinimg.com/736x/c0/e1/0c/c0e10ce96d37b06acdb8ef1467279363.jpg"/>
 
 <h1><b>Curency Converter</b></h1><br/>
-<img src="https://in.pinterest.com/pin/1045327763507680322/"/>
+<img src="https://i.pinimg.com/736x/73/ee/c8/73eec831bfefed3b08e2cd9c890a5568.jpg"/>
