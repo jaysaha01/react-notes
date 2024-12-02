@@ -10,3 +10,12 @@
 
 <h1><b>Curency Converter</b></h1><br/>
 <img src="https://i.pinimg.com/736x/73/ee/c8/73eec831bfefed3b08e2cd9c890a5568.jpg"/>
+
+<h1><b>Context API</b></h1><br/>
+<img src="https://i.pinimg.com/736x/dc/02/fe/dc02fe9f4de6c7e5da30192b76c03b9a.jpg"/>
+
+<h1><b>Theme Toggler</b></h1><br/>
+<img src="https://i.pinimg.com/736x/d2/f9/65/d2f96571dc2c90d46c58681392f624f9.jpg"/>
+
+<h1><b>Todo list (Context API)</b></h1><br/>
+<img src="https://i.pinimg.com/736x/08/99/5c/08995c0b8c342709d2dc4606762f38b8.jpg"/>
