@@ -17,7 +17,7 @@ function App(){
                 <div className="flex flex-wrap justify-center gap-3">
                     <button  style={{backgroundColor: "red"}} onClick={()=>setColor("red")}>Red</button>
                     <button  style={{backgroundColor: "green"}} onClick={()=>setColor("green")}>Green</button>
-                    <button  style={{backgroundColor: "yellow"}}>Yellow</button>
+                    <button  style={{backgroundColor: "yellow"}} onClick={()=>setColor("yellow")}>Yellow</button>
                 </div>
             </div>
         </div>
