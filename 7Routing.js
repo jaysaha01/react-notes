@@ -2,7 +2,7 @@
 
 //npm install react-router-dom
 
-import { Link, NavLink } from "react-dou"
+import { Link, NavLink } from "react-router-dom"
 /*
 Link = we use Link instade of a tag. because a will refresh the page and reload. so we use Link tag. 
 
