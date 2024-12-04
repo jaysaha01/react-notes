@@ -1,3 +1,7 @@
+Relative and absolute path
+www.abc.com/tech
+ 1) Relative Path is binding the value with current path = link1  => www.abc.com/tech/link1
+ 2) Absolute Path. we pass the complete path = /link1  => www.abc.com/link1
 
 /*
 
