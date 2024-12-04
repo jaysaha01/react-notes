@@ -8,7 +8,7 @@
 */
 import { useEffect, useState } from "react";
 
-export function useCurrencyInfo(currency) {
+function useCurrencyInfo(currency) {
     const [data, setData] = useState({});
     useEffect(() => {
 
@@ -20,7 +20,7 @@ export function useCurrencyInfo(currency) {
     return data
 }
 
-// export default useCurrencyInfo
+ export default useCurrencyInfo
 
 //crete "components" folder in src. and create two files. InputBox.jsx and index.js
 
