@@ -21,4 +21,4 @@
 <img src="https://i.pinimg.com/736x/08/99/5c/08995c0b8c342709d2dc4606762f38b8.jpg"/>
 
 <h1><b>Redux Todo</b></h1><br/>
-<img src="https://in.pinterest.com/pin/1045327763507827112/"/>
+<img src="https://i.pinimg.com/736x/c6/c3/fe/c6c3fe1cb9ece03bfb405efd94e3ff6a.jpg"/>
