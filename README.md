@@ -19,3 +19,6 @@
 
 <h1><b>Todo list (Context API)</b></h1><br/>
 <img src="https://i.pinimg.com/736x/08/99/5c/08995c0b8c342709d2dc4606762f38b8.jpg"/>
+
+<h1><b>Redux Todo</b></h1><br/>
+<img src="https://i.pinimg.com/736x/08/99/5c/08995c0b8c342709d2dc4606762f38b8.jpg"/>
