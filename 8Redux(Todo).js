@@ -1,0 +1,158 @@
+/*Redux abd Redux Tool Kit*/
+
+/*
+Download Redux Dev tool in chrome 
+
+Install Redux
+===================
+npm install @reduxjs/toolkit
+npm install react-redux
+
+Create "app" folder into src and create file of store.js
+
+📁 store.js  ✅2
+==================
+*/
+import {configureStore} from '@reduxjs/toolkit'
+import todoReducer from '../feature/todo/todoSlice'
+
+
+export const store = configureStore({
+    reducer:todoReducer
+})
+
+/*
+Create features folder into src => create todo folder => crete todoSlice.js
+
+📁 todoSlice.js     ✅1
+====================
+*/
+
+import {createSlice, nanoid} from '@reduxjs/toolkit'
+
+/*nonoid gegerate random ids*/
+
+const initialState={
+    todos:[{id:1, text:"Hellow World"}]
+}
+
+
+export const todoSlice= createSlice({
+
+    //This name will show in redux toolkit that. "name" is comming form redux
+
+    name: 'todo',
+    initialState,
+    reducers:{
+        addTodo: (state, action)=>{
+            const todo={
+                id:nanoid(),
+                text:action.payload
+            }
+            state.todos.push(todo)
+        },
+        removeTodo: (state, action)=> {
+            state.todos= state.todos.filter((todo)=> todo.id !== action.payload)
+        }
+
+    }
+
+    //state give you access of "initialState" . abi us "initialState" me kaya kaya value he. 
+    //action
+})
+
+export const {addTodo, romoveTodo}= todoSlice.actions
+
+export default todoSlice.reducers
+
+// 📁 Addtodo.jsx
+
+import {useDispatch} from 'react-redux';  //✅ 4
+import {addTodo} from '../features/tod/todoSlice' //✅ 7
+
+
+function AddTodo() {
+
+    cont [input, setInput]= React.useState(''); //✅ 3
+    const dispatch= useDispatch() //✅ 5
+
+    const addTodoHandler=(e)=>{ //✅ 6
+        e.preventDefault();
+        //Dispatch ek reducer ko use karte huya store k andar changes karta he. 
+        dispatch(addTodo(input))  //✅ 8
+        setInput('')  //✅ 9
+    }
+
+  return (
+    <form onSubmit={addTodoHandler} className="space-x-3 mt-12">
+      <input
+        type="text"
+        className="bg-gray-800 rounded border border-gray-700 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-900 text-base outline-none text-gray-100 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
+        placeholder="Enter a Todo..."
+        value={input}
+        onChange={(e) => setInput(e.target.value)}
+      />
+      <button
+        type="submit"
+        className="text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg"
+      >
+        Add Todo
+      </button>
+    </form>
+  )
+}
+
+export default AddTodo
+
+// 📁 Todos.jsx
+
+import React from 'react'
+import { useSelector, useDispatch } from 'react-redux' //✅ 10
+import {removeTodo} from '../features/todo/todoSlice'  //✅ 11
+
+function Todos() {
+    const todos = useSelector(state => state.todos) //✅ 12
+    const dispatch = useDispatch()  //✅ 13
+
+  return (
+    <>
+    //✅ 14
+    <div>Todos</div>
+    {
+        todos.map((todo)=>{              
+            <li key={todo.id}>
+                {todo.text}
+                <button onClick={()=>dispatch(removeTodo(todo.id))}>X</button>
+                //we use callback in onClick because we call function after the clicking
+            </li>
+        })
+    }
+    </>
+  )
+}
+
+export default Todos
+
+// 📁 App.js
+
+import React from 'react'
+
+const App = () => {
+  return (
+    <div>
+      <AddTodo/>
+      <Todos/>
+    </div>
+  )
+}
+
+export default App
+
+// 📁 main.js
+
+import {Provider} from 'ract-redux'
+import {store} from './app/store'
+
+<Provider store={store}>
+    <App/>
+</Provider>
