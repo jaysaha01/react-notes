@@ -25,3 +25,6 @@
 
 <h1><b>9: Namate Youtube</b></h1><br/>
 <img src="https://i.pinimg.com/736x/02/46/06/02460683913fdbff45e03bf55d692b6f.jpg"/>
+
+<h1><b>10: Netflix GPT</b></h1><br/>
+<img src="https://i.pinimg.com/736x/6d/f7/ab/6df7ab7305139f3511856a4106b3de3c.jpg"/>
