@@ -1731,3 +1731,180 @@ lifting the state up
 useContext
 
 */
+
+/* 
+✅ Let's Build our store -(Redux) (Build cart page)
+==========================================================
+*/
+
+/*
+Redux is not maedaroty. 
+
+example of outher than redux= zustand, React-redux is birdge between react and redux, Redux toolkit is latest way to writing redux. 
+
+Redux arcutecture
+====================
+
+Redux is like big object and it kept into a global central place.
+
+npm install @reduxjs/toolkit
+npm install react-redux
+
+*/
+
+// utils folder=> 📁appStore.js //✅1
+
+import {configureStore} from '@redux/toolkit';
+import cartReducer from './cartSlice';  //✅4
+
+const appStore= configureStore({
+    reducer:{ //✅4
+        cart: cartSlice
+    }
+})
+
+export default appStore;
+
+// 📁App.js  //✅2
+
+import {Provider, useDispatch, useSelector} from "react-redux";
+import  {appStore} from './utils/appStore'
+
+<Provider store={appStore}>
+    <div className='app'>
+        <header/>
+    </div>
+</Provider>
+
+// 📁cartSlice.js  //✅3
+
+import {createSlice} from '@redux/toolkit';
+
+const cartSlice= createSlice({
+    name:'cart',
+    initialState:{
+        items:[]
+    },
+    reducers:{
+        addItem:(state, action)=>{
+            //Mutating the state
+            state.items.push(action.payload);
+        },
+        removeItem:(state, action)=>{
+            state.items.pop();
+        },
+        clearCart:(state, action)=>{
+            state.items.length=0
+        }
+    }
+})
+
+export const {addItem, removeItem, clearCart}= cartSlice.actions;
+
+export default cartSlice.reducer;
+
+// 📁Header.js   (show items count from slice to header)
+
+import React from 'react'
+import { useSelector } from 'react-redux';  //✅5
+const Header = () => {
+
+//Subscribing to the store using selector
+const cartItems = useSelector((store)=> store.cart.items) //✅5
+  return (
+    <div>
+      <li>{cartItems.length}</li>//✅5
+    </div>
+  )
+}
+
+export default Header
+
+
+//📁ItemList.js                                     
+                             
+import { useDispatch } from 'react-redux';
+import {addItem} from "../utils/cartSlice"; //✅8
+
+const ItemList =({items})=>{
+
+    const dispatch= useDispatch(); //✅7
+
+    const handelAddItem =(item)=>{  //✅6
+        //Dispatch an action
+        dispatch(addItem(item)) //✅8
+
+        /*
+        {
+        payload:"cart"
+        }
+        */
+
+    }
+    
+    return(
+    
+    <div>
+    {items.map((item)=>{
+    <div key={item.card.info.id} onClick={handleClick}>      
+    <span>{item.card.info.name}</span>
+    <span>{item.card.info.price ? item.card.info.price /100 : item.card.info.defaultPrise}</span>
+    <button onClick={()=>{
+        handelAddItem(item)  //✅6
+    }}>Add+</button>
+    </div>    
+    })}
+    </div>
+    
+    ) 
+}
+
+export default ItemList
+
+/*
+onClick={handleClick(item)}❌This means you already called the function
+onClick={handleClick} ✅
+onClick={()=>handleClick()}
+*/
+
+
+// 📁Cart.js   //✅9
+
+//Adding to cart page
+import React from 'react'
+import { useSelector } from 'react-redux';
+
+//Remove items from cart page
+import { useDispatch } from 'react-redux';
+
+
+const cartItem= useSelector((store)=> store.cart.item); // Always do subscribe small and write porsion of the store
+/*
+(or)
+cosnt store= useSelector((store)=> store);
+const cartItem= store.cart.items;
+console.log(cartItem)
+*/
+
+const Cart = () => {
+
+     //Remove items from cart page
+    const dispatch= useDispatch();
+    const claerCart=()=>{
+        dispatch(cartItem())
+    }
+
+  return (
+    <div>
+      //Adding to cart page
+      <ItemList items={cartItem}/>
+
+
+      //Remove items from cart page
+      <button onClick={claerCart}>Clear Cart</button>
+      {cartItem.length === 0 && <h1>Please Add products to your cart</h1>}
+    </div>
+  )
+}
+
+export default Cart
