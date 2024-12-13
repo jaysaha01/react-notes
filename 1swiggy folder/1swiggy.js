@@ -846,7 +846,7 @@ const appRouter= createBrowserRouter([
    .
    .
    {
-   path:'/resturent/resId',      (2)
+   path:'/resturent/:resId',      (2)
    element:<resturentManu/>
    },
 
