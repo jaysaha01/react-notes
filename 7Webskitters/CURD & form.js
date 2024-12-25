@@ -1,3 +1,90 @@
+// ami jodi dev dependency hisabe download na kore tahole ki effect hobe . 
+
+/*
+Create => post
+read => get
+Update => put (individual or full change), patch (particular change or password change)
+delte => delete
+*/
+
+/*
+json server=> ceate api locally. if you fit the data into the json server then it will not remove
+
+install json server (it is a Dev dependancy)
+==============================================
+
+npm i -D json-server
+
+*/
+
+
+// Create Database folder => debugger.json file 
+
+{
+    "product": [
+        {
+            'id': 'prod',
+            'pname': "Mouse",
+            "color": "blue",
+            "price": "450"
+        }
+    ]
+}
+
+// npx json-server database/debugger.json --port 2000
+
+
+// npm i axios react-router-dom bootstrap react-bootstrap
+
+
+// Create api folder => and apiURl.js and axiosInstance.js file into it 
+
+// apiURl.js
+export const baseUrl = "https://localhost:2000/";
+export const prod_end = "product";
+
+// axiosInstance.js
+
+/* (we need api every where so for that reason we store base url in that file for reuseability) */
+
+import { baseUrl, prod_end } from "./api";
+import axios from "axios";
+
+let axiosInsstance = axios.create({
+    baseURL: baseUrl
+})
+
+export default axiosInsstance;
+
+//Read.jsx
+
+import React, { useEffect, useState } from "react";
+import axiosInsstance from "../api/axiosInstans";
+import { prod_end } from "../api/api";
+
+const Read = () => {
+    cosnt[(data, setData)] = useState([]);
+
+    let fetchProduct = () => {
+        let api = prod_end
+        axiosInsstance
+            .get(api)
+            .then((res) => {
+                console.log(res);
+                
+            })
+            .catch((err) => console.log(err));
+    };
+
+    useEffect(() => {
+        fetchProduct();
+    }, [setData,api]);
+    return <div>Read</div>;
+};
+
+export default Read;
+
+
 
 //Custom controlled form
 
