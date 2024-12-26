@@ -301,3 +301,79 @@ function App() {
 }
 
 export default App;
+
+
+// Delete and redirect post
+
+
+import { useNavigate, useParams } from "react-router-dom";  ✅redirect 1
+
+const Fullpost = () => {
+
+  let navigate= useNavigate(); ✅redirect 2
+
+  const [dataing, setDataing] = useState([]);
+
+  let { uid } = useParams();
+
+  let dapi = prod_end + "/" + uid;
+
+  useEffect(() => {
+    fetching();
+  }, []);
+
+  function fetching() {
+    let api = prod_end;
+    axiosInsstance
+      .get(dapi)
+      .then((res) => {
+        setDataing(res.data);
+        console.log(res.data);
+      })
+      .catch((err) => console.log(err));
+  }
+
+  if (dataing.length === 0) {
+    return <Please />;
+  }
+
+  function deletehandeler() {
+   
+    axiosInsstance
+      .delete(dapi)
+      .then((res) => {
+        navigate("/") ✅redirect 3
+      })
+      .catch((err) => console.log("Error Is " + err));
+  }
+
+  return (
+    <Container className="mt-5">
+      <Row>
+        {
+          <Col key={dataing.id}>
+            <Card style={{ width: "100%" }}>
+              <Card.Img
+                variant="top"
+                src={dataing.imageurl}
+                style={{ height: "400px", objectFit: "cover" }}
+              />
+              <Card.Body>
+                <Card.Title className="pb-4 pt-4">{dataing.title}</Card.Title>
+                <Card.Text>{dataing.description}</Card.Text>
+                <Button variant="primary" onClick={deletehandeler}>
+                  Delete Post
+                </Button>
+              </Card.Body>
+            </Card>
+          </Col>
+        }
+      </Row>
+    </Container>
+  );
+};
+
+export default Fullpost;
+
+
+
