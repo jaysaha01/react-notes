@@ -31,7 +31,7 @@ npm i -D json-server
     ]
 }
 
-// npx json-server database/debugger.json --port 2000
+// npx json-server database/db.json --port 2000
 
 
 // npm i axios react-router-dom bootstrap react-bootstrap
