@@ -375,5 +375,109 @@ const Fullpost = () => {
 
 export default Fullpost;
 
+Update 
+
+import React, { useEffect, useState } from "react";
+import axiosInsstance from "../api/axiosInstans";
+import { prod_end } from "../api/api";
+import Please from "./Please";
+import Container from "react-bootstrap/Container";
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
+import Button from "react-bootstrap/Button";
+import Card from "react-bootstrap/Card";
+import { useNavigate, useParams } from "react-router-dom";
+import { MyVerticallyCenteredModal } from "./MyVerticallyCenteredModal";
+
+const Fullpost = () => {
+  const [modalShow, setModalShow] = React.useState(false);
+  // const [editxt, setEdittxt] = useState(null);
+
+  let navigate = useNavigate();
+
+  const [dataing, setDataing] = useState([]);
+
+  let { uid } = useParams();
+
+  let dapi = prod_end + "/" + uid;
+
+  useEffect(() => {
+    fetching();
+  }, []);
+
+  function fetching() {
+    axiosInsstance
+      .get(dapi)
+      .then((res) => {
+        setDataing(res.data);
+        // console.log(res.data);
+      })
+      .catch((err) => console.log(err));
+  }
+
+  if (dataing.length === 0) {
+    return <Please />;
+  }
+
+  function deletehandeler() {
+    axiosInsstance
+      .delete(dapi)
+      .then((res) => {
+        navigate("/");
+      })
+      .catch((err) => console.log("Error Is " + err));
+  }
+
+  function edithandeler() {
+    // setEdittxt(true);
+    setModalShow("Edit Your Post");
+  }
+
+  return (
+    <Container className="mt-5">
+      <Row>
+        {
+          <Col key={dataing.id}>
+            <Card style={{ width: "100%" }}>
+              <Card.Img
+                variant="top"
+                src={dataing.imageurl}
+                style={{ height: "400px", objectFit: "cover" }}
+              />
+              <Card.Body className="p-5">
+                <Card.Title className="pb-4 pt-4">{dataing.title}</Card.Title>
+                <Card.Text>{dataing.description}</Card.Text>
+
+                <div className="box mt-5 ">
+                  <Button
+                    variant="primary"
+                    onClick={deletehandeler}
+                    className="me-3"
+                  >
+                    Delete Post
+                  </Button>
+                  <Button variant="primary" onClick={edithandeler}>
+                    Edit Post
+                  </Button>
+
+                  <MyVerticallyCenteredModal
+                    show={modalShow}
+                    onHide={() => setModalShow(false)}
+                    // edittxt={editxt}
+                    dataset={dataing}
+                    type="edit"
+                    // databaseid={uid}
+                  />
+                </div>
+              </Card.Body>
+            </Card>
+          </Col>
+        }
+      </Row>
+    </Container>
+  );
+};
+
+export default Fullpost;
 
 
