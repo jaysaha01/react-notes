@@ -1908,3 +1908,917 @@ const Cart = () => {
 }
 
 export default Cart
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+==========================================================================================================
+
+============================================= Explain by thapa ===========================================
+
+===========================================================================================================
+*/
+// 🔥 Lifting the state up
+
+/* 
+
+parent component  se child component tak state ka value share ho sakta he. paar child component ek dusra k saat state value share nahi kar sakta iss liya hum chil component state ko usko hum lift karke parent ko pass kardenga. 
+
+*/
+
+
+
+// ===========================================================================================================
+
+/*
+🔥 Todo APPlication
+*/
+
+
+
+/*✅  write and add text into the card  = (1) */
+
+/*
+koivi data change ho raha he to state use kare
+*/
+
+/*
+Todo.jsx
+===============
+*/
+import { useEffect, useState } from "react"
+
+export const Todo = () => {
+    const [inputValue, setInputValue] = useState(""); //✅1
+    const [task, setTask] = useState([]); //✅4
+
+    const handleInputChange = (value) => {  //✅3
+        setInputValue(value);
+    }
+
+    const handleFromSubmit = (event) => {
+        event.preventDefault();
+
+        if (!inputValue) return  //✅5
+
+        if (task.includes(inputValue)) { //✅6
+            setInputValue("")
+            return;
+        }
+
+        //Add new data and keep old data
+        //console.log(prevTask) //We can see previous data ex: []; filhal task is empty so it show [];
+        setTask((prevTask) => [...prevTask, inputValue])//purana jo v value he use asatise rakiya or naya value insert kariya  //✅5
+
+        setInputValue("") //remove text from the input value  //✅5
+
+    }
+
+    return (
+        <div>
+            <h1>Todo Application</h1>
+            <form onSubmit={handleFromSubmit}>
+                <div>
+                    <input type="text" autoComplete="off" value={inputValue} onChange={(event) => handleInputChange(event.target.value)} />//✅2
+
+                /*
+                in every render we change the value is empty. handleInputChange 
+
+                */
+                </div>
+                <button type="submit">Add Task</button>
+
+                <ul>
+                    {
+                        task.map((curTask, i) => {     //✅6
+                            return <li key={i}><span>${curTask}</span></li>
+                        })
+                    }
+                </ul>
+            </form>
+        </div>
+    )
+}
+
+/*
+console > componet > see the state change
+*/
+
+
+
+/*✅  How to add clock and data into todo app */
+
+
+/*
+Todo.jsx
+===============
+*/
+import { useState } from "react"
+
+export const Todo = () => {
+    const [inputValue, setInputValue] = useState("");
+    const [task, setTask] = useState([]);
+    const [dateTime, setDateTime] = useState("")//✅3
+
+    const handleInputChange = (value) => {
+        setInputValue(value);
+    }
+
+    const handleFromSubmit = (event) => {
+        event.preventDefault();
+
+        if (!inputValue) return
+
+        if (task.includes(inputValue)) {
+            setInputValue("")
+            return;
+        }
+
+
+        setTask((prevTask) => [...prevTask, inputValue])
+
+        setInputValue("") //remove text from the input value  
+    }
+
+
+    useEffect(() => {
+
+        const getDateTime = () => { //✅1
+            const now = new Data();
+            const formattedData = now.toLocalDataString();
+            const formattedTime = now.toLocalTimeString();
+            setDateTime(`${formattedData} - ${formattedTime}`) //✅4
+        }
+
+        const interval = setInterval(() => {  //✅2
+            getDateTime()
+        }, 1000)
+
+        return () => clearInterval(interval)
+
+    }, [])
+
+
+    return (
+        <div>
+            <h1>Todo Application</h1>
+            <h5>{dateTime}</h5>  //✅5
+            <form onSubmit={handleFromSubmit}>
+                <div>
+                    <input type="text" autoComplete="off" value={inputValue} onChange={(event) => handleInputChange(event.target.value)} />
+
+                </div>
+                <button type="submit">Add Task</button>
+
+                <ul>
+                    {
+                        task.map((curTask, i) => {
+                            return <li key={i}><span>${curTask}</span></li>
+                        })
+                    }
+                </ul>
+            </form>
+        </div>
+    )
+}
+
+
+
+/*✅  Delete and clear todo application */
+
+/*
+Todo.jsx
+===============
+*/
+import { useState } from "react"
+
+export const Todo = () => {
+    const [inputValue, setInputValue] = useState("");
+    const [task, setTask] = useState([]);
+    const [dateTime, setDateTime] = useState("")
+
+    const handleInputChange = (value) => {
+        setInputValue(value);
+    }
+
+    const handleFromSubmit = (event) => {
+        event.preventDefault();
+
+        if (!inputValue) return
+
+        if (task.includes(inputValue)) {
+            setInputValue("")
+            return;
+        }
+
+
+        setTask((prevTask) => [...prevTask, inputValue])
+
+        setInputValue("") //remove text from the input value  
+    }
+
+
+    useEffect(() => {
+
+        const getDateTime = () => {
+            const now = new Data();
+            const formattedData = now.toLocalDataString();
+            const formattedTime = now.toLocalTimeString();
+            setDateTime(`${formattedData} - ${formattedTime}`)
+        }
+
+        const interval = setInterval(() => {
+            getDateTime()
+        }, 1000)
+
+        return () => clearInterval(interval)
+
+    }, [])
+
+    const handleDlete = (value) => {  //✅2
+        console.log(task)
+        const updatedTask = task.filter((curTask) => curTask !== value)
+        setTask(updatedTask)
+    }
+
+    const handleClearTodoData = () => { //✅4
+        setTask([])
+    }
+
+    return (
+        <div>
+            <h1>Todo Application</h1>
+            <h5>{dateTime}</h5>
+            <form onSubmit={handleFromSubmit}>
+                <div>
+                    <input type="text" autoComplete="off" value={inputValue} onChange={(event) => handleInputChange(event.target.value)} />
+
+                </div>
+            </form>
+            <button type="submit">Add Task</button>
+
+            <ul>
+                {
+                    task.map((curTask, i) => {
+                        return (
+                            <li key={i}>
+                                <span>${curTask}</span>
+                                <button onClick={() => handleDlete(curTask)}>Delete</button>   //✅1
+                            /* handleDlete is a callback function when user click the button the i have to call the function */
+                            </li>
+                        )
+                    })
+                }
+            </ul>
+            <button onClick={handleClearTodoData}>Clear All</button> //✅3
+
+        </div>
+    )
+}
+
+
+
+
+/*✅  Seperation of consorn */
+
+TodoForm.jsx   //✅1
+==================
+
+export const TodoForm=({onAddTodo})=>{ //✅4
+    const [inputValue, setInputValue] = useState("");
+
+    const handleInputChange = (value) => {
+        setInputValue(value);
+    }
+
+
+    const handleFormSubmit=(event)=>{ //✅5
+
+        event.preventDefault()
+        //child me jab koi hit karraha he tap parent ka function call karna hoga. clid to parent communication
+        onAddTodo(inputValue)
+        setInputValue("")
+
+    }
+
+
+    return(
+        <>
+
+        <form onSubmit={handleFromSubmit}>
+                <div>
+                    <input type="text" autoComplete="off" value={inputValue} onChange={(event) => handleInputChange(event.target.value)} />
+
+                </div>
+            </form>
+            <button type="submit">Add Task</button>
+
+        </>
+
+    )
+}
+
+TodoList.jsx  //✅6,8
+==========
+
+export const TodoList=({key, data, onHandleDeleteTodo})=>{
+    return(
+
+    <li key={key}>
+        <span>${data}</span>
+        <button onClick={() => onHandleDeleteTodo(data)}>Delete</button>
+
+    </li>
+    )
+}
+
+TodoDate.jsx  //✅9
+=============
+
+export const TodoDate=()=>{
+    const [dateTime, setDateTime] = useState("")
+
+    useEffect(() => {
+
+        const getDateTime = () => {
+            const now = new Data();
+            const formattedData = now.toLocalDataString();
+            const formattedTime = now.toLocalTimeString();
+            setDateTime(`${formattedData} - ${formattedTime}`)
+        }
+
+        const interval = setInterval(() => {
+            getDateTime()
+        }, 1000)
+
+        return () => clearInterval(interval)
+
+    }, [])
+
+
+    return <h5>{dateTime}</h5>
+}
+
+
+/*
+Todo.jsx
+===============
+*/
+import { useState } from "react"
+
+export const Todo = () => {
+
+    const [task, setTask] = useState([]);
+
+
+
+    const handleFromSubmit = (inputValue) => {
+
+        if (!inputValue) return
+
+        if (task.includes(inputValue)) return;
+
+        setTask((prevTask) => [...prevTask, inputValue])
+
+    }
+
+
+    const handleDlete = (value) => {
+        console.log(task)
+        const updatedTask = task.filter((curTask) => curTask !== value)
+        setTask(updatedTask)
+    }
+
+
+    const handleClearTodoData = () => {
+        setTask([])
+    }
+
+
+    return (
+        <div>
+            <h1>Todo Application</h1>
+
+            <TodoDate/>  //✅10
+
+
+            <TodoForm onAddTodo={handleFormSubmit}/>  //✅2,3
+
+            <ul>
+                {
+                    task.map((curTask, i) => {
+                        return (
+
+                            <TodoList key={index} data={curTask} onHandleDeleteTodo={handleDlete}/>   //✅7
+
+                        )
+                    })
+                }
+            </ul>
+            <button onClick={handleClearTodoData}>Clear All</button>
+
+        </div>
+    )
+}
+
+
+
+
+
+/*✅  Best Way to add todo value in state and toggle function*/
+
+
+TodoForm.jsx
+==================
+
+export const TodoForm=({onAddTodo})=>{
+    const [inputValue, setInputValue] = useState({});
+
+    const handleInputChange = (value) => {
+        setInputValue({id:value, content: value, checked: false}); //✅1
+    }
+
+
+    const handleFormSubmit=(event)=>{
+
+        event.preventDefault()
+        //child me jab koi hit karraha he tap parent ka function call karna hoga. clid to parent communication
+        onAddTodo(inputValue)
+        setInputValue({id:"", content: "", checked: false})  //✅9
+
+    }
+
+
+    return(
+        <>
+
+        <form onSubmit={handleFromSubmit}>
+                <div>                                              //✅2
+                    <input type="text" autoComplete="off" value={inputValue.content} onChange={(event) => handleInputChange(event.target.value)} />
+
+                </div>
+            </form>
+            <button type="submit">Add Task</button>
+
+        </>
+
+    )
+}
+
+TodoList.jsx
+==========
+
+export const TodoList=({key, data, checked, onHandleDeleteTodo})=>{  //✅12
+    return(
+
+    <li>
+        <span>${data}</span>   //✅12
+        <span className={checked ? "checkList" : "notCheckList" }></span> //✅12
+
+        <button onclick={()=> onHandleCheckedTodo(data)}>Check Toggle button</button>   //✅13
+
+        <button onClick={() => onHandleDeleteTodo(data)}>Delete</button>
+
+    </li>
+    )
+}
+
+
+/*
+Todo.jsx
+===============
+*/
+import { useState } from "react"
+
+export const Todo = () => {
+
+    const [task, setTask] = useState([]);
+
+
+
+    const handleFromSubmit = (inputValue) => {
+
+        const {id, content, checked}= inputValue  //✅3
+
+        if (!content) return //✅4 //to check input fild is empty or not
+
+        // if (task.includes(inputValue)) return;
+
+        const ifTodoContenMatch= task.find((curTask)=>{  //✅5
+            curTask.content === content
+        })
+
+        if(ifTodoContenMatch) return  //✅6
+
+
+        setTask((prevTask) => [...prevTask, {id:Id, content: content, checked:checked}]) //✅7
+
+    }
+
+
+    const handleDlete = (value) => {
+        console.log(task)
+        const updatedTask = task.filter((curTask) => curTask.content !== value)  //✅10
+        setTask(updatedTask)
+    }
+
+
+    const handleClearTodoData = () => {
+        setTask([])
+    }
+
+    const handleCheckedTodo=(content)=>{    //✅14
+
+        const updatedTask= task.map((curTask)=>{
+
+            if(curTask.content === content){
+                return {...curTask, curTask: !curTask.checked } //check true he to false or false he to true kar do
+            }else{
+                return curTask
+            }
+
+        })
+        setTask(updatedTask)
+    }
+
+
+    return (
+        <div>
+            <h1>Todo Application</h1>
+
+            <TodoDate/>
+
+
+            <TodoForm onAddTodo={handleFormSubmit}/>
+
+            <ul>
+                {
+                    task.map((curTask) => {
+                        return (
+
+                            <TodoList key={curTask.id} data={curTask.content} checked={curTask.checked} onHandleDeleteTodo={handleDlete} onHandleCheckedTodo={handleCheckedTodo}/>  //✅8  , 11
+
+                        )
+                    })
+                }
+            </ul>
+            <button onClick={handleClearTodoData}>Clear All</button>
+
+        </div>
+    )
+}
+
+
+
+
+/*✅  Adding data tothe local storage*/
+
+TodoForm.jsx
+==================
+
+export const TodoForm=({onAddTodo})=>{
+    const [inputValue, setInputValue] = useState({});
+
+    const handleInputChange = (value) => {
+        setInputValue({id:value, content: value, checked: false});
+    }
+
+
+    const handleFormSubmit=(event)=>{
+
+        event.preventDefault()
+        //child me jab koi hit karraha he tap parent ka function call karna hoga. clid to parent communication
+        onAddTodo(inputValue)
+        setInputValue({id:"", content: "", checked: false})
+
+    }
+
+
+    return(
+        <>
+
+        <form onSubmit={handleFromSubmit}>
+                <div>
+                    <input type="text" autoComplete="off" value={inputValue.content} onChange={(event) => handleInputChange(event.target.value)} />
+
+                </div>
+            </form>
+            <button type="submit">Add Task</button>
+
+        </>
+
+    )
+}
+
+TodoList.jsx
+=============
+
+export const TodoList=({key, data, checked, onHandleDeleteTodo})=>{
+    return(
+
+    <li>
+        <span>${data}</span>
+        <span className={checked ? "checkList" : "notCheckList" }></span>
+
+        <button onclick={()=> onHandleCheckedTodo(data)}>Check Toggle button</button>
+
+        <button onClick={() => onHandleDeleteTodo(data)}>Delete</button>
+
+    </li>
+    )
+}
+
+TodoDate.jsx
+=============
+
+export const TodoDate=()=>{
+    const [dateTime, setDateTime] = useState("")
+
+    useEffect(() => {
+
+        const getDateTime = () => {
+            const now = new Data();
+            const formattedData = now.toLocalDataString();
+            const formattedTime = now.toLocalTimeString();
+            setDateTime(`${formattedData} - ${formattedTime}`)
+        }
+
+        const interval = setInterval(() => {
+            getDateTime()
+        }, 1000)
+
+        return () => clearInterval(interval)
+
+    }, [])
+
+
+    return <h5>{dateTime}</h5>
+}
+
+
+/*
+Todo.jsx
+===============
+*/
+import { useState } from "react"
+
+const todoskey= "reactTodo"
+export const Todo = () => {
+
+    const [task, setTask] = useState(()=>
+
+    const rowTodos= localStorage.getItem(todoskey) //✅2
+
+    if(!rowTodos) return [];   //✅3
+    return JSON.parse(rowTodos)  //✅4
+
+    );
+
+
+    const handleFromSubmit = (inputValue) => {
+
+        const {id, content, checked}= inputValue
+
+        if (!content) return
+
+        // if (task.includes(inputValue)) return;
+
+        const ifTodoContenMatch= task.find((curTask)=>{
+            curTask.content === content
+        })
+
+        if(ifTodoContenMatch) return
+
+
+        setTask((prevTask) => [...prevTask, {id:Id, content: content, checked:checked}])
+
+    }
+
+    // add data to local storage
+
+    localStorage.setItem("reactTodo", JSON.stringfy(task))    //✅1
+
+
+    const handleDlete = (value) => {
+        console.log(task)
+        const updatedTask = task.filter((curTask) => curTask.content !== value)
+        setTask(updatedTask)
+    }
+
+
+    const handleClearTodoData = () => {
+        setTask([])
+    }
+
+    const handleCheckedTodo=(content)=>{
+
+        const updatedTask= task.map((curTask)=>{
+
+            if(curTask.content === content){
+                return {...curTask, curTask: !curTask.checked } //check true he to false or false he to true kar do
+            }else{
+                return curTask
+            }
+
+        })
+        setTask(updatedTask)
+    }
+
+
+    return (
+        <div>
+            <h1>Todo Application</h1>
+
+            <TodoDate/>
+
+
+            <TodoForm onAddTodo={handleFormSubmit}/>
+
+            <ul>
+                {
+                    task.map((curTask) => {
+                        return (
+
+                            <TodoList key={curTask.id} data={curTask.content} checked={curTask.checked} onHandleDeleteTodo={handleDlete} onHandleCheckedTodo={handleCheckedTodo}/>
+
+                        )
+                    })
+                }
+            </ul>
+            <button onClick={handleClearTodoData}>Clear All</button>
+
+        </div>
+    )
+}
+
+
+/*✅  Host the todo app*/
+
+>npm run build (you get the production version code)
+
+Go to netlify => login => Add new site => Deploy maulay => upload dist folder > site overview > site configaration > change site name > get the link
+
+
+
+
+
+
+
+
+
+// ================================================================================================================
+
+// React Event Propagation
+
+//Buble Phase
+
+import const EventPropagation = () => {
+
+    const handleGrandparent = () => {
+        console.log("GrandParent Clikced");
+    }
+
+    const handleParentClick = () => {
+        console.log("Parent Clicked")
+    }
+
+    const handleChildClick = (event) => {
+        console.log(event);
+        console.log("Child Clicked");
+    }
+
+    return (
+        <div>
+            <div onClick={handleGrandparent}>
+
+                <div onClick={handleParentClick}>
+
+                    <div onClick={handleChildClick}>
+
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    )
+}
+
+// > if you click child div then => Child Clicked , Parent Clicked , GrandParent Clikced
+
+
+
+import const EventPropagation = () => {
+
+    const handleGrandparent = (event) => {
+        console.log("GrandParent Clikced");
+        event.stopPropagation() //✅
+    }
+
+    const handleParentClick = (event) => {
+        console.log("Parent Clicked")
+        event.stopPropagation()  //✅
+    }
+
+    const handleChildClick = (event) => {
+        console.log(event);
+        event.stopPropagation()  //✅
+        console.log("Child Clicked");
+    }
+
+    return (
+        <div>
+            <div onClick={handleGrandparent}>
+
+                <div onClick={handleParentClick}>
+
+                    <div onClick={handleChildClick}>
+
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    )
+}
+
+// > now if we one that console what we want need. Example click on child then => Child Clicked 
+
+
+//Capturing Phase
+
+import const EventPropagation = () => {
+
+    const handleGrandparent = (event) => {
+        console.log("GrandParent Clikced");
+    }
+
+    const handleParentClick = (event) => {
+        console.log("Parent Clicked")
+    }
+
+    const handleChildClick = (event) => {
+        console.log(event);
+        console.log("Child Clicked");
+    }
+
+    return (
+        <div>
+            <div onClickCapture={handleGrandparent}>
+
+                <div onClickCapture={handleParentClick}>
+
+                    <div onClickCapture={handleChildClick}>
+
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    )
+}
+
+// > if you click child div then => GrandParent Clikced ,Parent Clicked , Child Clicked
+
+
+
+// ================================================================================================================
+
+// Conditional Rendering
+
+<span className={rating >= 8.5 ? "super_hit" : "average"}>Rating</span>
+
+<span className={`rating ${rating >= 8.5 ? "super_hit" : "average"}`}>Rating</span>
+
+    
