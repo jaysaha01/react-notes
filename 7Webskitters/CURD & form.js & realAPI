@@ -481,3 +481,447 @@ const Fullpost = () => {
 export default Fullpost;
 
 
+
+// Sign Up 
+
+/*
+Apiurl.js
+================
+*/
+
+export const baseurl = "https://wtsacademy.dedicateddevelopers.us/";
+
+export const endpoint = "api/user/signup";
+
+/*
+AxiosInstance.js
+=======================
+*/
+
+import axios from "axios";
+import { baseurl } from "./Apiurl";
+
+const instance = axios.create({
+  baseURL: baseurl
+});
+
+export default instance
+
+
+
+import React, { useEffect } from "react";
+import { useState } from "react";
+import AxiosInstance from "../api/AxiosInstance";
+import { endpoint } from "../api/Apiurl";
+
+const Register = () => {
+  const [inputs, setInputs] = useState({
+    first_name: "",
+    last_name: "",
+    email: "",
+    password: "",
+  });
+
+
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+
+    setInputs((values) => ({ ...values, [name]: value }));
+  };
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+
+    console.log("Received Data", inputs);
+
+    let fromValue = {
+      first_name: inputs.first_name,
+      last_name: inputs.last_name,
+      email: inputs.email,
+      password: inputs.password,
+    };
+
+
+    AxiosInstance.post(endpoint, fromValue)
+      .then((res) => {
+        console.log("User Added", res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <label>
+        Enter your first name:
+        <input
+          type="text"
+          name="first_name"
+          value={inputs.first_name}
+          onChange={handleChange}
+        />
+      </label>
+      <label>
+        Enter your last name:
+        <input
+          type="text"
+          name="last_name"
+          value={inputs.last_name}
+          onChange={handleChange}
+        />
+      </label>
+      <label>
+        Enter your email:
+        <input
+          type="email"
+          name="email"
+          value={inputs.email}
+          onChange={handleChange}
+        />
+      </label>
+      <label>
+        Enter your password:
+        <input
+          type="password"
+          name="password"
+          value={inputs.password}
+          onChange={handleChange}
+        />
+      </label>
+
+      <input type="submit" />
+    </form>
+  );
+};
+
+export default Register;
+
+// browser => console=> payload (data ki formate a gache), preview , Response (documentation r response ta dakhai) 
+
+
+
+// ========================================================================================================================================================
+
+
+// Image upload 
+
+import React, { useEffect } from "react";
+import { useState } from "react";
+import AxiosInstance from "../api/AxiosInstance";
+import { endpoint } from "../api/Apiurl";
+
+const Register = () => {
+  const [inputs, setInputs] = useState({
+    first_name: "",
+    last_name: "",
+    email: "",
+    password: "",
+  });
+
+  let [imgState, setImgState] = useState();  //✅3
+
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+
+    setInputs((values) => ({ ...values, [name]: value }));
+  };
+
+  const handleImage = (event) => {    //✅2
+
+    //event print kore dakha nao image ta asche kothai
+    console.log("event for img", event.target.files);
+    setImgState(event.target.files[0]);
+    console.log(inputs, imgState);
+
+  };
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+
+    console.log("Received Data", inputs);
+
+    let fromValue = {
+      first_name: inputs.first_name,
+      last_name: inputs.last_name,
+      email: inputs.email,
+      password: inputs.password,
+    };
+
+    let data = new FormData();  //✅3
+    data.append("first_name", inputs.first_name);
+    data.append("last_name", inputs.last_name);
+    data.append("email", inputs.email);
+    data.append("password", inputs.password);
+    data.append("profile_pic", imgState);
+
+    AxiosInstance.post(endpoint, data, {   //✅4
+      headers: {
+        "Content-Type": "application/form-data",
+      },
+    })
+      .then((res) => {
+        console.log("User Added", res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <label>
+        Enter your first name:
+        <input
+          type="text"
+          name="first_name"
+          value={inputs.first_name}
+          onChange={handleChange}
+        />
+      </label>
+      <label>
+        Enter your last name:
+        <input
+          type="text"
+          name="last_name"
+          value={inputs.last_name}
+          onChange={handleChange}
+        />
+      </label>
+      <label>
+        Enter your email:
+        <input
+          type="email"
+          name="email"
+          value={inputs.email}
+          onChange={handleChange}
+        />
+      </label>
+      <label>
+        Enter your password:
+        <input
+          type="password"
+          name="password"
+          value={inputs.password}
+          onChange={handleChange}
+        />
+      </label>
+
+      <label>
+        Upload Image file:
+        <input type="file" onChange={handleImage} multiple accept="*image/*" />  //✅1
+      </label>
+      <input type="submit" />
+    </form>
+  );
+};
+
+export default Register;
+
+//(binary)
+
+// ========================================================================================================================================================
+
+//✅ Login and sove token in local storage
+
+/*
+Apiurl.js
+================
+*/
+
+export const baseurl = "https://wtsacademy.dedicateddevelopers.us/";
+
+export const endpoint = "api/user/signup";
+
+export const signinEndpoint = "api/user/signin";  //✅
+
+
+/*
+AxiosInstance.js
+=======================
+*/
+
+import axios from "axios";
+import { baseurl } from "./Apiurl";
+
+const instance = axios.create({
+  baseURL: baseurl
+});
+
+instance.interceptors.request.use(    //✅
+  async function (config) {
+    const token = sessionStorage.getItem("token");
+
+    if (token) {
+      config.headers['x-access-token'] = token
+    }
+    return config
+  },
+  function (err) {
+    return Promise.reject(err);
+  }
+)
+
+export default instance
+
+
+//login.jsx
+
+import React, { useEffect } from "react";
+import { useState } from "react";
+import AxiosInstance from "../api/AxiosInstance";
+import { signinEndpoint } from "../api/Apiurl";
+import { useNavigate } from "react-router-dom";
+
+const Login = () => {
+  let navigate = useNavigate();
+
+  const [inputs, setInputs] = useState({
+    email: "",
+    password: "",
+  });
+
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+
+    setInputs((values) => ({ ...values, [name]: value }));
+  };
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+
+    console.log("Received Data", inputs);
+
+    let fromValue = {
+      email: inputs.email,
+      password: inputs.password,
+    };
+
+    AxiosInstance.post(signinEndpoint, fromValue)
+      .then((res) => {
+        console.log("User SignIn", res);
+        if (res?.data.status === 200) {
+          alert(res.data.message);
+          window.sessionStorage.setItem("token", res.data.token);
+          navigate("/home");
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <label>
+        Enter your email:
+        <input
+          type="email"
+          name="email"
+          value={inputs.email}
+          onChange={handleChange}
+        />
+      </label>
+      <label>
+        Enter your password:
+        <input
+          type="password"
+          name="password"
+          value={inputs.password}
+          onChange={handleChange}
+        />
+      </label>
+
+      <input type="submit" />
+    </form>
+  );
+};
+
+export default Login;
+
+//after login this we get a token
+
+//go to json webtoken => coppy the token => see the payload
+
+// ========================================================================================================================================================
+
+/*
+Apiurl.js
+================
+*/
+
+export const baseurl = "https://wtsacademy.dedicateddevelopers.us/";
+
+export const endpoint = "api/user/signup";
+
+export const signinEndpoint = "api/user/signin";
+
+export const profile_url = "api/user/profile-details"; //✅
+
+
+//Home.jsx
+
+import React, { useEffect, useState } from "react";
+import AxiosInstance from "../api/AxiosInstance";
+import { profile_url } from "../api/Apiurl";
+
+
+const Home = () => {
+
+  const [usedetails, setusedetails] = useState({
+    email: "",
+    first_name: "",
+    last_name: "",
+    profile_pic: ""
+  })
+
+
+  const fetchingdata = () => {
+    AxiosInstance.get(profile_url)
+      .then((res) => {
+
+        if (res.data.status === 200) {
+
+          console.log("User profile", res);
+
+          //For image
+
+          let baseurl = "https://wtsacademy.dedicateddevelopers.us/";
+          let folder_path = "uploads/user/profile_pic/"
+          let profile_image = baseurl + folder_path + res.data.data.profile_pic;
+
+          setusedetails({ ...usedetails, first_name: res.data.data.first_name, last_name: res.data.data.last_name, profile_pic: profile_image, email: res.data.data.email })
+
+        }
+
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+  useEffect(() => {
+    fetchingdata();
+  }, []);
+
+
+  console.log(usedetails)
+
+  return (
+    <div>
+      <h1>Home</h1>
+      <img src={usedetails.profile_pic} style={{ width: "100px", height: "100px", objectFit: "cover", borderRadius: "100%" }} />
+    </div>
+  );
+};
+
+export default Home;
+// https://wtsacademy.dedicateddevelopers.us/uploads/user/profile_pic/profilepicurl (to get profile image)
+
+//Now we get the details of signup response. amra folder path diya profile display korate pari . folder pathe backend developer dabe
+
+
+// ========================================================================================================================================================
+
+
