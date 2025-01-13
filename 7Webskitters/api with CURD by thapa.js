@@ -619,3 +619,103 @@ export const updateData = (id, data) => {   //✅4
   return api.put(`/post/${id}`, data)
 
 }
+
+=============================================================================================================
+                                        ✅ React Hook Form
+==============================================================================================================
+
+//✅ React Form
+
+// https://react-hook-form.com/
+
+// > npm install react-hook-form
+
+import React from 'react'
+import { useForm, SubmitHandler } from "react-hook-form"//✅1
+
+const realapi = () => {
+
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors ,isSubmitting }, //✅6
+  } = useForm()  //✅2
+
+  const onSubmit= (data) => console.log(data) //✅4 {username:"harray", password:"hrray123"}
+
+
+  return (
+    <div>
+      { isSubmitting && <div>Loading</div>}  //✅7
+      <container>
+        <form action="" onSubmit={handleSubmit(onSubmit)}> //✅3
+          <input type="text" {...register("username" , {required: true, minLength: {value: 3, message: "Min Length 3"}, maxLength:{value: 8, message: "Max Length 8"}} )} ></input>  //✅5
+          {errors.username && <div className="red">{errors.username.message}</div>}
+
+
+          <input type="password" {...register("password")} ></input>  //✅5
+
+
+          <input disabled={isSubmitting} type="submit"/>
+
+        </form>
+      </container>
+    </div>
+  )
+}
+
+export default realapi
+
+// -----------------------------------------
+
+// ✅ custom errors
+
+import React from 'react'
+import { useForm, SubmitHandler } from "react-hook-form"
+
+const realapi = () => {
+
+  const {
+    register,
+    handleSubmit,
+    setError, //✅2
+    watch,
+    formState: { errors ,isSubmitting }, 
+  } = useForm()  
+
+  const onSubmit= (data) =>{
+  
+    console.log(data) 
+
+    if(data.username !== "subham"){ //✅3
+      setError("myform",{message:"You form is not in good order"})
+    }
+
+  }
+
+  return (
+    <div>
+      { isSubmitting && <div>Loading</div>}  
+      <container>
+        <form action="" onSubmit={handleSubmit(onSubmit)}> 
+          <input type="text" {...register("username" , {required: true, minLength: {value: 3, message: "Min Length 3"}, maxLength:{value: 8, message: "Max Length 8"}} )} ></input>  
+          {errors.username && <div className="red">{errors.username.message}</div>}
+
+
+          <input type="password" {...register("password")} ></input>  
+
+
+          <input disabled={isSubmitting} type="submit"/>
+              
+          {errors.myform && <div>{errors.myform.message}</div>} //✅1  //(myform => custome name)
+
+        </form>
+      </container>
+    </div>
+  )
+}
+
+export default realapi
+
+=============================================================================================================================================================
