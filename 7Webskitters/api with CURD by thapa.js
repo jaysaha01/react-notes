@@ -325,7 +325,7 @@ export const postData = (data) => {    //✅3
 const Posts = () => {
 
   const [data, setData] = useState([])
-  const [updateDataApi, setUpdateDataAPi] = useState({})
+  const [updateDataApi, setUpdateDataAPi] = useState({}) //✅2
 
   const getPostData = async () => {
 
@@ -360,7 +360,7 @@ const Posts = () => {
 
 
   //Function Edit
-  const handleUpdatePost = (curElem) => setUpdateDataAPi(curElem)   //✅2
+  const handleUpdatePost = (curElem) => setUpdateDataAPi(curElem)   //✅2 Now here are are the current data
 
 
   return (
@@ -398,7 +398,7 @@ import { postData } from './api/PostApi'
 
 import React from 'react'
 
-const Form = ({ data, setAddData, updateDataApi, setUpdateDataApi }) => {    //✅3
+const Form = ({ data, setData, updateDataApi, setUpdateDataApi }) => {    //✅3
 
   const [addData, setAddData] = useState({
     title: "",
