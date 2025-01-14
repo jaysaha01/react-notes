@@ -1649,4 +1649,299 @@ export default Home;
 
 // ========================================================================================================================================================
 
+✅ Summery of login & logout
+
+Apiurl.js
+==========
+
+export const mainUrl="https://wtsacademy.dedicateddevelopers.us/api/"
+
+export const signup= "user/signup";
+
+export const login= "user/signin";
+
+export const profile_url= "user/profile-details";
+
+Apinstances.js
+===============
+
+import axios from 'axios';
+import { mainUrl } from './Apiurl';
+
+const instance = axios.create({
+  baseURL: mainUrl,
+});
+
+instance.interceptors.request.use(    
+  async function (config) {
+    const token = sessionStorage.getItem("token");
+
+    if (token) {
+      config.headers['x-access-token'] = token
+    }
+    return config
+  },
+  function (err) {
+    return Promise.reject(err);
+  }
+)
+
+export default instance
+
+
+Sighnup.jsx
+==============
+
+const Sighnup = () => {
+  const { register, handleSubmit, formState: { errors } } = useForm();
+
+  const onSubmit = (data) => {
+    const { email, first_name, last_name, password, profile_pic } = data;
+
+    // Get the file from the input
+    const profilePic = profile_pic[0]; // Access the first file from FileList
+
+    // Validation to ensure file is selected
+    if (!profilePic) {
+      console.error("No profile picture selected");
+      return;
+    }
+
+    // Create FormData and append all fields
+    const formData = new FormData();
+    formData.append("first_name", first_name);
+    formData.append("last_name", last_name);
+    formData.append("email", email);
+    formData.append("password", password);
+    formData.append("profile_pic", profilePic); // Append the file
+
+    // Send the FormData to the server
+    Apinstances.post(signup, formData)
+      .then((res) => {
+        console.log("Response:", res.data);
+      })
+      .catch((err) => {
+        console.error("Error:", err);
+      });
+  };
+
+  return (
+    <div>
+      <Container className="pt-5">
+        <Row>
+          <Col>
+            <Form onSubmit={handleSubmit(onSubmit)}>
+              {/* First Name */}
+              <Form.Group className="mb-3">
+                <Form.Control
+                  type="text"
+                  placeholder="Enter First Name"
+                  {...register("first_name", { required: "First Name is required" })}
+                />
+                {errors.first_name && (
+                  <span className="text-danger">{errors.first_name.message}</span>
+                )}
+              </Form.Group>
+
+              {/* Last Name */}
+              <Form.Group className="mb-3">
+                <Form.Control
+                  type="text"
+                  placeholder="Enter Last Name"
+                  {...register("last_name", { required: "Last Name is required" })}
+                />
+                {errors.last_name && (
+                  <span className="text-danger">{errors.last_name.message}</span>
+                )}
+              </Form.Group>
+
+              {/* Email */}
+              <Form.Group className="mb-3">
+                <Form.Control
+                  type="email"
+                  placeholder="Enter Email"
+                  {...register("email", {
+                    required: "Email is required",
+                    pattern: {
+                      value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
+                      message: "Invalid email address",
+                    },
+                  })}
+                />
+                {errors.email && (
+                  <span className="text-danger">{errors.email.message}</span>
+                )}
+              </Form.Group>
+
+              {/* Password */}
+              <Form.Group className="mb-3">
+                <Form.Control
+                  type="password"
+                  placeholder="Password"
+                  {...register("password", {
+                    required: "Password is required",
+                    minLength: {
+                      value: 6,
+                      message: "Password must be at least 6 characters",
+                    },
+                  })}
+                />
+                {errors.password && (
+                  <span className="text-danger">{errors.password.message}</span>
+                )}
+              </Form.Group>
+
+              {/* Profile Picture */}
+              <Form.Group controlId="formFile" className="mb-3">
+                <Form.Label>Upload Profile Picture</Form.Label>
+                <Form.Control
+                  type="file"
+                  {...register("profile_pic", { required: "Profile picture is required" })}
+                />
+                {errors.profile_pic && (
+                  <span className="text-danger">{errors.profile_pic.message}</span>
+                )}
+              </Form.Group>
+
+              {/* Submit Button */}
+              <Button variant="primary" type="submit">
+                Submit
+              </Button>
+            </Form>
+          </Col>
+        </Row>
+      </Container>
+    </div>
+  );
+};
+
+export default Sighnup;
+
+sighnin.jsx
+============
+
+const Sighnin = () => {
+  const [mdata, setmData] = useState({
+    email: '',
+    password: '',
+  })
+
+  const [userDetails, setUserDetails] = useState({
+
+    email: "",
+    first_name: "",
+    last_name: "",
+    profile_pic: "",
+  })
+
+  const {
+    register,
+    handleSubmit,
+    watch,
+  } = useForm()
+
+  // Sign in form submission
+
+  const onSubmit = (data) => {
+    const { email, password } = data
+
+    setmData({
+      email: email,
+      password: password,
+    })
+
+
+    Apinstances.post(login, mdata).then((res) => {
+      console.log(res.data);
+      if (res?.data.status === 200) {
+        alert(res.data.message);
+        window.sessionStorage.setItem("token", res.data.token);
+      }
+    })
+      .catch((err) => {
+        console.log(err);
+      })
+  }
+
+
+  //Profile fetching
+  const fetchignprofile = () => {
+
+    Apinstances.get(profile_url).then((res) => {
+      // console.log(res.data);
+
+      let baseurl = "https://wtsacademy.dedicateddevelopers.us/";
+      let folder_path = "uploads/user/profile_pic/"
+      let profile_image = baseurl + folder_path + res.data.data.profile_pic;
+
+      setUserDetails({
+        email: res.data.data.email,
+        first_name: res.data.data.first_name,
+        last_name: res.data.data.last_name,
+        profile_pic: profile_image,
+      })
+
+      
+
+    })
+      .catch((err) => {
+        console.log(err);
+      })
+  }
+
+  
+  useEffect(() => {
+
+    fetchignprofile()
+
+  }, [])
+
+
+ 
+  // console.log(userDetails.profile_pic)
+
+   //🔥 Set image to tocal storage
+   useEffect(()=>{
+    if(userDetails.profile_pic){
+      window.sessionStorage.setItem("profile_pic", userDetails.profile_pic);
+    }
+   },[userDetails.profile_pic])
+  
+
+
+  return (
+    <div>
+      <Container className='pt-5'>
+        <Row>
+          <Col>
+            <Form onSubmit={handleSubmit(onSubmit)}>
+              <Form.Group className="mb-3" controlId="formBasicEmail">
+                <Form.Control type="email" placeholder="Enter email" {...register("email")} />
+                {/* <Form.Text className="text-muted">
+                  We'll never share your email with anyone else.
+                </Form.Text> */}
+              </Form.Group>
+
+              <Form.Group className="mb-3" controlId="formBasicPassword">
+                <Form.Control type="password" placeholder="Password" {...register("password")} />
+              </Form.Group>
+
+
+              <Button variant="primary" type="submit">
+                Submit
+              </Button>
+            </Form>
+
+
+          </Col>
+        </Row>
+      </Container>
+
+    </div>
+  )
+}
+
+
+  
+
 
