@@ -1941,6 +1941,114 @@ const Sighnin = () => {
   )
 }
 
+==============================================================================================================================================
+
+✅ How to upload image in json server
+
+const Addbook = () => {
+
+  let [mainimg, setMainimg] = useState("")
+
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm();
+
+  const onSubmit = (data) => {
+    const { book_name, book_description, book_image } = data;
+    console.log(book_name, book_description, book_image[0])
+
+
+
+    ✅ Convert Image to Base64 for upload to json server
+
+    let file = book_image[0];
+    let reader = new FileReader();
+    let base64String = "";
+
+    reader.onload = function () {
+      base64String = reader.result.replace("data:", "")
+        .replace(/^.+,/, "");
+      let imageBase64Stringsep = base64String;
+
+      let formdb = {
+        book_name: book_name,
+        book_description: book_description,
+        book_image: base64String
+      }
+  
+      instance.post(port, formdb).then((res) => {
+        alert("Data Add to DB")
+      })
+        .catch((err) => {
+          alert("Error : Data not added")
+        })
+    }
+    reader.readAsDataURL(file);
+
+  
+
+  };
+  return (
+    <Container className="pt-5 pb-5">
+      <Row>
+        <Col>
+          <Form onSubmit={handleSubmit(onSubmit)}>
+            <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+              <Form.Label>Book Name</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Book Name"
+                {...register("book_name")}
+              />
+            </Form.Group>
+
+            <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+              <Form.Label>Book Description</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Book Description"
+                {...register("book_description")}
+              />
+            </Form.Group>
+
+            <Form.Group controlId="formFile" className="mb-3">
+              <Form.Label>Default file input example</Form.Label>
+              <Form.Control type="file" {...register("book_image")} />
+            </Form.Group>
+
+            <Button variant="primary" type="submit">
+              Submit
+            </Button>
+
+
+          </Form>
+        </Col>
+      </Row>
+    </Container>
+  );
+};
+
+index.jsx
+==============
+
+ <Row className='pt-3 justify-content-center'>
+          {product.map((dtls) => (
+            <Col className='mb-5' md={3} key={dtls.id}>
+              <Card style={{ width: '100%', height: "100%" }} className='pt-4 pb-4'>
+                <Card.Img
+                  variant="top"
+                  src={`data:image/png;base64,${dtls.book_image}`}
+          
+                  style={{ height: "200px", objectFit: "contain" }}
+                />
+            
+              </Card>
+            </Col>
+          ))}
+  </Row> 
 
   
 
