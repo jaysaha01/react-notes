@@ -917,6 +917,8 @@ import UserClass from './UserClass';
 ✅ Let's get classy (Crete stete in classbase components)
 -----------------------------------------------------------
 
+ => rcc to crate class base component 
+ 
 import React from "react";
 
 class UserClass extents React.Component {
