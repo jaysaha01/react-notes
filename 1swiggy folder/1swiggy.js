@@ -1914,7 +1914,100 @@ export default Cart
 
 
 
+//🔥 Redux Thunk Middleware (Redux me api calling kase hotahe)
 
+/*
+Redux Thunkl is a middleware that allows you to write action creators that return a function instead of an action . This function can perform asynchronous logic (like API request) and dispatch actions after hte operation is coomplite (e.g. fatching task and then dipatching them to the store)
+
+when you retrn a function from an action creator, Redux thunk provides the function as a argument. THis allows you to manully dipatch other actions(e.g. When an API call succeeds or falls)
+
+Redux thunk ek middleware he jis k madat se hum action ko dispath kartahe . ya action hamare liya api call karta he or jo bhai data ata he use hamare satate me set kar detahe . 
+
+jab hume koi delay task parform karna hotahe tab hum thunk use kartehe. 
+
+*/
+
+redux / store.js
+
+import {configureStore} from "@redux/toolkit"
+import todoReducer  from './slice/todo'
+
+export const store = configureStore({
+    reducer:{
+        todo:todoReducer
+    }
+})
+
+
+redux / todo.js
+
+import {createSlice,createAsyncThunk} from "@reduxjs/toolkit";
+
+export const fetchTodo= createAsyncThunk('fetchTodos',async ()=>{
+
+    //jab fetchTodos actions dispatch hoga ya particular function run hone wala he
+
+    const response= await fetch('https://api.com/weather')
+    retrn response.json();
+})
+
+const todoSlice= createSlice({
+
+    name:"todo",
+    initialState:{
+        isLoading:false,
+        data:null,
+        isError:false
+    },
+    extraReducers:(builder)=>{
+        //to put on state we use extraReducers
+
+        builder.pending(fetchTodos.pending,{state, action}=>{
+            state.isLoading=true
+        });
+
+        builder.addCase(fetchTodos.fullfilled,{state, action}=>{
+            state.isLoading=false;
+            state.data= action.payload;
+        });
+
+        builder.addCase(fetchTodos.rejected,{state, action}=>{
+            console.log("Error", action.payload);
+            state.isError=true
+        });
+    }
+
+})
+
+export default todoSlice.reducer;
+
+
+App.js 
+-------
+
+import {useDispatch, useSelector} from "react-redux";
+import {fetchTodos} from './redux/slice/todo';
+
+function App(){
+    const dispatch= useDispatch();
+    const state= useSelector((state)=> state);
+
+    if(state.todo.isLoading){
+        return <h1>Loading....</h1>
+    }
+
+    return(
+        <>
+        <button onClick={(e)=> dispatch(fetchTodos())}>Fetchin Tdods..</button>
+        {
+            state.todo.data && state.todo.data.map((e)=> <li>{e.title}</li>)
+        }
+        </>
+    )
+}
+
+
+// ==========================================================================================================================================
 
 
 
