@@ -2007,6 +2007,98 @@ function App(){
 }
 
 
+     (or)
+
+
+      
+//Async task on reducer (fetching the product details by redux thunk)
+
+
+// Create productSlice.js  into Redux(store) folder 
+
+// productSlice.js
+
+const { createSlice, createAsyncThunk } from '@redux/redux';
+
+
+const productSlice = cartSlice({
+    name: "product",
+    initialState: {
+        data: [],
+        status: "idle",
+
+    },
+    extraReducers: (builder) => {
+        builder
+
+            .addCase(fetchProducts.pending, (state, action) => {
+                state.state = "loading"
+            })
+
+            .addCase(fetchProducts.fullfilled, (state, action) => {
+                state.data = action.payload;
+                state.staus = "Idle"
+            })
+
+            .addCase(fetchProducts.rejected, (state, action) => {
+                state.staus = "Error"
+            })
+
+    }
+
+
+})
+
+
+export const { add, remove } = cartSlice.actions;
+
+export default cartSlice.reducer;
+
+//thunk ek function he
+
+export const fetchProducts = createAsyncThunk("anyname", async () => {
+    const res = await fetch("https://fecthstore.com/products");
+    const data = await res.json()
+    return data
+})
+
+
+
+//Product.jsx 
+
+import React from 'react'
+import { useSelector } from "react-redux";
+
+const Product = () => {
+
+    const {data: products,status}=useSelector((state)=>state.product);
+
+    if(status==="loading"){
+        return <h2>Loading...</h2>
+    }
+
+    if(status==="error"){
+        return <h2>Error</h2>
+    }
+
+  return (
+    <div>
+        {
+             products.map((products)=>{
+                <>
+                <img src={products.src}/>
+                <button>Add to cart</button>
+                </>
+            })
+        }
+
+    </div>
+  )
+}
+
+export default Product
+
+
 // ==========================================================================================================================================
 
 
