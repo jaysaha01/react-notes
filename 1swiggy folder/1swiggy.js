@@ -1943,7 +1943,7 @@ redux / todo.js
 
 import {createSlice,createAsyncThunk} from "@reduxjs/toolkit";
 
-export const fetchTodo= createAsyncThunk('fetchTodos',async ()=>{
+export const fetchTodos= createAsyncThunk('fetchTodos',async ()=>{
 
     //jab fetchTodos actions dispatch hoga ya particular function run hone wala he
 
