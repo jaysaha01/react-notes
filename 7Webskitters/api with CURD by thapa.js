@@ -624,7 +624,7 @@ export const updateData = (id, data) => {   //✅4
                                         ✅ React Hook Form
 ==============================================================================================================
 
-//✅ React Form
+//✅ React Form (go to npm of react hook form to get more details of the configuration)
 
 // https://react-hook-form.com/
 
@@ -638,23 +638,26 @@ const realapi = () => {
   const {
     register,
     handleSubmit,
-    watch,
     formState: { errors ,isSubmitting }, //✅6
   } = useForm()  //✅2
 
   const onSubmit= (data) => console.log(data) //✅4 {username:"harray", password:"hrray123"}
 
+//{...register} is used to link with your input to react hook form. 
 
+
+  
   return (
     <div>
       { isSubmitting && <div>Loading</div>}  //✅7
       <container>
         <form action="" onSubmit={handleSubmit(onSubmit)}> //✅3
-          <input type="text" {...register("username" , {required: true, minLength: {value: 3, message: "Min Length 3"}, maxLength:{value: 8, message: "Max Length 8"}} )} ></input>  //✅5
-          {errors.username && <div className="red">{errors.username.message}</div>}
+          <input className={errors.username ? "input-error-class" ? ""}  type="text" {...register("username" , {required: true, minLength: {value: 3, message: "Min Length 3"}, maxLength:{value: 8, message: "Max Length 8"}} )} ></input>  //✅5
+          {errors.username && <div className="red">{errors.username.message}</div>} //for visible the error 
 
 
-          <input type="password" {...register("password")} ></input>  //✅5
+          <input type="password" {...register("password", {pattern:{value:/^[A-Za-z]+$/i , message: "Last Name is not as per rules"}) } ></input>  //✅5
+            {errors.password && <div className="red">{errors.password.message}</div>}
 
 
           <input disabled={isSubmitting} type="submit"/>
@@ -667,9 +670,9 @@ const realapi = () => {
 
 export default realapi
 
-// -----------------------------------------
+//----------------------Submiting ke doran dubara submit nahi hone se kase bache (Debouncing) ----------------------
 
-// ✅ custom errors
+//isSubmitting darshatahe ki appki from abhi submit ho rahahe ya nahi
 
 import React from 'react'
 import { useForm, SubmitHandler } from "react-hook-form"
@@ -678,37 +681,31 @@ const realapi = () => {
 
   const {
     register,
-    handleSubmit,
-    setError, //✅2
-    watch,
+    handleSubmit,         ✅2
     formState: { errors ,isSubmitting }, 
-  } = useForm()  
+  } = useForm() 
 
-  const onSubmit= (data) =>{
-  
+  async const onSubmit= (data) => {
+    //API call ko simulate krte ✅1
+    await Promise((resolve) =>setTimeout(resolve, 5000))
     console.log(data) 
-
-    if(data.username !== "subham"){ //✅3
-      setError("myform",{message:"You form is not in good order"})
-    }
-
   }
+
 
   return (
     <div>
       { isSubmitting && <div>Loading</div>}  
       <container>
         <form action="" onSubmit={handleSubmit(onSubmit)}> 
-          <input type="text" {...register("username" , {required: true, minLength: {value: 3, message: "Min Length 3"}, maxLength:{value: 8, message: "Max Length 8"}} )} ></input>  
-          {errors.username && <div className="red">{errors.username.message}</div>}
+          <input className={errors.username ? "input-error-class" ? ""}  type="text" {...register("username" , {required: true, minLength: {value: 3, message: "Min Length 3"}, maxLength:{value: 8, message: "Max Length 8"}} )} ></input>  //✅5
+          {errors.username && <div className="red">{errors.username.message}</div>} //for visible the error 
 
 
-          <input type="password" {...register("password")} ></input>  
+          <input type="password" {...register("password", {pattern:{value:/^[A-Za-z]+$/i , message: "Last Name is not as per rules"}) } ></input>  
+            {errors.password && <div className="red">{errors.password.message}</div>}
 
-
-          <input disabled={isSubmitting} type="submit"/>
-              
-          {errors.myform && <div>{errors.myform.message}</div>} //✅1  //(myform => custome name)
+                             ✅3                                ✅4
+          <input disabled={isSubmitting} type="submit" value={isSubmitting} ? "Submitting" ? "Submit" />
 
         </form>
       </container>
@@ -717,6 +714,9 @@ const realapi = () => {
 }
 
 export default realapi
+  
+
+
 
 =============================================================================================================================================================
                                                            ✅ Webskitters Real JSON Server and Real API Work
