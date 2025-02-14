@@ -567,7 +567,7 @@ TODO If we use normal variable then variable will change but UI not update. if I
 
 
 
-✅ Search Featecher
+✅ Search Feature
 ----------------------
 
 📁Body.js
@@ -579,9 +579,8 @@ import  Shimmer from './Shimmer';
 
 const Body = () => {
 
-    const [listOfResturent, setListOfResturent] = useState([]);
-
-    const [filterResturent, setFilterResturent]= useState([]); (7)
+    const [listOfRestaurants, setListOfRestraunt] = useState([]);
+    const [filteredRestaurant, setFilteredRestaurant] = useState([]);
 
     const [searchText, setSearchText]=useState(""); (2)
 
@@ -594,8 +593,13 @@ const Body = () => {
 
         let data= await fetch("https://wwww.swigi-api.com/..... ");
         const json= await data.json();
-        setListOfResturent(json?.data?.cards[2]?.data?.data?.cards)
-        setFilterResturent(json?.data?.cards[2]?.data?.data?.cards)    (9)
+        // Optional Chaining
+    setListOfRestraunt(
+      json?.data?.cards[2]?.card?.card?.gridElements?.infoWithStyle?.restaurants
+    );
+    setFilteredRestaurant(
+      json?.data?.cards[2]?.card?.card?.gridElements?.infoWithStyle?.restaurants
+    );    (9)
     }
 
 
@@ -619,8 +623,11 @@ const Body = () => {
             <div className="search"><input type="text" /><button>Search</button></div>
             <button className="filter-btn" onClick={()=> {
 
-               let filteredList= listOfResturent.filter((res)=> res.data.avgRating > 4);
-               setListOfResturent(filteredList)
+              const filteredRestaurant = listOfRestaurants.filter((res) =>
+                res.info.name.toLowerCase().includes(searchText.toLowerCase())
+              );
+
+              setFilteredRestaurant(filteredRestaurant);
 
             }}>Top Rated Resturents </button>  (
             <div className="res-container">
