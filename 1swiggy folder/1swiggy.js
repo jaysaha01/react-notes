@@ -2111,6 +2111,568 @@ export default Product
 
 
 
+=========================================================================================================
+
+       ===================== Tenstack Query (Rect Query)  =======================
+
+=========================================================================================================
+
+
+//🔥 React Query and Tenstack query is same
+
+
+//What is Rect Query? Why we use React Query ?
+
+//✅ setup the query ------------------------
+
+https://tanstack.com/query/v5/docs/framework/react/installation > installtion > npm i @tanstack/react-query
+
+// npm i @tanstack/react-query-devtools
+
+main.jsx
+----------
+
+import {QueryClient, QueryClientProvider} from @tenstack/react-query;
+import {ReactQueryDevTools} from '@tanstak/react-query-devtools'
+
+let queryClient = new QueryClient();
+
+<QueryClientProvider client={queryClient}>
+  <App/>
+  <ReactQueryDevTools initialIsOpen={false}/>
+</QueryClientProvider>
+
+
+//✅ Fetch Posts ---------------------------
+
+api / api.js
+-----------------
+
+import axios from "axios";
+
+const api= axios.create({
+  baseURL:"https://jsonpalceholder"
+})
+
+//to fetch the data
+
+export const fetchPosts= async ()=>{
+  const res = await api.get('/posts');
+  return res.status === 200 ? res.data : []
+}
+
+
+App.jsx
+---------
+import {useQuery} from "@tenstack/react-query";
+import {fetchPosts} from './api/api'
+
+function App(){
+
+  useQuery({
+    const {data:postData, isLoading,isError, error , status}=queryKey:['posts'],//like useState
+    queryFn:fetchPosts, //like useEffect
+  })
+
+  if(!isLoading) return <p>Loading...</p>
+  if(isError) return <p>Error:{error} Something went wrong</p>
+
+  return (
+    <div>
+      {console.log(data, isLoading)}
+    </div>
+  )
+
+
+}
+
+
+//✅ Garbage Collection time ----------------------
+
+/*
+
+First fime fetch kark query data cashe me dal detahe . qury 5 min tak cash se vo data dikhati he par vo piche data fetch karte rahatahe agar within time new data database pe ata he fir vo uss new data ko user ko dikasake
+
+*/
+
+//✅ stale time (Prevent everytime data fetching) --------------------------
+
+if you increase state time then it will not fetch data
+
+App.jsx
+---------
+
+function App(){
+
+  const {data:postData, isLoading,isError, error , status}=useQuery({
+    queryKey:['posts'],//like useState
+    queryFn:fetchPosts, //like useEffect
+    staleTime: 10000 // ✅ 10 sec tak new data fetch nahi hoga , this is in milisecond
+  })
+}
+
+
+//✅ (Pooling in React Query) API call within a time interval -----------------------
+
+
+function App(){
+
+  const {data:postData, isLoading,isError, error , status}=useQuery({
+    queryKey:['posts'],
+    queryFn:fetchPosts,
+    refetchInterval:1000 //✅ Every one sec dta wapas refetch karo. staleTime rahaga to hum server ko retch nahi kar paynga
+    refetchIntervalInBackground: true , //✅ when we go to another tob thattime also fetch our data
+  })
+}
+
+
+
+//✅ Dynamic page in react query  ----------------------------
+
+app.js
+------
+
+{
+  path:"/rq/:id",
+  element:<FetchIndv/>
+}
+
+FetchRQ.jsx
+--------------
+return(
+
+  <Navlink to={`/rq/${elm?.id}`}>
+  <li>{body}</li>
+  <Navlink/>
+)
+
+api / api.js
+-----------------
+
+import axios from "axios";
+
+const api= axios.create({
+  baseURL:"https://jsonpalceholder"
+})
+
+//to fetch the data
+
+export const fetchPosts= async ()=>{
+  const res = await api.get('/posts');
+  return res.status === 200 ? res.data : []
+}
+
+//✅ Fetch individual post
+
+export const fetchInvPost= async (id)=>{
+  try{
+    const res = await api.get(`/posts/${id}`);
+    return res.status === 200 ? res.data : []
+  }catch(err){
+    console.log(err)
+  }
+
+}
+
+
+FetchIndv.jsx
+---------------
+
+import React from 'react'
+import {useQuery} from "@tenstack/react-query";
+import {useParams} from 'react-router-dom';
+import fetchInvPost from 'api/api'
+
+
+const FetchIndv = () => {
+
+  let {id}= useParams()
+
+  const {data, isPending, isError, error}=useQuery({
+  queryKey:['post',id],//jab jab id change hoga tab tab queryFun call hoga
+  queryFn:()=>fetchInvPost(id),
+  })
+
+  console.log(data)
+
+  if(!isLoading) return <p>Loading...</p>
+  if(isError) return <p>Error:{error} Something went wrong</p>
+
+  return (
+    <div>
+      <h1>Single Post</h1>
+    </div>
+  )
+}
+
+export default FetchIndv
+
+
+
+//✅ Pagination  ----------------------------
+
+
+api / api.js
+-----------------
+
+import axios from "axios";
+
+const api= axios.create({
+  baseURL:"https://jsonpalceholder"
+})
+
+//✅1 to fetch the data
+
+export const fetchPosts= async (pageNumber)=>{
+  const res = await api.get(`/posts?_start=${pageNumber}&_limit=3`);
+  return res.status === 200 ? res.data : []
+}
+
+
+export const fetchInvPost= async (id)=>{
+  try{
+    const res = await api.get(`/posts/${id}`);
+    return res.status === 200 ? res.data : []
+  }catch(err){
+    console.log(err)
+  }
+}
+
+
+
+
+FetchRQ.jsx //✅2
+-----------------
+import {keepPreviosData, useQuery} from "@tenstack/react-query"
+
+import fetchPost form '..api/api';
+
+export const FetchFQ=()=>{
+
+  const [pageNumber, setPageNumber]= useState(0)
+
+  const {data:postData, isLoading,isError, error , status}=useQuery({
+    queryKey:['posts', pageNumber],
+    queryFn:()=> fetchPosts(pageNumber),
+    placeholderData:keepPreviousData,//✅3  jab app data fetch karrahaho tab app previos data ko asatise rakhiya and jabhi naya data aye tabhi update kijiya. loading dikhane nahi dikhiya
+  })
+
+
+return(
+
+  <>
+  <Navlink to={`/rq/${elm?.id}`}>
+    <li>{body}</li>
+    <Navlink/>
+
+    <div className="pagination_box">
+      <button onclick={()=> setPageNumber(prev)=> prev - 3}  disabled={pageNumber === 0 ? true : false}>Prev</button>
+      <p>{pageNumber / 3 }</p>
+      <button onclick={()=> setPageNumber(prev)=> prev + 3}>Next</button>
+    </div>
+  </>
+
+  )
+
+
+}
+
+
+//✅ useMustation Hook  ----------------------------
+
+//curd operation me usemutation hook ka use hota he.
+
+
+1) Delete -----------
+
+FetchRQ.jsx
+-----------------
+import {keepPreviosData, useQuery, useMuatation, useQuiquClient} from "@tenstack/react-query"
+import {deletePost} from "api/api" ✅4
+
+import fetchPost form '..api/api';
+
+export const FetchFQ=()=>{
+
+  const [pageNumber, setPageNumber]= useState(0)
+
+  const queryClient= useQueryClient(); //✅6
+
+  const {data:postData, isLoading,isError, error , status}=useQuery({
+    queryKey:['posts', pageNumber],
+    queryFn:()=> fetchPosts(pageNumber),
+    placeholderData:keepPreviousData,
+  })
+
+  //! ✅1 Mutation Function to delete this post
+ const deleteMutation = useMutation({
+    mutationFn:(id)=> deltePost(id),  //✅5
+
+    onSuccess:(data, id)=>{ //✅7
+      queryClient.setQueryData(['posts', pageNumber],(curElm)=>{
+        return curElm?.filter((post)=> post.id !== id )
+      })
+    }
+  })
+
+
+
+return(
+
+  <>
+  <Navlink to={`/rq/${elm?.id}`}>
+    <li>{body}</li>
+    <button onClick={deleteMutation.mutate(id)}>Delete</button> //✅2  .mutate is call the mutationFn
+    <Navlink/>
+  </>
+  )
+
+}
+
+
+api / api.js
+-----------------
+
+import axios from "axios";
+
+const api= axios.create({
+  baseURL:"https://jsonpalceholder"
+})
+
+// fetch the data
+
+export const fetchPosts= async (pageNumber)=>{
+  const res = await api.get(`/posts?_start=${pageNumber}&_limit=3`);
+  return res.status === 200 ? res.data : []
+}
+
+
+export const fetchInvPost= async (id)=>{
+  try{
+    const res = await api.get(`/posts/${id}`);
+    return res.status === 200 ? res.data : []
+  }catch(err){
+    console.log(err)
+  }
+}
+
+//✅3 Delete the post
+
+export const deltePost=(id)=>{
+  return api.delete(`/posts/${id}`)
+}
+
+
+
+
+2) Update -----------
+
+api / api.js
+-----------------
+
+import axios from "axios";
+
+const api= axios.create({
+  baseURL:"https://jsonpalceholder"
+})
+
+// fetch the data
+
+export const fetchPosts= async (pageNumber)=>{
+  const res = await api.get(`/posts?_start=${pageNumber}&_limit=3`);
+  return res.status === 200 ? res.data : []
+}
+
+export const fetchInvPost= async (id)=>{
+  try{
+    const res = await api.get(`/posts/${id}`);
+    return res.status === 200 ? res.data : []
+  }catch(err){
+    console.log(err)
+  }
+}
+
+export const deltePost=(id)=>{
+  return api.delete(`/posts/${id}`)
+}
+
+{/*✅1 to update the post  */}
+
+export const updatePost=()=>{
+  return api.patch(`/post/${id}`,{title:"I Have Update"})
+};
+
+
+FetchRQ.jsx
+-----------------
+import {keepPreviosData, useQuery, useMuatation, useQuiquClient} from "@tenstack/react-query"
+import {deletePost, updatePost} from "api/api"
+
+import fetchPost form '..api/api';
+
+export const FetchFQ=()=>{
+
+  const [pageNumber, setPageNumber]= useState(0)
+
+  const queryClient= useQueryClient();
+
+  const {data:postData, isLoading,isError, error , status}=useQuery({
+    queryKey:['posts', pageNumber],
+    queryFn:()=> fetchPosts(pageNumber),
+    placeholderData:keepPreviousData,
+  })
+
+
+ const deleteMutation = useMutation({
+    mutationFn:(id)=> deltePost(id),
+
+    onSuccess:(data, id)=>{
+      queryClient.setQueryData(['posts', pageNumber],(curElm)=>{
+        return curElm?.filter((post)=> post.id !== id )
+      })
+    }
+  })
+
+
+  //! ✅2 Mutation function to update the post
+ const updateMutation = useMutation({
+  mutationFn:(id)=> updatePost(id),
+
+  onSuccess:(apiData, postId)=>{
+    queryClient.setQueryData(['posts', pageNumber],(postsData)=>{
+      return postsData?.map((curPost)=>{
+        return curPost.id === postId ? {...curPost, title:apiData.data.title} : curPost
+      })
+    })
+  }
+})
+
+
+
+return(
+
+  <>
+  <Navlink to={`/rq/${elm?.id}`}>
+    <li>{body}</li>
+    <button onClick={deleteMutation.mutate(id)}>Delete</button>
+    <button onClick={updateMutation.mutate(id)}>Update</button>  //✅3
+    <Navlink/>
+  </>
+
+  )
+
+}
+
+
+
+//✅ Infine Scroll  ----------------------------
+
+import React from 'react'
+import {useInfiniteQuery} from @tanstack/react-query;
+import {fetchUsers} from "api/api"
+
+const InfiniteScroll = () => {
+
+
+//✅2
+const {data, hasNextPage, fetchNextPage, status, isFetchingNextPage}= useInfiniteQuery({
+queryKey:['users'],
+queryFn:fetchUsers,
+getNextPageParams:(lastPage, allpages)=>{
+  // getNextPageParams kakam he we have more pages or not
+
+  return lastPage.length === 10 ? allpages.length+1 : undefined
+}
+})
+
+useEffect(() => {
+  window.addEventListener('scroll', handleScroll),
+  return ()=> window.removeEventListener('scroll', handleScroll)
+
+  const bottom= window.innerHeight + window.scrollY  > = document.documentElement.scrollHeight - 1;
+
+  if(bottom && hasNextPage){
+    fetchNextPage()
+  }
+
+}, [])
+
+  return (
+    <div>
+      {
+        data?.pages?.map((page, index)=>(
+          <ul>
+            {
+              page.map((user)=>(
+                <li><p>user</p></li>
+              ))
+            }
+          </ul>
+        ))
+      }
+      {isFetchingNextPage ? "Loading..." : null}
+
+    </div>
+  )
+}
+
+export default InfiniteScroll
+
+
+api / api.js
+-----------------
+
+import axios from "axios";
+
+const api= axios.create({
+  baseURL:"https://jsonpalceholder"
+})
+
+// fetch the data
+
+export const fetchPosts= async (pageNumber)=>{
+  const res = await api.get(`/posts?_start=${pageNumber}&_limit=3`);
+  return res.status === 200 ? res.data : []
+}
+
+export const fetchInvPost= async (id)=>{
+  try{
+    const res = await api.get(`/posts/${id}`);
+    return res.status === 200 ? res.data : []
+  }catch(err){
+    console.log(err)
+  }
+}
+
+export const deltePost=(id)=>{
+  return api.delete(`/posts/${id}`)
+}
+
+export const updatePost=()=>{
+  return api.patch(`/post/${id}`,{title:"I Have Update"})
+};
+
+//✅2 infinite scrolling
+
+//pageParam is page no
+
+export const fetchUsers= async({pageParam=1})=>{
+  try{
+    const res= await axios.get(`https:api.github/users?per_page=10%page=${pageParam}`);
+
+    return res.data
+
+  }catch(error){
+    console.length(console.error();
+    )
+  }
+}
+
+
+
+// ==============================================================================
+
+
 
 
 
