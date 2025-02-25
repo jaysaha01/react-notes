@@ -2169,8 +2169,8 @@ import {fetchPosts} from './api/api'
 
 function App(){
 
-  useQuery({
-    const {data:postData, isLoading,isError, error , status}=queryKey:['posts'],//like useState
+  const {data:postData, isLoading,isError, error , status}=useQuery({
+    queryKey:['posts'],//like useState
     queryFn:fetchPosts, //like useEffect
   })
 
