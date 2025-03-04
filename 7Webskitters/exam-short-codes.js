@@ -511,6 +511,7 @@ export default function QRCodeGenerator() {
 
 //Light and dark theme with local storage;
 
+//lightDarkMode.jsx
 
 import useLocalStroage from "./useLocalStroage";
 import './theme.css'
@@ -537,13 +538,14 @@ export default function LightDarkMode() {
 }
 
 
-// useLocalStroage.jsx
+// useLocalStroage.jsx //✅1
 
 import { useEffect } from "react";
 import { useState } from "react";
 
-export default function useLocalStroage(key, defaultValue) {
+export default function useLocalStroage(key, defaultValue) {  //✅2
     const [value, setValue] = useState(() => {
+        // This is lazy initializer function of usestate
         let currentValue;
 
         try {
@@ -558,7 +560,7 @@ export default function useLocalStroage(key, defaultValue) {
         return currentValue;
     });
 
-    useEffect(() => {
+    useEffect(() => {  //✅3
         localStorage.setItem(key, JSON.stringify(value));
     }, [key, value]);
 
