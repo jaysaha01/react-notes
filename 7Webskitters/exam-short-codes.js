@@ -1440,7 +1440,7 @@ const Tab = () => {
 
   return !products.length ? <h1>NO PRoducts Found</h1> :(
     <div>
-    const noOfPages= totalProducts/PAGE_SIZE; //✅3
+    
         <div>{[...Array(noOfPages)].map((n)=> <span onClick={()=>handlePageChange(n)}>{n}</span>)}</div> //✅4,8
 
         {
