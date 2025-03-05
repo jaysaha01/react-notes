@@ -708,70 +708,53 @@ export default function ScrollIndicator({ url }) {
 
 // Custom Tabs
 
-// tab-test.jsx (parent Component)
-
-
-import Tabs from "./tabs";
-import './tabs.css';
-
-function RandomComponent() {
-    return <h1>Some random content</h1>;
-}
-
-export default function TabTest() {   //✅2
-    const tabs = [
-        {
-            label: "Tab 1",
-            content: <div>This is content for Tab 1</div>,
-        },
-        {
-            label: "Tab 2",
-            content: <div>This is content for Tab 2</div>,
-        },
-        {
-            label: "Tab 3",
-            content: <RandomComponent />,
-        },
-    ];
-
-    function handleChange(currentTabIndex) { //✅4
-        console.log(currentTabIndex);
-    }
-
-    return <Tabs tabsContent={tabs} onChange={handleChange} />; //✅3
-}
-
-// tabs.jsx   //✅1
-
+import React from "react";
 import { useState } from "react";
 
-export default function Tabs({ tabsContent, onChange }) {
-    const [currentTabIndex, setCurrentTabIndex] = useState(0);  //✅6
+const Tab = () => {
+  const tabs = ["Tab1", "Tab2", "Tab2"]; //✅1
 
-    function handleOnClick(getCurrentIndex) {  //✅7
-        setCurrentTabIndex(getCurrentIndex);
-        onChange(getCurrentIndex);
-    }
+  const content = [
+    "content 1",
+    "content 2",
+    "content 3", //✅5
+  ];
 
-    return (
-        <div className="wrapper">
-            <div className="heading">
-                {tabsContent.map((tabItem, index) => (
-                    <div
-                        className={`tab-item ${currentTabIndex === index ? "active" : ""}`}
-                        onClick={() => handleOnClick(index)}      //✅5
-                        key={tabItem.label}
-                    >
-                        <span className="label">{tabItem.label}</span>
-                    </div>
-                ))}
-            </div>
-            <div className="content" style={{ color: "red" }}>
-                {tabsContent[currentTabIndex] && tabsContent[currentTabIndex].content}
-            </div>
-        </div>
-    );
-}
+  const [activeTab, setActiveTab] = useState(0); //✅3
+
+  return (
+    <>
+      <div className="header">
+        {tabs.map((elm, index) => {
+          <button
+          onClick={()=> setActiveTab(index)}
+
+            className={`px-4 border hover:bg-blue ${
+              activeTab === index ? "bg blue" : ""
+            }`}
+            
+          >
+            {elm}
+          </button>; //✅2, 4,7
+        })}
+      </div>
+      <div className="content">
+        
+        //✅6
+        {content &
+          content.map((content, index) => {
+            if (activeTab === index) {
+              return <div key={`content_${index}`}>{content}</div>;
+            }else{
+                return null
+            }
+          })}
+      </div>
+    </>
+  );
+};
+
+export default Tab;
 
 // ============================================================================================================
 // custom-modal-popup
@@ -785,7 +768,7 @@ import "./modal.css";
 export default function ModalTest() {
     const [showModalPopup, setShowModalPopup] = useState(false);  //✅3
 
-    function handleToggleModalPopup() {
+    function handleToggleModalPopup() {//✅4
         setShowModalPopup(!showModalPopup);
     }
 
@@ -840,95 +823,160 @@ export default function Modal({ id, header, body, footer, onClose }) {
 
 //   search-autocomplete-with-api
 
-import { useEffect, useState } from "react";
-import Suggestions from "./suggesstions";
+import React from "react";
+import { useEffect } from "react";
+import { useState } from "react";
 
-export default function SearchAutocomplete() {
-    const [loading, setLoading] = useState(false);  //✅2
-    const [users, setUsers] = useState([]); //✅2
-    const [error, setError] = useState(null); //✅3
-    const [searchParam, setSearchParam] = useState("");  //✅4
-    const [showDropdown, setShowDropdown] = useState(false); //✅4
-    const [filteredUsers, setFilteredUsers] = useState([]); //✅6
+const Tab = () => {
 
-    function handleChange(event) {  //✅6
-        const query = event.target.value.toLowerCase();
-        setSearchParam(query);
-        if (query.length > 1) {
-            const filteredData =
-                users && users.length
-                    ? users.filter((item) => item.toLowerCase().indexOf(query) > -1)
-                    : [];
-            setFilteredUsers(filteredData);
-            setShowDropdown(true);
-        } else {
-            setShowDropdown(false);
-        }
+    let [results, setResults] = useState([])//✅3
+    let [input, setInput] = useState("")//✅3
+
+
+
+    const fetchData = async () => { //✅2
+        const data = await fetch("api of the data"+ input);
+        const json = await data.json()
+        setResults(json?.recepes)//✅5
     }
 
-    function handleClick(event) {
-        setShowDropdown(false)
-        setSearchParam(event.target.innerText)
-        setFilteredUsers([])
-    }
 
-    async function fetchListOfUsers() {  //✅3
-        try {
-            setLoading(true);
-            const response = await fetch("https://dummyjson.com/users");
-            const data = await response.json();
+    useEffect(() => { //✅6
+        fetchData()
+    }, [input])
 
-            if (data && data.users && data.users.length) {
-                setUsers(data.users.map((userItem) => userItem.firstName));
-                setLoading(false);
-                setError(null);
-            }
-        } catch (error) {
-            setLoading(false);
-            console.log(error);
-            setError(error);
-        }
-    }
-
-    useEffect(() => { //✅3
-        fetchListOfUsers();
-    }, []);
-
-    console.log(users, filteredUsers);
 
     return (
-        <div className="search-autocomplete-container">
-            {loading ? (
-                <h1>Loading Data ! Please wait</h1>
-            ) : (
-                <input                                     //✅1 , 5
-                    value={searchParam}
-                    name="search-users"
-                    placeholder="Search Users here..."
-                    onChange={handleChange}
-                />
-            )}
 
-            {showDropdown && <Suggestions handleClick={handleClick} data={filteredUsers} />} //✅7
+        <>
+        <div>
+            <h1>Searh AutoComplete Search Bar</h1>
+            <input type="text" onChange={(e) => setInput(e.target.value)} />//✅1, 4
         </div>
+        <div>
+            { //✅7
+                results?.map((r)=>{
+                    <span key={r.id}>{r.name}</span>
+                })
+            }
+        </div>
+        </>
+        
     );
-}
+};
+
+export default Tab;
+
+//inout inside show the results and click outside of the input hide the results
+
+import React from "react";
+import { useEffect } from "react";
+import { useState } from "react";
+
+const Tab = () => {
+
+    let [results, setResults] = useState([])
+    let [input, setInput] = useState("")
+
+    const [showResults, setShowResults] = useState(false)//✅1
 
 
-// suggesstions.jsx
-export default function Suggestions({ data, handleClick }) {  //✅7
+    const fetchData = async () => {
+        const data = await fetch("api of the data" + input);
+        const json = await data.json()
+        setResults(json?.recepes)
+    }
+
+    useEffect(() => {
+        fetchData()
+    }, [input])
+
+
     return (
-        <ul>
-            {data && data.length
-                ? data.map((item, index) => (
-                    <li onClick={handleClick} key={index}>
-                        {item}
-                    </li>
-                ))
-                : null}
-        </ul>
+        <>
+            <div>
+                <h1>Searh AutoComplete Search Bar</h1>
+                <input type="text" onChange={(e) => setInput(e.target.value)} onFocus={()=> setShowResults(true)}  onBlur={()=>setShowResults(false)}/> //✅3
+            </div>
+
+            {showResults && (  //✅2
+                <div className="resultcontainer">
+                    {
+                        results?.map((r) => {
+                            <span key={r.id}>{r.name}</span>
+                        })
+                    }
+                </div>
+            )
+
+            }
+
+        </>
+
     );
-}
+};
+
+export default Tab;
+
+
+//impliment deboncing 
+import React from "react";
+import { useEffect } from "react";
+import { useState } from "react";
+
+const Tab = () => {
+
+    let [results, setResults] = useState([])
+    let [input, setInput] = useState("")
+
+    const [showResults, setShowResults] = useState(false)
+
+
+    const fetchData = async () => {
+        const data = await fetch("api of the data" + input);
+        const json = await data.json()
+        setResults(json?.recepes)
+    }
+
+    useEffect(() => {
+
+        const timer= setTimeout(fetchData, 3000);//✅1
+     
+        return()=>{
+            //when componet unmounts then this return will called //✅2
+            clearTimeout(timer)
+        }
+    }, [input])
+
+
+    return (
+        <>
+            <div>
+                <h1>Searh AutoComplete Search Bar</h1>
+                <input type="text" onChange={(e) => setInput(e.target.value)} onFocus={()=> setShowResults(true)}  onBlur={()=>setShowResults(false)}/> 
+            </div>
+
+            {showResults && (  
+                <div className="resultcontainer">
+                    {
+                        results?.map((r) => {
+                            <span key={r.id}>{r.name}</span>
+                        })
+                    }
+                </div>
+            )
+
+            }
+
+        </>
+
+    );
+};
+
+export default Tab;
+
+
+
 
 
 // ================================================================================================
@@ -1030,9 +1078,7 @@ export default function TicTacToe() {
     );
 }
 
-// ================================================================================================
 
-// Feature Flags
 
 // ================================================================================================
 
@@ -1297,99 +1343,190 @@ export default function ScrollToSection() {
 
 // Pagination 
 
+//Render The data
+
 // index.jsx
 
-function Pagination({ currentPage, totalPages = 10, onPageChange }) {
-    function generateNoOfPages() {   //✅1
-        const pages = [];
+import React from 'react'
+import { useEffect } from 'react';
+import { useState } from 'react';
 
-        for (let i = 1; i <= totalPages; i++) {
-            pages.push(i);
+const ProductCard=({image, product})=>{ //✅4
+    return<div className='product-card'>
+        <img src={image} alt={product}/>
+        <span>{title}</span>
+    </div>
+}
+
+
+
+
+const Tab = () => {
+
+    const [products, setProducts]=useState([])//✅2
+
+    const fetchData= async ()=>{ //✅1
+        const data= await fetch("api of products?limit=500");
+        const json= await data.json();
+        setProducts(json.products);
+    }
+
+    useEffect(()=>{//✅3
+        fetchData()
+    }, [])
+
+  return !products.length ? <h1>NO PRoducts Found</h1> :(
+    <div>
+
+        {
+            products.map((p, i)=>{
+                <ProductCard key={i} image={p.title} title={p.title}/> //✅4
+
+            })
         }
-
-        return pages;
-    }
-
-    return (
-        <div className="pagination">
-            <button      //✅14
-                onClick={() => onPageChange(currentPage - 1)}
-                className="pagination-btn"
-                disabled={currentPage === 1}
-            >
-                Prev
-            </button>
-
-
-            {generateNoOfPages().map((pageNo) => (   //✅2, 4
-                <button
-                    className={`pagination-btn ${currentPage === pageNo ? 'active' : ''}`}
-                    key={pageNo}
-                    onClick={() => onPageChange(pageNo)}
-                >
-                    {pageNo}
-                </button>
-            ))}
-
-
-            <button  //✅15
-                onClick={() => onPageChange(currentPage + 1)}
-                className="pagination-btn"
-                disabled={currentPage === totalPages}
-            >
-                Next
-            </button>
-        </div>
-    );
+      
+    </div>
+  )
 }
 
-export default Pagination;
-
-//   test.jsx
-
-import { useState } from "react";
-import Pagination from ".";
-import './pagination.css';
-
-function PaginationTest() { //✅3
+export default Tab
 
 
-    const dummyData = Array.from({ length: 100 }, (_, index) => ({   //✅5
-        id: index + 1,
-        name: `Product ${index + 1}`,
-    }));
 
-    const itemsPerPage = 10;//✅6
-    const [currentPage, setCurrentPage] = useState(1); //✅7
+//implimentting the paginatuon
 
-    function handlePageChange(currentPage) {   //✅13
-        setCurrentPage(currentPage)
+import React from 'react'
+import { useEffect } from 'react';
+import { useState } from 'react';
+
+const ProductCard=({image, product})=>{ 
+    return<div className='product-card'>
+        <img src={image} alt={product}/>
+        <span>{title}</span>
+    </div>
+}
+
+
+
+const PAGE_SIZE=10; //✅1
+
+const Tab = () => {
+
+    const [products, setProducts]=useState([])
+
+    const [currentPage, setCurrentPage]=useState(0) //✅5
+
+    const fetchData= async ()=>{ 
+
+        const data= await fetch("api of products?limit=500");
+        const json= await data.json();
+        setProducts(json.products);
     }
 
-    const indexOfLastItem = currentPage * itemsPerPage;  //✅8
-    const indexOfFirstItem = indexOfLastItem - itemsPerPage;  //✅9
-    const currentListOfItems = dummyData.slice(indexOfFirstItem, indexOfLastItem);  //✅10
+    useEffect(()=>{
+        fetchData()
+    }, [])
 
-    console.log(currentListOfItems, indexOfFirstItem, indexOfLastItem);
+    const totalProducts= products.length; //✅2
+    const noOfPages= totalProducts/PAGE_SIZE; //✅3
+    const start= currentPage * PAGE_SIZE; //✅5
+    const end= start + PAGE_SIZE; //✅6
 
-    return (
+    const handlePageChange=(n)=>{//✅8
+        setCurrentPage(n)
+
+    }
+
+
+  return !products.length ? <h1>NO PRoducts Found</h1> :(
+    <div>
+    const noOfPages= totalProducts/PAGE_SIZE; //✅3
+        <div>{[...Array(noOfPages)].map((n)=> <span onClick={()=>handlePageChange(n)}>{n}</span>)}</div> //✅4,8
+
+        {
+            products.slice(start, end).map((p, i)=>{ //✅7
+                <ProductCard key={i} image={p.title} title={p.title}/> 
+
+            })
+        }
+      
+    </div>
+  )
+}
+
+export default Tab
+
+
+//left and right arrow
+
+import React from 'react'
+import { useEffect } from 'react';
+import { useState } from 'react';
+
+const ProductCard = ({ image, product }) => {
+    return <div className='product-card'>
+        <img src={image} alt={product} />
+        <span>{title}</span>
+    </div>
+}
+
+
+
+const PAGE_SIZE = 10;
+
+const Tab = () => {
+
+    const [products, setProducts] = useState([])
+
+    const [currentPage, setCurrentPage] = useState(0)
+
+    const fetchData = async () => {
+
+        const data = await fetch("api of products?limit=500");
+        const json = await data.json();
+        setProducts(json.products);
+    }
+
+    useEffect(() => {
+        fetchData()
+    }, [])
+
+    const totalProducts = products.length;
+    const noOfPages = totalProducts / PAGE_SIZE;
+    const start = currentPage * PAGE_SIZE;
+    const end = start + PAGE_SIZE;
+
+    const goToNextPage = () => { //✅2
+        setCurrentPage((prev) => prev + 1)
+    }
+
+    const goToPrevPage = () => { //✅2
+        setCurrentPage((prev) => prev - 1)
+    }
+
+
+    return !products.length ? <h1>NO PRoducts Found</h1> : (
         <div>
-            <h1>Pagination</h1>
-            <ul className="list-items">  //✅11
-                {currentListOfItems.map((listItem) => (
-                    <li key={listItem.id}>{listItem.name}</li>
-                ))}
-            </ul>
-            <Pagination                      //✅12
-                currentPage={currentPage}
-                totalPages={Math.ceil(dummyData.length / itemsPerPage)}
-                onPageChange={handlePageChange}
-            />
+
+            <div>
+                <button  disabled={currentPage === 0} onClick={() => goToPrevPage()}>👈</button> //✅1
+                {[...Array(noOfPages)].map((n) => <span    className={"page-number" + (n === currentPage  ? "active" : "" )}   onClick={() => handlePageChange(n)}>{n}</span>)} //✅3
+                <span disabled={currentPage === noOfPages-1} onClick={() => goToNextPage()}>👉</span> //✅1
+            </div>
+
+            {
+                products.slice(start, end).map((p, i) => {
+                    <ProductCard key={i} image={p.title} title={p.title} />
+                })
+            }
+
         </div>
-    );
+    )
 }
 
-export default PaginationTest;
+export default Tab
+
+
 
 
 
