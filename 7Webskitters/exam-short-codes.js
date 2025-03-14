@@ -1849,3 +1849,503 @@ onClick={handleNext}>Next</button>
 
 // ====================================================================================================
 
+
+//Animated Slider (1)
+
+// App.js 
+
+import Carousal from './carousal';
+
+function App() {
+    return (
+        <Carousal>//✅1
+            <img src={One} />
+            <img src={Two} />
+            <img src={Three} />
+            <img src={Four} />
+            <img src={Five} />
+        </Carousal>
+    )
+}
+
+
+// carousal.jsx  //✅2
+
+import React from 'react'
+
+const carousal = ({ children }) => { //✅3
+
+    //when we pass chldren like this then we get it into children. children is a array like structure. 
+
+    const [currentIndex, setCurrentIndex] = useState(0); //✅4
+    const carousalBoxRef = useRef(); //✅6
+
+
+    useEffect(() => { //✅5
+
+        //get the images and show the first image
+        const carousalBox = carousalBoxRef.current;
+        const slides = carousalBox.children;
+        slides[0].setAttribute("data-active", true)
+
+
+
+        setInterval(() => {
+
+            setCurrentIndex((prev) => {
+                const carousalBox = carousalBoxRef.current;  //✅8
+                const slides = carousalBox.children; //✅8
+                console.log(slides) //✅8=> we found hare html collection
+                const count = slides.length;  //✅8
+                const newIndex = prev === count - 1 ? 0 : prev + 1;  //✅8
+
+
+                [...slides].forEach((slide, index) => { //✅9
+                    slide.setAttribute("data-active", index === newIndex) //✅9
+                })
+
+
+            })
+
+        }, 3000)
+    }, [])
+
+
+    function handlePrevious() { //✅10
+
+        const carousalBox = carousalBoxRef.current;
+        const slides = carousalBox.children;
+        console.log(slides)
+        const count = slides.length;
+        const newIndex = currentIndex === count - 1 ? 0 : currentIndex + 1;
+        setCurrentIndex(newIndex)
+
+        [...slides].forEach((slide, index) => {
+            slide.setAttribute("data-active", index === newIndex)
+        })
+
+    }
+
+    function handleNext() { //✅10
+
+
+    }
+
+    return (
+        <div>
+            <div className="box" ref={carousalBoxRef}> //✅7
+                {children} //✅4
+            </div>
+            <div className="buttons">
+                <button onClick={handlePrevious}>Prev</button> //✅10
+                <button onClick={handleNext}>Next</button> //✅10
+            </div>
+        </div>
+    )
+}
+
+export default carousal
+
+
+//Animated Slider (2) ---- after click sometime it will run also atomatically
+
+
+// carousal.jsx  
+
+import React from 'react'
+
+const carousal = ({ children }) => { 
+
+    //when we pass chldren like this then we get it into children. children is a array like structure. 
+
+    const [currentIndex, setCurrentIndex] = useState(0); 
+    const carousalBoxRef = useRef();
+
+    const intervalRef= useRef(0);//✅1
+
+
+    useEffect(() => { 
+
+        //get the images and show the first image
+        const carousalBox = carousalBoxRef.current;
+        const slides = carousalBox.children;
+        slides[0].setAttribute("data-active", true)
+
+
+         //✅2
+         startSlider()
+        
+    }, [])
+
+
+    function startSlider(){
+        //✅1
+        intervalRef.current= setInterval(() => {
+
+            setCurrentIndex((prev) => {
+                const carousalBox = carousalBoxRef.current;  
+                const slides = carousalBox.children; 
+                console.log(slides) 
+                const count = slides.length;  
+                const newIndex = prev === count - 1 ? 0 : prev + 1; 
+
+
+                [...slides].forEach((slide, index) => { 
+                    slide.setAttribute("data-active", index === newIndex) 
+                })
+            })
+        }, 3000)
+    }
+
+
+    function handleNext () { 
+
+        //stop interval 
+        clearInterval(intervalRef.current) //✅3
+
+        const carousalBox = carousalBoxRef.current;
+        const slides = carousalBox.children;
+        console.log(slides)
+        const count = slides.length;
+        const newIndex = currentIndex === count - 1 ? 0 : currentIndex + 1;
+        setCurrentIndex(newIndex)
+
+        [...slides].forEach((slide, index) => {
+            slide.setAttribute("data-active", index === newIndex)
+        })
+
+        //✅4
+        startSlider()
+
+
+    }
+
+    function handlePrevious() { 
+
+
+    }
+
+    return (
+        <div>
+            <div className="box" ref={carousalBoxRef}> 
+                {children} 
+            </div>
+            <div className="buttons">
+                <button onClick={handlePrevious}>Prev</button> 
+                <button onClick={handleNext}>Next</button> 
+            </div>
+        </div>
+    )
+}
+
+export default carousal
+
+
+
+//Animated Slider (3) ---- Stepper 
+
+// carousal.jsx  
+
+import React from 'react'
+
+const carousal = ({ children }) => { 
+
+    //when we pass chldren like this then we get it into children. children is a array like structure. 
+
+    const [currentIndex, setCurrentIndex] = useState(0); 
+    const carousalBoxRef = useRef();
+
+    const intervalRef= useRef(0);
+
+
+    useEffect(() => { 
+
+        //get the images and show the first image
+        const carousalBox = carousalBoxRef.current;
+        const slides = carousalBox.children;
+        slides[0].setAttribute("data-active", true)
+
+         startSlider()
+        
+    }, [])
+
+
+    function startSlider(){
+        intervalRef.current= setInterval(() => {
+
+            setCurrentIndex((prev) => {
+                const carousalBox = carousalBoxRef.current;  
+                const slides = carousalBox.children; 
+                console.log(slides) 
+                const count = slides.length;  
+                const newIndex = prev === count - 1 ? 0 : prev + 1; 
+
+
+                [...slides].forEach((slide, index) => { 
+                    slide.setAttribute("data-active", index === newIndex) 
+                })
+            })
+        }, 3000)
+    }
+
+
+    function handleNext () { 
+
+        //stop interval 
+        clearInterval(intervalRef.current) 
+
+        const carousalBox = carousalBoxRef.current;
+        const slides = carousalBox.children;
+        console.log(slides)
+        const count = slides.length;
+        const newIndex = currentIndex === count - 1 ? 0 : currentIndex + 1;
+        setCurrentIndex(newIndex)
+
+        [...slides].forEach((slide, index) => {
+            slide.setAttribute("data-active", index === newIndex)
+        })
+
+        startSlider()
+    }
+
+    function handlePrevious() { 
+    }
+
+
+    function handleStepperClick(newIndex){ //✅2
+        return()=>{
+            clearInterval(intervalRef.current);
+
+            const {slides}= getSlidesInfo();
+
+            [...slides].forEach((slide, index) => {
+                slide.setAttribute("data-active", index === newIndex)
+            })
+
+            startSlider()
+
+            setCurrentIndex(newIndex);
+        }        
+    }
+
+
+    return (
+        <div>
+            <div className="box" ref={carousalBoxRef}> 
+                {children} 
+            </div>
+            <div className="buttons">
+                <button onClick={handlePrevious}>Prev</button> 
+                <button onClick={handleNext}>Next</button> 
+            </div>
+            <div className="stapper">//✅1
+                {
+                    Array.from(children).map((_,i)=>{
+                        return <button onClick={()=>handleStepperClick(index)}>{i}</button>
+                    })
+                }
+            </div>
+        </div>
+    )
+}
+
+export default carousal
+
+
+//Animated Slider (3) ---- Sliding Animation
+
+// style.css  ✅1
+
+/*
+
+.show{
+animation: showAnimation 1s ease-in-out forwords;
+z-index:3;
+opacity:1
+}
+
+.hide{
+animation: hideAnmation 1s ease-in-out forwords;
+z-index:2;
+opacity:0
+}
+
+@keyframes showAnmation {
+
+from{
+transform: translateX(100%)
+}
+
+to{
+transform: translateX(0)
+}
+
+}
+
+
+
+@keyframes hideAnmation {
+
+from{
+transform: translateX(0)
+}
+
+to{
+transform: translateX(-100)
+}
+
+}
+
+*/
+
+
+import React from 'react'
+
+const carousal = ({ children }) => { 
+
+    //when we pass chldren like this then we get it into children. children is a array like structure. 
+
+    const [currentIndex, setCurrentIndex] = useState(0); 
+    const carousalBoxRef = useRef();
+
+    const intervalRef= useRef(0);
+
+
+    useEffect(() => { 
+
+        //get the images and show the first image
+        const carousalBox = carousalBoxRef.current;
+        const slides = carousalBox.children;
+        slides[0].setAttribute("data-active", true)
+
+         startSlider()
+        
+    }, [])
+
+
+    function startSlider(){   //✅2
+        intervalRef.current= setInterval(() => {
+
+            setCurrentIndex((prev) => {
+                
+                const {slides, count}= getSlidesInfo();
+
+                const newIndex= prev === count -1 ? 0 : prev + 1;
+
+                slides[prev].className.remove("show");
+                slides[prev].className.add('hide');
+
+                slides[newIndex].className.remove("hide");
+                slides[newIndex].className.add('show');
+            })
+        }, 3000)
+    }
+
+
+    function handleNext () { 
+
+        //stop interval 
+        clearInterval(intervalRef.current) 
+
+        const carousalBox = carousalBoxRef.current;
+        const slides = carousalBox.children;
+        console.log(slides)
+        const count = slides.length;
+        const newIndex = currentIndex === count - 1 ? 0 : currentIndex + 1;
+        setCurrentIndex(newIndex)
+
+        [...slides].forEach((slide, index) => {
+            slide.setAttribute("data-active", index === newIndex)
+        })
+
+        startSlider()
+    }
+
+    function handlePrevious() { 
+    }
+
+
+    function handleStepperClick(newIndex){ 
+        return()=>{
+            clearInterval(intervalRef.current);
+
+            const {slides}= getSlidesInfo();
+
+            [...slides].forEach((slide, index) => {
+                slide.setAttribute("data-active", index === newIndex)
+            })
+            startSlider()
+            setCurrentIndex(newIndex);
+        }        
+    }
+
+
+    return (
+        <div>
+            <div className="box" ref={carousalBoxRef}> 
+                {children} 
+            </div>
+            <div className="buttons">
+                <button onClick={handlePrevious}>Prev</button> 
+                <button onClick={handleNext}>Next</button> 
+            </div>
+            <div className="stapper">
+                {
+                    Array.from(children).map((_,i)=>{
+                        return <button onClick={()=>handleStepperClick(index)}>{i}</button>
+                    })
+                }
+            </div>
+        </div>
+    )
+}
+
+export default carousal
+
+
+// ===========================================================================================
+
+// switch 
+
+// index.js 
+
+import React from 'react'
+
+const index = () => {
+
+const [isOn, setIndex]=useState(false);
+
+function handleToggle(){
+    setIsON(!isOn);
+}
+  return (
+    <div>
+        <Switch isOn={isOn} onToggle={handleToggle} label="Learning React"/>
+    </div>
+  )
+}
+
+export default index
+
+// switch.jsx 
+
+import React from 'react'
+
+const Switch = ({isOn,onToggle=()=> {}, label=""}) => {
+  return (
+    <div>
+        <lable>
+            <input type="checkbox" checked={isOn} onChange={onToggle}/>
+            <span className="slider"></span>
+            <span className="switch-label">{label}</span>
+        </lable> //click label to on the switch 
+    </div>
+  )
+}
+
+export default Switch
+
+// ======================================================================================================================
+
+
+
