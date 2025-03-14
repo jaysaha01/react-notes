@@ -981,7 +981,7 @@ export default Tab;
 
 // ================================================================================================
 
-// Tiktac game
+// Tiktac game❌
 
 // 0 1 2
 // 3 4 5
@@ -1082,7 +1082,7 @@ export default function TicTacToe() {
 
 // ================================================================================================
 
-// Outside click (Click outside the content to remove the content)
+// Outside click (Click outside the content to remove the content) ❌
 
 //Index.jsx //✅1
 
@@ -1148,7 +1148,7 @@ export default function UseOnclickOutsideTest() {
 
 // ================================================================================================
 
-//! use-window-resize
+//! use-window-resize  ❌
 
 //index.js
 
@@ -1201,7 +1201,7 @@ export default function UseWindowResizeTest() {
 
 // ================================================================================================
 
-// Scroll to top and bottom feature
+// Scroll to top and bottom feature ❌
 
 // scroll-to-section.jsx
 
@@ -1267,7 +1267,7 @@ export default function ScrollToTopAndBottom() {
 // ================================================================================================
 
 
-//! scroll-to-Selection.jsx
+//! scroll-to-Selection.jsx ❌
 
 import { useRef } from "react"; //✅4
 
