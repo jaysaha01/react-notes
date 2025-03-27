@@ -1,4 +1,4 @@
-/*
+
 
 MUI based on Material Design By Google
 ----------------------------------------
@@ -302,7 +302,7 @@ import { Box } from '@mui/meterial';
 </Box>
 
 
-/*
+
 Stack (it's work like box)
 ===============================
 
@@ -314,7 +314,7 @@ Stack (it's work like box)
 
 </Stack>
 
-*/
+
 
 
 // ----------------------------------------------------------------------------------------------
@@ -1485,3 +1485,194 @@ function Header() {
 }
 
 export default Header;
+
+
+
+MUI Dark mode light mode toggle 😀
+----------------------------------
+      
+context/ThemeContext.tsx
+"use client";
+
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { CssBaseline } from "@mui/material";
+import { createContext, useContext, useState, ReactNode, useEffect } from "react";
+
+type ThemeMode = "light" | "dark";
+
+interface ThemeContextProps {
+  mode: ThemeMode;
+  toggleTheme: () => void;
+}
+
+const ThemeContext = createContext<ThemeContextProps | undefined>(undefined);
+
+export const useThemeContext = () => {
+  const context = useContext(ThemeContext);
+  if (!context) {
+    throw new Error("useThemeContext must be used within ThemeProvider");
+  }
+  return context;
+};
+
+export const ThemeContextProvider = ({ children }: { children: ReactNode }) => {
+  const [mode, setMode] = useState<ThemeMode>("light");
+
+  // Persist theme mode in localStorage
+  useEffect(() => {
+    const savedMode = localStorage.getItem("theme") as ThemeMode;
+    if (savedMode) setMode(savedMode);
+  }, []);
+
+  const toggleTheme = () => {
+    setMode((prevMode) => {
+      const newMode = prevMode === "light" ? "dark" : "light";
+      localStorage.setItem("theme", newMode);
+      return newMode;
+    });
+  };
+
+  const theme = createTheme({✅
+    palette: {
+      mode,
+    },
+  });
+
+  return (
+    <ThemeContext.Provider value={{ mode, toggleTheme }}>
+      <ThemeProvider theme={theme}> ✅
+        <CssBaseline /> ✅
+        {children}
+      </ThemeProvider>
+    </ThemeContext.Provider>
+  );
+};
+
+
+app/layout.tsx (Create a context to manage the theme state globally.)
+-------------------------------------------------------------------------
+import { ThemeContextProvider } from "@/context/ThemeContext";
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <html lang="en">
+      <body>
+        <ThemeContextProvider>{children}</ThemeContextProvider>
+      </body>
+    </html>
+  );
+}
+
+
+app/components/ThemeToggle.tsx  (Modify app/layout.tsx to include the ThemeContextProvider)
+--------------------------------------------------------------------------------------------------
+
+"use client";
+
+import { useThemeContext } from "@/context/ThemeContext";
+import { IconButton } from "@mui/material";
+import { Brightness4, Brightness7 } from "@mui/icons-material";
+
+const ThemeToggle = () => {
+  const { mode, toggleTheme } = useThemeContext();
+
+  return (
+    <IconButton onClick={toggleTheme} color="inherit">
+      {mode === "dark" ? <Brightness7 /> : <Brightness4 />}
+    </IconButton>
+  );
+};
+
+export default ThemeToggle;
+
+
+app/page.tsx
+--------------
+import ThemeToggle from "@/components/ThemeToggle";
+import { Typography, Container } from "@mui/material";
+
+export default function HomePage() {
+  return (
+    <Container>
+      <ThemeToggle />
+      <Typography variant="h4">Welcome to My Next.js App</Typography>
+    </Container>
+  );
+}
+
+====================================================================================================
+
+how to use mui dark mode and lignt mode in next js typescript in app approuter 
+
+/*Modify your custom div component to access the MUI theme.
+
+How It Works:
+Uses useTheme() to access the current MUI theme.
+
+Dynamically changes backgroundColor, color, and border based on the theme.palette.mode.
+*/
+
+"use client"; 
+
+import { useTheme } from "@mui/material/styles";
+import { Box } from "@mui/material";
+
+const CustomDiv = () => {
+  const theme = useTheme();
+
+  return (
+    <Box
+      sx={{
+        padding: "16px",
+        borderRadius: "8px",
+        textAlign: "center",
+        fontSize: "18px",
+        fontWeight: "bold",
+        backgroundColor: theme.palette.mode === "dark" ? "#333" : "#fff",
+        color: theme.palette.mode === "dark" ? "#fff" : "#000",
+        border: `1px solid ${theme.palette.divider}`,
+      }}
+    >
+      This is a Custom Div
+    </Box>
+  );
+};
+
+export default CustomDiv;
+
+
+or
+
+/*If you want a cleaner approach, you can use styled from @mui/material/styles.
+
+Uses MUI's styled API to create a styled div.
+
+Dynamically updates styles based on theme.palette.mode.
+
+*/
+"use client";
+
+import { styled } from "@mui/material/styles";
+
+const StyledDiv = styled("div")(({ theme }) => ({
+  padding: "16px",
+  borderRadius: "8px",
+  textAlign: "center",
+  fontSize: "18px",
+  fontWeight: "bold",
+  backgroundColor: theme.palette.mode === "dark" ? "#333" : "#fff",
+  color: theme.palette.mode === "dark" ? "#fff" : "#000",
+  border: `1px solid ${theme.palette.divider}`,
+}));
+
+const StyledCustomDiv = () => {
+  return <StyledDiv>This is a Styled Custom Div</StyledDiv>;
+};
+
+export default StyledCustomDiv;
+
+      
