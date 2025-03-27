@@ -1622,7 +1622,7 @@ import { useTheme } from "@mui/material/styles";
 import { Box } from "@mui/material";
 
 const CustomDiv = () => {
-  const theme = useTheme();
+  const theme = useTheme(); ✅
 
   return (
     <Box
