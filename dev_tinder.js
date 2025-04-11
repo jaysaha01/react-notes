@@ -55,9 +55,9 @@ import { useId, useState } from 'react';
 function App() {
     return (
         <>
-            <BrowserRouter basename="/">
-                <Routes>
-                    <Route path="/" element={<Body />}>
+            <BrowserRouter basename="/"> //basename="/" means all routes are based on the root / of your domain. Required once at the top level.
+                <Routes> //Routes is a wrapper that holds all the Route components. 
+                    <Route path="/" element={<Body />}>  //Route path="/" element={<Body />} means when the user visits /, render the Body component. Inside Body, there are nested routes:
                         <Route path="/login" element={<Login />}></Route>
                         <Route path="/profile" element={<Profile />}></Route>
                     </Route>
@@ -130,8 +130,6 @@ import { configureStore } from '@reduxjs/toolkit'
 export const appStore = configureStore({
     reducer: {},
 })
-
-
 
 
 /*
@@ -664,7 +662,6 @@ const Request = () => {
 
         try {
             const res = axios.post(Baseurl + "/request/review/" + status + "/" + _id, {}, { withCredentials: true });
-
             dispatch(removeRequest(_id))
 
         } catch (err) {
