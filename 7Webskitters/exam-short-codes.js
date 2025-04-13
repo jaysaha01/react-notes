@@ -2402,6 +2402,29 @@ export default Interests=({data, setData, errors})=>{ ✅9, ✅13
     }));
     };
 
+
+  or 
+  // This function handles when a checkbox is clicked
+    const handleDataChange = (e) => {
+        // Get the name of the interest from the checkbox
+        const interestName = e.target.name;
+
+        // Check if the checkbox is checked or unchecked
+        if (e.target.checked) {
+            // If checked, add this interest to the list
+            setData({
+                ...data,
+                interests: [...data.interests, interestName],
+            });
+        } else {
+            // If unchecked, remove the interest from the list
+            setData({
+                ...data,
+                interests: data.interests.filter((interest) => interest !== interestName),
+            });
+        }
+    };
+
     
     return(
         <div>
