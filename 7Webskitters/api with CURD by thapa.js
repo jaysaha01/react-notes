@@ -638,6 +638,7 @@ const realapi = () => {
   const {
     register,
     handleSubmit,
+    reset(), //to refresh the form
     formState: { errors ,isSubmitting }, //✅6
   } = useForm()  //✅2
 
@@ -645,8 +646,6 @@ const realapi = () => {
 
 //{...register} is used to link with your input to react hook form. 
 
-
-  
   return (
     <div>
       { isSubmitting && <div>Loading</div>}  //✅7
@@ -716,8 +715,795 @@ const realapi = () => {
 export default realapi
   
 
+===========================================================================================================================================================
+                                                            ✅ Axios Tutoruyal
+===========================================================================================================================================================
+
+src > api > ednPoints.js
+---------------------------
+
+export const BASEURL="URLs://fakestore.api.com"
+
+export const endpoints = {
+    products: "/products"
+}
 
 
+App.js (GET Request) ✅
+-----------------------
+const getProducts = async()=>{
+
+    const res= await axios({
+        url:"https://faksestore.com.products",
+        methord:get,
+        params:{
+            id:1
+        }
+    })
+
+    (or)
+
+    const res=await axios.get(`${BASEURL}${endpoints.products}`);
+    console.log(res?.data) //axois's reponse
+    return res?.data;
+}
+
+
+App.js (POST Request) ✅
+-------------------------
+
+const getProducts = async()=>{
+
+    const res= await axios({
+        url:"https://faksestore.com.products",
+        methord:post,
+        data:{
+            id:1   //Sending params in post request
+        }
+    })
+}
+
+
+Axoise Instance Setup & use ✅
+------------------------------
+
+src > api > axiosSetup.js  
+--------------------------
+<!-- Priyanka Chaurasia -->
+
+import axios from "axios"
+
+export const axoisInstanse = axoise.create({
+    baseURL:BASEURL,
+    timeout:1000,  //API Calling cacel hoya jabe
+    headers:{
+        authorization:"test" //login r por j token asbe seta k headers a set korar jonno authorization lagbe
+    }
+})
+
+
+//Token thek tobe send korbo nahole send korbo na tokhon amara use korbo interceptor
+
+//outgoing request intercepting
+axoisInstanse.interceptors.request.use((cofig)=>{
+
+    const getToken= localStorage.getItem("token");
+
+    if(getToken){
+        config.headers["x-access-token"]= getToken
+        config.headers.Authorization = Bearer${getToken}
+    }
+    console.log(config, 'config');
+    return config
+})
+
+//Response intercepting
+axoisInstanse.interceptors.response.use(
+    (res)=>{
+    console.log(res, "Response")
+},
+(errors)=>{
+    console.log(res, "errors")
+}
+)
+
+
+App.js (GET Request) 
+-----------------------
+const getProducts = async()=>{
+
+    <!-- akane amara base url set korbo na sudhu endpoints gulo stup  korbo -->
+    const res= await axoisInstanse.get(endpoints.products); 
+    console.log(res?.data)
+}
+
+
+
+
+===========================================================================================================================================================
+                                                            ✅ React Queary
+===========================================================================================================================================================
+
+  
+
+//🔥 React Query and Tenstack query is same
+
+
+//What is Rect Query? Why we use React Query ?
+
+//✅ setup the query ------------------------
+
+https://tanstack.com/query/v5/docs/framework/react/installation > installtion > npm i @tanstack/react-query
+
+// npm i @tanstack/react-query-devtools
+
+main.jsx
+----------
+
+import {QueryClient, QueryClientProvider} from @tenstack/react-query;
+import {ReactQueryDevTools} from '@tanstak/react-query-devtools'
+
+let queryClient = new QueryClient();
+
+<QueryClientProvider client={queryClient}>
+  <App/>
+  <ReactQueryDevTools initialIsOpen={false}/>
+</QueryClientProvider>
+
+
+//✅ Fetch Posts ---------------------------
+
+api / api.js
+-----------------
+
+import axios from "axios";
+
+const api= axios.create({
+  baseURL:"https://jsonpalceholder"
+})
+
+//to fetch the data
+
+export const fetchPosts= async ()=>{
+  const res = await api.get('/posts');
+  return res.status === 200 ? res.data : []
+}
+
+
+App.jsx
+---------
+import {useQuery} from "@tenstack/react-query";
+import {fetchPosts} from './api/api'
+
+function App(){
+
+  const {data:postData, isLoading,isError, error , status}=useQuery({
+    queryKey:['posts'],//like useState
+    queryFn:fetchPosts, //like useEffect
+  })
+
+  if(!isLoading) return <p>Loading...</p>
+  if(isError) return <p>Error:{error} Something went wrong</p>
+
+  return (
+    <div>
+      {console.log(data, isLoading)}
+    </div>
+  )
+
+
+}
+
+
+//✅ Garbage Collection time ----------------------
+
+/*
+
+First fime fetch kark query data cashe me dal detahe . qury 5 min tak cash se vo data dikhati he par vo piche data fetch karte rahatahe agar within time new data database pe ata he fir vo uss new data ko user ko dikasake
+
+*/
+
+//✅ stale time (Prevent everytime data fetching) --------------------------
+
+if you increase state time then it will not fetch data
+
+App.jsx
+---------
+
+function App(){
+
+  const {data:postData, isLoading,isError, error , status}=useQuery({
+    queryKey:['posts'],//like useState
+    queryFn:fetchPosts, //like useEffect
+    staleTime: 10000 // ✅ 10 sec tak new data fetch nahi hoga , this is in milisecond
+  })
+}
+
+
+//✅ (Pooling in React Query) API call within a time interval -----------------------
+
+
+function App(){
+
+  const {data:postData, isLoading,isError, error , status}=useQuery({
+    queryKey:['posts'],
+    queryFn:fetchPosts,
+    refetchInterval:1000 //✅ Every one sec dta wapas refetch karo. staleTime rahaga to hum server ko retch nahi kar paynga
+    refetchIntervalInBackground: true , //✅ when we go to another tob thattime also fetch our data
+  })
+}
+
+
+
+//✅ Dynamic page in react query  ----------------------------
+
+app.js
+------
+
+{
+  path:"/rq/:id",
+  element:<FetchIndv/>
+}
+
+FetchRQ.jsx
+--------------
+return(
+
+  <Navlink to={`/rq/${elm?.id}`}>
+  <li>{body}</li>
+  <Navlink/>
+)
+
+api / api.js
+-----------------
+
+import axios from "axios";
+
+const api= axios.create({
+  baseURL:"https://jsonpalceholder"
+})
+
+//to fetch the data
+
+export const fetchPosts= async ()=>{
+  const res = await api.get('/posts');
+  return res.status === 200 ? res.data : []
+}
+
+//✅ Fetch individual post
+
+export const fetchInvPost= async (id)=>{
+  try{
+    const res = await api.get(`/posts/${id}`);
+    return res.status === 200 ? res.data : []
+  }catch(err){
+    console.log(err)
+  }
+
+}
+
+
+FetchIndv.jsx
+---------------
+
+import React from 'react'
+import {useQuery} from "@tenstack/react-query";
+import {useParams} from 'react-router-dom';
+import fetchInvPost from 'api/api'
+
+
+const FetchIndv = () => {
+
+  let {id}= useParams()
+
+  const {data, isPending, isError, error}=useQuery({
+  queryKey:['post',id],//jab jab id change hoga tab tab queryFun call hoga
+  queryFn:()=>fetchInvPost(id),
+  })
+
+  console.log(data)
+
+  if(!isLoading) return <p>Loading...</p>
+  if(isError) return <p>Error:{error} Something went wrong</p>
+
+  return (
+    <div>
+      <h1>Single Post</h1>
+    </div>
+  )
+}
+
+export default FetchIndv
+
+
+
+//✅ Pagination  ----------------------------
+
+
+api / api.js
+-----------------
+
+import axios from "axios";
+
+const api= axios.create({
+  baseURL:"https://jsonpalceholder"
+})
+
+//✅1 to fetch the data
+
+export const fetchPosts= async (pageNumber)=>{
+  const res = await api.get(`/posts?_start=${pageNumber}&_limit=3`);
+  return res.status === 200 ? res.data : []
+}
+
+
+export const fetchInvPost= async (id)=>{
+  try{
+    const res = await api.get(`/posts/${id}`);
+    return res.status === 200 ? res.data : []
+  }catch(err){
+    console.log(err)
+  }
+}
+
+
+
+
+FetchRQ.jsx //✅2
+-----------------
+import {keepPreviosData, useQuery} from "@tenstack/react-query"
+
+import fetchPost form '..api/api';
+
+export const FetchFQ=()=>{
+
+  const [pageNumber, setPageNumber]= useState(0)
+
+  const {data:postData, isLoading,isError, error , status}=useQuery({
+    queryKey:['posts', pageNumber],
+    queryFn:()=> fetchPosts(pageNumber),
+    placeholderData:keepPreviousData,//✅3  jab app data fetch karrahaho tab app previos data ko asatise rakhiya and jabhi naya data aye tabhi update kijiya. loading dikhane nahi dikhiya
+  })
+
+
+return(
+
+  <>
+  <Navlink to={`/rq/${elm?.id}`}>
+    <li>{body}</li>
+    <Navlink/>
+
+    <div className="pagination_box">
+      <button onclick={()=> setPageNumber(prev)=> prev - 3}  disabled={pageNumber === 0 ? true : false}>Prev</button>
+      <p>{pageNumber / 3 }</p>
+      <button onclick={()=> setPageNumber(prev)=> prev + 3}>Next</button>
+    </div>
+  </>
+
+  )
+
+
+}
+
+
+//✅ useMustation Hook  ----------------------------
+
+//curd operation me usemutation hook ka use hota he.
+
+
+1) Delete -----------
+
+FetchRQ.jsx
+-----------------
+import {keepPreviosData, useQuery, useMuatation, useQuiquClient} from "@tenstack/react-query"
+import {deletePost} from "api/api" ✅4
+
+import fetchPost form '..api/api';
+
+export const FetchFQ=()=>{
+
+  const [pageNumber, setPageNumber]= useState(0)
+
+  const queryClient= useQueryClient(); //✅6
+
+  const {data:postData, isLoading,isError, error , status}=useQuery({
+    queryKey:['posts', pageNumber],
+    queryFn:()=> fetchPosts(pageNumber),
+    placeholderData:keepPreviousData,
+  })
+
+  //! ✅1 Mutation Function to delete this post
+ const deleteMutation = useMutation({
+    mutationFn:(id)=> deltePost(id),  //✅5
+
+    onSuccess:(data, id)=>{ //✅7
+      queryClient.setQueryData(['posts', pageNumber],(curElm)=>{
+        return curElm?.filter((post)=> post.id !== id )
+      })
+    }
+  })
+
+
+
+return(
+
+  <>
+  <Navlink to={`/rq/${elm?.id}`}>
+    <li>{body}</li>
+    <button onClick={deleteMutation.mutate(id)}>Delete</button> //✅2  .mutate is call the mutationFn
+    <Navlink/>
+  </>
+  )
+
+}
+
+
+api / api.js
+-----------------
+
+import axios from "axios";
+
+const api= axios.create({
+  baseURL:"https://jsonpalceholder"
+})
+
+// fetch the data
+
+export const fetchPosts= async (pageNumber)=>{
+  const res = await api.get(`/posts?_start=${pageNumber}&_limit=3`);
+  return res.status === 200 ? res.data : []
+}
+
+
+export const fetchInvPost= async (id)=>{
+  try{
+    const res = await api.get(`/posts/${id}`);
+    return res.status === 200 ? res.data : []
+  }catch(err){
+    console.log(err)
+  }
+}
+
+//✅3 Delete the post
+
+export const deltePost=(id)=>{
+  return api.delete(`/posts/${id}`)
+}
+
+
+
+
+2) Update -----------
+
+api / api.js
+-----------------
+
+import axios from "axios";
+
+const api= axios.create({
+  baseURL:"https://jsonpalceholder"
+})
+
+// fetch the data
+
+export const fetchPosts= async (pageNumber)=>{
+  const res = await api.get(`/posts?_start=${pageNumber}&_limit=3`);
+  return res.status === 200 ? res.data : []
+}
+
+export const fetchInvPost= async (id)=>{
+  try{
+    const res = await api.get(`/posts/${id}`);
+    return res.status === 200 ? res.data : []
+  }catch(err){
+    console.log(err)
+  }
+}
+
+export const deltePost=(id)=>{
+  return api.delete(`/posts/${id}`)
+}
+
+{/*✅1 to update the post  */}
+
+export const updatePost=()=>{
+  return api.patch(`/post/${id}`,{title:"I Have Update"})
+};
+
+
+FetchRQ.jsx
+-----------------
+import {keepPreviosData, useQuery, useMuatation, useQuiquClient} from "@tenstack/react-query"
+import {deletePost, updatePost} from "api/api"
+
+import fetchPost form '..api/api';
+
+export const FetchFQ=()=>{
+
+  const [pageNumber, setPageNumber]= useState(0)
+
+  const queryClient= useQueryClient();
+
+  const {data:postData, isLoading,isError, error , status}=useQuery({
+    queryKey:['posts', pageNumber],
+    queryFn:()=> fetchPosts(pageNumber),
+    placeholderData:keepPreviousData,
+  })
+
+
+ const deleteMutation = useMutation({
+    mutationFn:(id)=> deltePost(id),
+
+    onSuccess:(data, id)=>{
+      queryClient.setQueryData(['posts', pageNumber],(curElm)=>{
+        return curElm?.filter((post)=> post.id !== id )
+      })
+    }
+  })
+
+
+  //! ✅2 Mutation function to update the post
+ const updateMutation = useMutation({
+  mutationFn:(id)=> updatePost(id),
+
+  onSuccess:(apiData, postId)=>{
+    queryClient.setQueryData(['posts', pageNumber],(postsData)=>{
+      return postsData?.map((curPost)=>{
+        return curPost.id === postId ? {...curPost, title:apiData.data.title} : curPost
+      })
+    })
+  }
+})
+
+
+
+return(
+
+  <>
+  <Navlink to={`/rq/${elm?.id}`}>
+    <li>{body}</li>
+    <button onClick={deleteMutation.mutate(id)}>Delete</button>
+    <button onClick={updateMutation.mutate(id)}>Update</button>  //✅3
+    <Navlink/>
+  </>
+
+  )
+
+}
+
+
+
+//✅ Infine Scroll  ----------------------------
+
+import React from 'react'
+import {useInfiniteQuery} from @tanstack/react-query;
+import {fetchUsers} from "api/api"
+
+const InfiniteScroll = () => {
+
+
+//✅2
+const {data, hasNextPage, fetchNextPage, status, isFetchingNextPage}= useInfiniteQuery({
+queryKey:['users'],
+queryFn:fetchUsers,
+getNextPageParams:(lastPage, allpages)=>{
+  // getNextPageParams kakam he we have more pages or not
+
+  return lastPage.length === 10 ? allpages.length+1 : undefined
+}
+})
+
+useEffect(() => {
+  window.addEventListener('scroll', handleScroll),
+  return ()=> window.removeEventListener('scroll', handleScroll)
+
+  const bottom= window.innerHeight + window.scrollY  > = document.documentElement.scrollHeight - 1;
+
+  if(bottom && hasNextPage){
+    fetchNextPage()
+  }
+
+}, [])
+
+  return (
+    <div>
+      {
+        data?.pages?.map((page, index)=>(
+          <ul>
+            {
+              page.map((user)=>(
+                <li><p>user</p></li>
+              ))
+            }
+          </ul>
+        ))
+      }
+      {isFetchingNextPage ? "Loading..." : null}
+
+    </div>
+  )
+}
+
+export default InfiniteScroll
+
+
+api / api.js
+-----------------
+
+import axios from "axios";
+
+const api= axios.create({
+  baseURL:"https://jsonpalceholder"
+})
+
+// fetch the data
+
+export const fetchPosts= async (pageNumber)=>{
+  const res = await api.get(`/posts?_start=${pageNumber}&_limit=3`);
+  return res.status === 200 ? res.data : []
+}
+
+export const fetchInvPost= async (id)=>{
+  try{
+    const res = await api.get(`/posts/${id}`);
+    return res.status === 200 ? res.data : []
+  }catch(err){
+    console.log(err)
+  }
+}
+
+export const deltePost=(id)=>{
+  return api.delete(`/posts/${id}`)
+}
+
+export const updatePost=()=>{
+  return api.patch(`/post/${id}`,{title:"I Have Update"})
+};
+
+//✅2 infinite scrolling
+
+//pageParam is page no
+
+export const fetchUsers= async({pageParam=1})=>{
+  try{
+    const res= await axios.get(`https:api.github/users?per_page=10%page=${pageParam}`);
+
+    return res.data
+
+  }catch(error){
+    console.length(console.error();
+    )
+  }
+}
+
+
+
+// ==============================================================================
+
+
+// ================================================================================================================
+
+// React Event Propagation
+
+//Buble Phase
+
+import const EventPropagation = () => {
+
+    const handleGrandparent = () => {
+        console.log("GrandParent Clikced");
+    }
+
+    const handleParentClick = () => {
+        console.log("Parent Clicked")
+    }
+
+    const handleChildClick = (event) => {
+        console.log(event);
+        console.log("Child Clicked");
+    }
+
+    return (
+        <div>
+            <div onClick={handleGrandparent}>
+
+                <div onClick={handleParentClick}>
+
+                    <div onClick={handleChildClick}>
+
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    )
+}
+
+// > if you click child div then => Child Clicked , Parent Clicked , GrandParent Clikced
+
+
+
+import const EventPropagation = () => {
+
+    const handleGrandparent = (event) => {
+        console.log("GrandParent Clikced");
+        event.stopPropagation() //✅
+    }
+
+    const handleParentClick = (event) => {
+        console.log("Parent Clicked")
+        event.stopPropagation()  //✅
+    }
+
+    const handleChildClick = (event) => {
+        console.log(event);
+        event.stopPropagation()  //✅
+        console.log("Child Clicked");
+    }
+
+    return (
+        <div>
+            <div onClick={handleGrandparent}>
+
+                <div onClick={handleParentClick}>
+
+                    <div onClick={handleChildClick}>
+
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    )
+}
+
+// > now if we one that console what we want need. Example click on child then => Child Clicked 
+
+
+//Capturing Phase
+
+import const EventPropagation = () => {
+
+    const handleGrandparent = (event) => {
+        console.log("GrandParent Clikced");
+    }
+
+    const handleParentClick = (event) => {
+        console.log("Parent Clicked")
+    }
+
+    const handleChildClick = (event) => {
+        console.log(event);
+        console.log("Child Clicked");
+    }
+
+    return (
+        <div>
+            <div onClickCapture={handleGrandparent}>
+
+                <div onClickCapture={handleParentClick}>
+
+                    <div onClickCapture={handleChildClick}>
+
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    )
+}
+
+// > if you click child div then => GrandParent Clikced ,Parent Clicked , Child Clicked
+
+
+
+
+
+
+
+  
 =============================================================================================================================================================
                                                            ✅ Webskitters Real JSON Server and Real API Work
 =============================================================================================================================================================
@@ -781,15 +1567,10 @@ let axiosInsstance = axios.create({
 
 export default axiosInsstance;
 
-//Read.jsx
-
-import React, { useEffect, useState } from "react";
-import axiosInsstance from "../api/axiosInstans";
-import { prod_end } from "../api/api";
+//Read.jsx --------------------------------------
 
 const Read = () => {
-    cosnt[(data, setData)] = useState([]);
-
+   
     let fetchProduct = () => {
         let api = prod_end
         axiosInsstance
@@ -801,133 +1582,7 @@ const Read = () => {
             .catch((err) => console.log(err));
     };
 
-    useEffect(() => {
-        fetchProduct();
-    }, [setData,api]);
-    return <div>Read</div>;
-};
-
-export default Read;
-
-
-
-//Custom controlled form
-
-// Setting up form and take input
-
-import { useState } from 'react';
-import './App.css';
-
-function App() {
-    let [input, setInput] = useState({ fullname: "", email: "" });
-
-    const changeHandler = (event) => {
-        let { name, value } = event.target;
-
-        setInput({ ...input, [name]: value })
-    }
-
-
-    const submitHandeler = (event) => {
-        event.preventDefault();
-        console.log("Form Submited: ", input)
-    }
-
-    return (
-        <div className="App">
-            <h1>Custom Conroll form</h1>
-            <form onSubmit={submitHandeler}>
-                <input type="text" name="fullname" placeholder='Enter your full name' onChange={changeHandler} />
-                <input type='email' name='email' placeholder='Enter your email' onChange={changeHandler} />
-                <input type='submit' value="Add" />
-            </form>
-        </div>
-    );
-}
-
-export default App;
-
-
-// Adding validation and show error into the form
-
-
-import { useState } from 'react';
-import './App.css';
-
-const exEmail = RegExp("^[^\W_]+\w*(?:[.-]\w*)*[^\W_]+@[^\W_]+(?:[.-]?\w*[^\W_]+)*(?:\.[^\W_]{2,})$") //✅5
-
-
-/*
-/  / = wrappiing
-^ = start;
-(?=.*?[A-Z]) = must atleast one uppercase letter;
-()= grouping
-.{8,}= match any charecter
-*/
-
-function App() {
-    let [input, setInput] = useState({
-        fullname: "", email: "", errors: {
-            fullname: "",   //✅1
-            email: ""
-        }
-    });
-
-    const changeHandler = (event) => {
-
-        let { name, value } = event.target;
-
-        let err = { ...input.errors }     //✅2
-        switch (name) {
-            case 'fullname':
-                if (value.length < 1) {
-                    err.fullname = "Required Field"
-                } else if (value.length < 2) {
-                    err.fullname = "Atlest 2 charecters"
-                } {
-                    err.fullname = ""
-                }
-                break;
-
-
-            case 'email':  //✅2                                     //✅5
-                err.email = value.length < 1 ? "Required Field" : exEmail.test(value) ? "" : "Wrogn pattern"
-                break;
-
-
-            default: console.log("Not necessary")
-
-        }
-                                               //✅3
-        setInput({ ...input, [name]: value, errors: err})
-    }
-
-    console.log("vaidation errs :", input.errors)
-
-    const submitHandeler = (event) => {
-        event.preventDefault();
-        console.log("Form Submited: ", input)
-    }
-
-
-    return (
-        <div className="App">
-            <h1>Custom Conroll form</h1>
-            <form onSubmit={submitHandeler}>
-                <input type="text" name="fullname" placeholder='Enter your full name' onChange={changeHandler} />
-                <br />
-                {input.errors && input.errors.fullname.length > 0 ? <p>{input.errors.fullname}</p> : null} //✅4
-                <input type='email' name='email' placeholder='Enter your email' onChange={changeHandler} />
-                <br />
-                {input.errors && input.errors.email.length > 0 ? <p>{input.errors.email}</p> : null} //✅4
-                <input type='submit' value="Add" />
-            </form>
-        </div>
-    );
-}
-
-export default App;
-
+    
 /*
 HTTP request handle (get, post, put)
 
@@ -1030,38 +1685,6 @@ export default App;
 
 // Delete and redirect post
 
-
-import { useNavigate, useParams } from "react-router-dom";  ✅redirect 1
-
-const Fullpost = () => {
-
-  let navigate= useNavigate(); ✅redirect 2
-
-  const [dataing, setDataing] = useState([]);
-
-  let { uid } = useParams();
-
-  let dapi = prod_end + "/" + uid;
-
-  useEffect(() => {
-    fetching();
-  }, []);
-
-  function fetching() {
-    let api = prod_end;
-    axiosInsstance
-      .get(dapi)
-      .then((res) => {
-        setDataing(res.data);
-        console.log(res.data);
-      })
-      .catch((err) => console.log(err));
-  }
-
-  if (dataing.length === 0) {
-    return <Please />;
-  }
-
   function deletehandeler() {
    
     axiosInsstance
@@ -1072,259 +1695,11 @@ const Fullpost = () => {
       .catch((err) => console.log("Error Is " + err));
   }
 
-  return (
-    <Container className="mt-5">
-      <Row>
-        {
-          <Col key={dataing.id}>
-            <Card style={{ width: "100%" }}>
-              <Card.Img
-                variant="top"
-                src={dataing.imageurl}
-                style={{ height: "400px", objectFit: "cover" }}
-              />
-              <Card.Body>
-                <Card.Title className="pb-4 pt-4">{dataing.title}</Card.Title>
-                <Card.Text>{dataing.description}</Card.Text>
-                <Button variant="primary" onClick={deletehandeler}>
-                  Delete Post
-                </Button>
-              </Card.Body>
-            </Card>
-          </Col>
-        }
-      </Row>
-    </Container>
-  );
-};
-
-export default Fullpost;
-
-Update 
-
-import React, { useEffect, useState } from "react";
-import axiosInsstance from "../api/axiosInstans";
-import { prod_end } from "../api/api";
-import Please from "./Please";
-import Container from "react-bootstrap/Container";
-import Row from "react-bootstrap/Row";
-import Col from "react-bootstrap/Col";
-import Button from "react-bootstrap/Button";
-import Card from "react-bootstrap/Card";
-import { useNavigate, useParams } from "react-router-dom";
-import { MyVerticallyCenteredModal } from "./MyVerticallyCenteredModal";
-
-const Fullpost = () => {
-  const [modalShow, setModalShow] = React.useState(false);
-  // const [editxt, setEdittxt] = useState(null);
-
-  let navigate = useNavigate();
-
-  const [dataing, setDataing] = useState([]);
-
-  let { uid } = useParams();
-
-  let dapi = prod_end + "/" + uid;
-
-  useEffect(() => {
-    fetching();
-  }, []);
-
-  function fetching() {
-    axiosInsstance
-      .get(dapi)
-      .then((res) => {
-        setDataing(res.data);
-        // console.log(res.data);
-      })
-      .catch((err) => console.log(err));
-  }
-
-  if (dataing.length === 0) {
-    return <Please />;
-  }
-
-  function deletehandeler() {
-    axiosInsstance
-      .delete(dapi)
-      .then((res) => {
-        navigate("/");
-      })
-      .catch((err) => console.log("Error Is " + err));
-  }
-
-  function edithandeler() {
-    // setEdittxt(true);
-    setModalShow("Edit Your Post");
-  }
-
-  return (
-    <Container className="mt-5">
-      <Row>
-        {
-          <Col key={dataing.id}>
-            <Card style={{ width: "100%" }}>
-              <Card.Img
-                variant="top"
-                src={dataing.imageurl}
-                style={{ height: "400px", objectFit: "cover" }}
-              />
-              <Card.Body className="p-5">
-                <Card.Title className="pb-4 pt-4">{dataing.title}</Card.Title>
-                <Card.Text>{dataing.description}</Card.Text>
-
-                <div className="box mt-5 ">
-                  <Button
-                    variant="primary"
-                    onClick={deletehandeler}
-                    className="me-3"
-                  >
-                    Delete Post
-                  </Button>
-                  <Button variant="primary" onClick={edithandeler}>
-                    Edit Post
-                  </Button>
-
-                  <MyVerticallyCenteredModal
-                    show={modalShow}
-                    onHide={() => setModalShow(false)}
-                    // edittxt={editxt}
-                    dataset={dataing}
-                    type="edit"
-                    // databaseid={uid}
-                  />
-                </div>
-              </Card.Body>
-            </Card>
-          </Col>
-        }
-      </Row>
-    </Container>
-  );
-};
-
-export default Fullpost;
+ 
 
 // ==============================================================================================================================================================
 
-// Sign Up 
-
-/*
-Apiurl.js
-================
-*/
-
-export const baseurl = "https://wtsacademy.dedicateddevelopers.us/";
-
-export const endpoint = "api/user/signup";
-
-/*
-AxiosInstance.js
-=======================
-*/
-
-import axios from "axios";
-import { baseurl } from "./Apiurl";
-
-const instance = axios.create({
-  baseURL: baseurl
-});
-
-export default instance
-
-
-
-import React, { useEffect } from "react";
-import { useState } from "react";
-import AxiosInstance from "../api/AxiosInstance";
-import { endpoint } from "../api/Apiurl";
-
-const Register = () => {
-  const [inputs, setInputs] = useState({
-    first_name: "",
-    last_name: "",
-    email: "",
-    password: "",
-  });
-
-
-  const handleChange = (event) => {
-    const { name, value } = event.target;
-
-    setInputs((values) => ({ ...values, [name]: value }));
-  };
-
-  const handleSubmit = (event) => {
-    event.preventDefault();
-
-    console.log("Received Data", inputs);
-
-    let fromValue = {
-      first_name: inputs.first_name,
-      last_name: inputs.last_name,
-      email: inputs.email,
-      password: inputs.password,
-    };
-
-
-    AxiosInstance.post(endpoint, fromValue)
-      .then((res) => {
-        console.log("User Added", res);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
-
-
-  return (
-    <form onSubmit={handleSubmit}>
-      <label>
-        Enter your first name:
-        <input
-          type="text"
-          name="first_name"
-          value={inputs.first_name}
-          onChange={handleChange}
-        />
-      </label>
-      <label>
-        Enter your last name:
-        <input
-          type="text"
-          name="last_name"
-          value={inputs.last_name}
-          onChange={handleChange}
-        />
-      </label>
-      <label>
-        Enter your email:
-        <input
-          type="email"
-          name="email"
-          value={inputs.email}
-          onChange={handleChange}
-        />
-      </label>
-      <label>
-        Enter your password:
-        <input
-          type="password"
-          name="password"
-          value={inputs.password}
-          onChange={handleChange}
-        />
-      </label>
-
-      <input type="submit" />
-    </form>
-  );
-};
-
-export default Register;
-
 // browser => console=> payload (data ki formate a gache), preview , Response (documentation r response ta dakhai) 
-
 
 
 // ========================================================================================================================================================
@@ -1646,300 +2021,6 @@ export default Home;
 
 //Now we get the details of signup response. amra folder path diya profile display korate pari . folder pathe backend developer dabe
 
-
-// ========================================================================================================================================================
-
-✅ Summery of login & logout
-
-Apiurl.js
-==========
-
-export const mainUrl="https://wtsacademy.dedicateddevelopers.us/api/"
-
-export const signup= "user/signup";
-
-export const login= "user/signin";
-
-export const profile_url= "user/profile-details";
-
-Apinstances.js
-===============
-
-import axios from 'axios';
-import { mainUrl } from './Apiurl';
-
-const instance = axios.create({
-  baseURL: mainUrl,
-});
-
-instance.interceptors.request.use(    
-  async function (config) {
-    const token = sessionStorage.getItem("token");
-
-    if (token) {
-      config.headers['x-access-token'] = token
-    }
-    return config
-  },
-  function (err) {
-    return Promise.reject(err);
-  }
-)
-
-export default instance
-
-
-Sighnup.jsx
-==============
-
-const Sighnup = () => {
-  const { register, handleSubmit, formState: { errors } } = useForm();
-
-  const onSubmit = (data) => {
-    const { email, first_name, last_name, password, profile_pic } = data;
-
-    // Get the file from the input
-    const profilePic = profile_pic[0]; // Access the first file from FileList
-
-    // Validation to ensure file is selected
-    if (!profilePic) {
-      console.error("No profile picture selected");
-      return;
-    }
-
-    // Create FormData and append all fields
-    const formData = new FormData();
-    formData.append("first_name", first_name);
-    formData.append("last_name", last_name);
-    formData.append("email", email);
-    formData.append("password", password);
-    formData.append("profile_pic", profilePic); // Append the file
-
-    // Send the FormData to the server
-    Apinstances.post(signup, formData)
-      .then((res) => {
-        console.log("Response:", res.data);
-      })
-      .catch((err) => {
-        console.error("Error:", err);
-      });
-  };
-
-  return (
-    <div>
-      <Container className="pt-5">
-        <Row>
-          <Col>
-            <Form onSubmit={handleSubmit(onSubmit)}>
-              {/* First Name */}
-              <Form.Group className="mb-3">
-                <Form.Control
-                  type="text"
-                  placeholder="Enter First Name"
-                  {...register("first_name", { required: "First Name is required" })}
-                />
-                {errors.first_name && (
-                  <span className="text-danger">{errors.first_name.message}</span>
-                )}
-              </Form.Group>
-
-              {/* Last Name */}
-              <Form.Group className="mb-3">
-                <Form.Control
-                  type="text"
-                  placeholder="Enter Last Name"
-                  {...register("last_name", { required: "Last Name is required" })}
-                />
-                {errors.last_name && (
-                  <span className="text-danger">{errors.last_name.message}</span>
-                )}
-              </Form.Group>
-
-              {/* Email */}
-              <Form.Group className="mb-3">
-                <Form.Control
-                  type="email"
-                  placeholder="Enter Email"
-                  {...register("email", {
-                    required: "Email is required",
-                    pattern: {
-                      value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
-                      message: "Invalid email address",
-                    },
-                  })}
-                />
-                {errors.email && (
-                  <span className="text-danger">{errors.email.message}</span>
-                )}
-              </Form.Group>
-
-              {/* Password */}
-              <Form.Group className="mb-3">
-                <Form.Control
-                  type="password"
-                  placeholder="Password"
-                  {...register("password", {
-                    required: "Password is required",
-                    minLength: {
-                      value: 6,
-                      message: "Password must be at least 6 characters",
-                    },
-                  })}
-                />
-                {errors.password && (
-                  <span className="text-danger">{errors.password.message}</span>
-                )}
-              </Form.Group>
-
-              {/* Profile Picture */}
-              <Form.Group controlId="formFile" className="mb-3">
-                <Form.Label>Upload Profile Picture</Form.Label>
-                <Form.Control
-                  type="file"
-                  {...register("profile_pic", { required: "Profile picture is required" })}
-                />
-                {errors.profile_pic && (
-                  <span className="text-danger">{errors.profile_pic.message}</span>
-                )}
-              </Form.Group>
-
-              {/* Submit Button */}
-              <Button variant="primary" type="submit">
-                Submit
-              </Button>
-            </Form>
-          </Col>
-        </Row>
-      </Container>
-    </div>
-  );
-};
-
-export default Sighnup;
-
-sighnin.jsx
-============
-
-const Sighnin = () => {
-  const [mdata, setmData] = useState({
-    email: '',
-    password: '',
-  })
-
-  const [userDetails, setUserDetails] = useState({
-
-    email: "",
-    first_name: "",
-    last_name: "",
-    profile_pic: "",
-  })
-
-  const {
-    register,
-    handleSubmit,
-    watch,
-  } = useForm()
-
-  // Sign in form submission
-
-  const onSubmit = (data) => {
-    const { email, password } = data
-
-    setmData({
-      email: email,
-      password: password,
-    })
-
-
-    Apinstances.post(login, mdata).then((res) => {
-      console.log(res.data);
-      if (res?.data.status === 200) {
-        alert(res.data.message);
-        window.sessionStorage.setItem("token", res.data.token);
-      }
-    })
-      .catch((err) => {
-        console.log(err);
-      })
-  }
-
-
-  //Profile fetching
-  const fetchignprofile = () => {
-
-    Apinstances.get(profile_url).then((res) => {
-      // console.log(res.data);
-
-      let baseurl = "https://wtsacademy.dedicateddevelopers.us/";
-      let folder_path = "uploads/user/profile_pic/"
-      let profile_image = baseurl + folder_path + res.data.data.profile_pic;
-
-      setUserDetails({
-        email: res.data.data.email,
-        first_name: res.data.data.first_name,
-        last_name: res.data.data.last_name,
-        profile_pic: profile_image,
-      })
-
-      
-
-    })
-      .catch((err) => {
-        console.log(err);
-      })
-  }
-
-  
-  useEffect(() => {
-
-    fetchignprofile()
-
-  }, [])
-
-
- 
-  // console.log(userDetails.profile_pic)
-
-   //🔥 Set image to tocal storage
-   useEffect(()=>{
-    if(userDetails.profile_pic){
-      window.sessionStorage.setItem("profile_pic", userDetails.profile_pic);
-    }
-   },[userDetails.profile_pic])
-  
-
-
-  return (
-    <div>
-      <Container className='pt-5'>
-        <Row>
-          <Col>
-            <Form onSubmit={handleSubmit(onSubmit)}>
-              <Form.Group className="mb-3" controlId="formBasicEmail">
-                <Form.Control type="email" placeholder="Enter email" {...register("email")} />
-                {/* <Form.Text className="text-muted">
-                  We'll never share your email with anyone else.
-                </Form.Text> */}
-              </Form.Group>
-
-              <Form.Group className="mb-3" controlId="formBasicPassword">
-                <Form.Control type="password" placeholder="Password" {...register("password")} />
-              </Form.Group>
-
-
-              <Button variant="primary" type="submit">
-                Submit
-              </Button>
-            </Form>
-
-
-          </Col>
-        </Row>
-      </Container>
-
-    </div>
-  )
-}
 
 ==============================================================================================================================================
 
