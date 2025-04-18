@@ -2572,3 +2572,1049 @@ export default TableForm=()=>{
     )
 }
 
+
+
+
+# Multi select search
+
+## reactjs-interview-questions/multi-select-input/src/components/pill.jsx
+
+/_ eslint-disable react/prop-types _/
+const Pill = ({image, text, onClick}) => {
+return (
+<span className="user-pill" onClick={onClick}>
+<img src={image} alt={text} />
+<span>{text} &times;</span>
+</span>
+);
+};
+
+export default Pill;
+
+## reactjs-interview-questions/multi-select-input/src/App.jsx
+
+import {useEffect, useRef, useState} from "react";
+import "./App.css";
+
+import Pill from "./components/pill";
+
+function App() {
+const [searchTerm, setSearchTerm] = useState("");
+const [suggestions, setSuggestions] = useState([]);
+const [selectedUsers, setSelectedUsers] = useState([]);
+const [selectedUserSet, setSelectedUserSet] = useState(new Set());
+const [activeSuggestion, setActiveSuggestion] = useState(0);
+
+const inputRef = useRef(null);
+
+// https://dummyjson.com/users/search?q=Jo
+
+useEffect(() => {
+const fetchUsers = () => {
+setActiveSuggestion(0);
+if (searchTerm.trim() === "") {
+setSuggestions([]);
+return;
+}
+
+      fetch(`https://dummyjson.com/users/search?q=${searchTerm}`)
+        .then((res) => res.json())
+        .then((data) => setSuggestions(data))
+        .catch((err) => {
+          console.error(err);
+        });
+    };
+
+    fetchUsers();
+
+}, [searchTerm]);
+
+const handleSelectUser = (user) => {
+setSelectedUsers([...selectedUsers, user]);
+setSelectedUserSet(new Set([...selectedUserSet, user.email]));
+setSearchTerm("");
+setSuggestions([]);
+inputRef.current.focus();
+};
+
+const handleRemoveUser = (user) => {
+const updatedUsers = selectedUsers.filter(
+(selectedUser) => selectedUser.id !== user.id
+);
+setSelectedUsers(updatedUsers);
+
+    const updatedEmails = new Set(selectedUserSet);
+    updatedEmails.delete(user.email);
+    setSelectedUserSet(updatedEmails);
+
+};
+
+const handleKeyDown = (e) => {
+if (
+e.key === "Backspace" &&
+e.target.value === "" &&
+selectedUsers.length > 0
+) {
+const lastUser = selectedUsers[selectedUsers.length - 1];
+handleRemoveUser(lastUser);
+setSuggestions([]);
+} else if (e.key === "ArrowDown" && suggestions?.users?.length > 0) {
+e.preventDefault();
+setActiveSuggestion((prevIndex) =>
+prevIndex < suggestions.users.length - 1 ? prevIndex + 1 : prevIndex
+);
+} else if (e.key === "ArrowUp" && suggestions?.users?.length > 0) {
+e.preventDefault();
+setActiveSuggestion((prevIndex) => (prevIndex > 0 ? prevIndex - 1 : 0));
+} else if (
+e.key === "Enter" &&
+activeSuggestion >= 0 &&
+activeSuggestion < suggestions.users.length
+) {
+handleSelectUser(suggestions.users[activeSuggestion]);
+}
+};
+
+return (
+
+<div className="user-search-container">
+<div className="user-search-input">
+{/_ Pills _/}
+{selectedUsers.map((user) => {
+return (
+<Pill
+key={user.email}
+image={user.image}
+text={`${user.firstName} ${user.lastName}`}
+onClick={() => handleRemoveUser(user)}
+/>
+);
+})}
+{/_ input feild with search suggestions _/}
+<div>
+<input
+ref={inputRef}
+type="text"
+value={searchTerm}
+onChange={(e) => setSearchTerm(e.target.value)}
+placeholder="Search For a User..."
+onKeyDown={handleKeyDown}
+/>
+{/_ Search Suggestions _/}
+<ul className="suggestions-list">
+{suggestions?.users?.map((user, index) => {
+return !selectedUserSet.has(user.email) ? (
+<li
+className={index === activeSuggestion ? "active" : ""}
+key={user.email}
+onClick={() => handleSelectUser(user)} >
+<img
+src={user.image}
+alt={`${user.firstName} ${user.lastName}`}
+/>
+<span>
+{user.firstName} {user.lastName}
+</span>
+</li>
+) : (
+<></>
+);
+})}
+</ul>
+</div>
+</div>
+</div>
+);
+}
+
+export default App;
+
+<!-- ================================================================================================================================= -->
+
+<!-- Music Player  -->
+
+import { useEffect, useRef, useState } from "react";
+import './music.css'
+
+function MusicPlayer() {
+
+
+const audioRef = useRef(null);  //✅1
+const [isPlaying, setIsPlaying] = useState(false); //✅1
+const [currentMusicTrack, SetCurrentMusicTrack] = useState(0); //✅1
+const [trackProgress, setTrackProgress] = useState(0); //✅1
+
+
+
+const tracks = [
+{
+title: "Track 1",
+source: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+image: "https://via.placeholder.com/150",
+},
+{
+title: "Track 2",
+source: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
+image: "https://via.placeholder.com/150",
+},
+// Add more tracks as needed
+];
+
+
+
+useEffect(() => { //✅5
+if (isPlaying) {
+const interval = setInterval(() => {
+setTrackProgress(
+(audioRef.current.currentTime / audioRef.current.duration) * 100
+);
+}, 1000);
+
+      return () => clearInterval(interval);
+}
+
+}, [isPlaying]);
+
+
+
+
+function handlePauseAndPlay() {
+if (isPlaying) {
+audioRef.current.pause();
+} else {
+audioRef.current.play();
+}
+setIsPlaying(!isPlaying);
+}
+
+
+
+function handleSkipTrack(getDirection) {
+if (getDirection === "forward") {
+SetCurrentMusicTrack((prevTrack) => (prevTrack + 1) % tracks.length);
+} else if (getDirection === "backward") {
+SetCurrentMusicTrack(
+(prevTrack) => (prevTrack - 1 + tracks.length) % tracks.length
+);
+}
+
+    setTrackProgress(0);
+
+}
+
+return (
+
+<div className="music-player">
+<h1>Music Player</h1>
+<h2>{tracks[currentMusicTrack].title}</h2> //✅2
+
+<img                                          
+        src={tracks[currentMusicTrack].image}
+        alt={tracks[currentMusicTrack].title}
+      />  //✅2
+
+
+<audio ref={audioRef} src={tracks[currentMusicTrack].source} /> //✅2
+
+
+
+<div className="progress-bar"> //✅3
+<div
+className="progress"
+style={{
+            width: `${trackProgress}%`,
+            background: isPlaying ? "#3498db" : "#a43636",
+            height: '15px'
+          }} ></div>
+</div>
+
+
+
+<div className="track-controls">
+<button onClick={() => handleSkipTrack("backward")}>Backward</button>
+
+<button onClick={handlePauseAndPlay}> //✅4
+{isPlaying ? "Pause" : "Play"}
+</button>
+
+<button onClick={() => handleSkipTrack("forward")}>Forward</button>
+</div>
+</div>
+);
+}
+
+export default MusicPlayer;
+
+
+currentTime = This gives you the number of seconds that have already played from the audio.
+duration = This gives you the total length of the audio in seconds.
+
+<!-- ======================================================================================================= -->
+
+
+BMI Calculator
+
+import { useState } from "react";
+import './bmi.css'
+
+function BMICalculator() {
+const [weight, setWeight] = useState(null);
+const [height, setHeight] = useState(null);
+const [bmi, setBMI] = useState(null);
+const [errorMsg, setErrorMsg] = useState("");
+
+function calculateBmi() {
+if (!height || !weight) {
+setErrorMsg("Please enter both height and weight");
+return;
+}
+
+    const numericHeight = parseFloat(height);
+    const numericWeight = parseFloat(weight);
+
+    if (
+      isNaN(numericHeight) ||
+      isNaN(numericWeight) ||
+      numericHeight <= 0 ||
+      numericWeight <= 0
+    ) {
+      setErrorMsg(
+        "Please enter valid numeric values for both height and weight"
+      );
+      return;
+    }
+
+    const calculateHeightInMeters = numericHeight / 100;
+    const calculateBmiValue = (
+      numericWeight /
+      (calculateHeightInMeters * calculateHeightInMeters)
+    ).toFixed(2);
+
+    setBMI(calculateBmiValue);
+    setErrorMsg("");
+
+}
+
+console.log(bmi);
+
+return (
+
+<div className="bmi-calculator-container">
+<h1>BMI Calculator</h1>
+<div className="input-container">
+<label>Height (cm):</label>
+<input
+onChange={(event) => setHeight(event.target.value)}
+type="number"
+value={height}
+/>
+</div>
+<div className="input-container">
+<label>Weight (kg):</label>
+<input
+onChange={(event) => setWeight(event.target.value)}
+type="number"
+value={weight}
+/>
+</div>
+<button onClick={calculateBmi}>Calculate BMI</button>
+{errorMsg ? <p className="error-msg-text">{errorMsg}</p> : null}
+{errorMsg !== "" ? null : (
+<p className="bmi-result-text">
+{bmi < 18.5
+? "Underweight"
+: bmi >= 18.5 && bmi < 24.9
+? "Normal Weight"
+: bmi >= 25 && bmi < 29.9
+? "Overweight"
+: "Obese"}
+</p>
+)}
+</div>
+);
+}
+
+export default BMICalculator;
+
+<!-- ============================================================================================================================= -->
+
+Drag and drop
+
+import { useEffect, useState } from "react";
+import './draganddrop.css'
+
+function DragAndDropFeature() {
+const [loading, setLoading] = useState(false);
+const [todos, setTodos] = useState([]);
+
+async function fetchListOfTodos() {
+try {
+setLoading(true);
+const apiResponse = await fetch(
+"https://dummyjson.com/todos?limit=5&skip=0"
+);
+const result = await apiResponse.json();
+
+      if (result && result.todos && result.todos.length > 0) {
+        setLoading(false);
+        const updatedTodos = result.todos.map((todoItem) => ({
+          ...todoItem,
+          status: "wip",
+        }));
+        setTodos(updatedTodos);
+      }
+    } catch (e) {
+      console.log(e);
+      setLoading(false);
+    }
+
+}
+
+useEffect(() => {
+fetchListOfTodos();
+}, []);
+
+console.log(todos);
+
+function onDragStart(event, id){
+event.dataTransfer.setData('id',id)
+}
+
+function onDrop(event,status){
+const id = event.dataTransfer.getData('id');
+console.log(event.dataTransfer.getData('id'));
+let updateTodos = todos.filter(todoItem=> {
+
+        if(todoItem.id.toString() === id){
+            todoItem.status = status
+        }
+        return todoItem
+    })
+
+    setTodos(updateTodos)
+
+}
+
+function renderTodos() {
+const todoListToRender = {
+wip: [],
+completed: [],
+};
+
+    todos.forEach((todoItem) => {
+      todoListToRender[todoItem.status].push(
+        <div
+          onDragStart={(event) => onDragStart(event, todoItem.id)}
+          draggable
+          key={todoItem.id}
+          className="todo-card"
+        >
+          {todoItem.todo}
+        </div>
+      );
+    });
+
+    return todoListToRender
+
+}
+
+if(loading) return <h1>Loading data! Please wait</h1>
+
+return (
+
+<div className="drag-and-drop-container">
+<h1>Drag and Drop</h1>
+<div className="drag-and-drop-board">
+<div
+onDrop={(event) => onDrop(event, "wip")}
+onDragOver={(event) => event.preventDefault()}
+className="work-in-progress" >
+<h3>In Progress</h3>
+<div className="todo-list-wrapper">
+{renderTodos().wip}
+</div>
+</div>
+<div
+onDrop={(event) => onDrop(event, "completed")}
+onDragOver={(event) => event.preventDefault()}
+className="completed" >
+<h3>Completed</h3>
+<div className="todo-list-wrapper">
+{renderTodos().completed}
+</div>
+</div>
+</div>
+</div>
+);
+}
+
+export default DragAndDropFeature;
+
+<!-- ========================================================================================================================= -->
+
+<!-- Form Validation  -->
+
+import { useState } from "react";
+import './form.css'
+
+function FormValidation() {
+const [formData, setFormData] = useState({
+username: "",
+email: "",
+password: "",
+});
+const [errors, setErrors] = useState({
+username: "",
+password: "",
+email: "",
+});
+
+function handleFormChange(event) {
+const { name, value } = event.target;
+setFormData({
+...formData,
+[name]: value,
+});
+validateInput(name, value);
+}
+
+function validateInput(getName, getValue) {
+switch (getName) {
+case "username":
+setErrors((prevErrors) => ({
+...prevErrors,
+username:
+getValue.length < 3 ? "Username must be at least 3 characters" : "",
+}));
+
+        break;
+      case "email":
+        setErrors((prevErrors) => ({
+          ...prevErrors,
+          email: /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(getValue)
+            ? ""
+            : "Invalid email address",
+        }));
+
+        break;
+      case "password":
+        setErrors((prevErrors) => ({
+          ...prevErrors,
+          password:
+            getValue.length < 5 ? "Password must be at least 5 characters" : "",
+        }));
+
+        break;
+
+      default:
+        break;
+    }
+
+}
+
+function handleFormSubmit(event) {
+event.preventDefault();
+
+    // const validateErrors = {};
+
+    // Object.keys(formData).forEach((dataItem) => {
+    //   validateInput(dataItem, formData[dataItem]);
+    //   if (errors[dataItem]) {
+    //     validateErrors[dataItem] = errors[dataItem];
+    //   }
+    // });
+
+    // setErrors((prevErrors) => ({
+    //   ...prevErrors,
+    //   ...validateErrors,
+    // }));
+
+    // if (Object.values(validateErrors).every((error) => error === "")) {
+    //   //perform your form submission logic
+    // } else {
+    //   console.log("error is present. Please fix");
+    // }
+
+}
+
+console.log(errors);
+
+return (
+
+<div className="form-validation-container">
+<h1>Simple Form Validation</h1>
+<form onSubmit={handleFormSubmit}>
+<div className="input-wrapper">
+<label htmlFor="username">User Name</label>
+<input
+            type="text"
+            name="username"
+            id="username"
+            placeholder="Enter your username"
+            value={formData.username}
+            onChange={handleFormChange}
+          />
+<span>{errors?.username}</span>
+</div>
+<div className="input-wrapper">
+<label htmlFor="email">Email</label>
+<input
+            id="email"
+            type="email"
+            name="email"
+            value={formData.email}
+            placeholder="Enter your email"
+            onChange={handleFormChange}
+          />
+<span>{errors?.email}</span>
+</div>
+<div className="input-wrapper">
+<label htmlFor="password">Password</label>
+<input
+            type="password"
+            id="password"
+            name="password"
+            placeholder="Enter your password"
+            value={formData.password}
+            onChange={handleFormChange}
+          />
+<span>{errors?.password}</span>
+</div>
+<button type="submit">Submit</button>
+</form>
+</div>
+);
+}
+
+export default FormValidation;
+
+<!-- =================================================================================================================== -->
+
+<!-- Quiz App -->
+
+import { useState } from "react";
+import './quiz.css'
+
+const questions = [
+{
+question: "What is the capital of France?",
+options: ["Paris", "Berlin", "Madrid", "Rome"],
+correctAnswer: "Paris",
+},
+{
+question: "Which planet is known as the Red Planet?",
+options: ["Mars", "Venus", "Jupiter", "Saturn"],
+correctAnswer: "Mars",
+},
+{
+question: 'Who wrote "Romeo and Juliet"?',
+options: [
+"Charles Dickens",
+"Jane Austen",
+"William Shakespeare",
+"Mark Twain",
+],
+correctAnswer: "William Shakespeare",
+},
+{
+question: "What is the largest mammal?",
+options: ["Elephant", "Whale Shark", "Blue Whale", "Giraffe"],
+correctAnswer: "Blue Whale",
+},
+{
+question: "In which year did the Titanic sink?",
+options: ["1905", "1912", "1920", "1931"],
+correctAnswer: "1912",
+},
+{
+question: "What is the currency of Japan?",
+options: ["Yen", "Won", "Ringgit", "Baht"],
+correctAnswer: "Yen",
+},
+{
+question: "Which programming language is also a gem?",
+options: ["Ruby", "Python", "Java", "C++"],
+correctAnswer: "Ruby",
+},
+{
+question: "What is the largest ocean on Earth?",
+options: [
+"Atlantic Ocean",
+"Indian Ocean",
+"Southern Ocean",
+"Pacific Ocean",
+],
+correctAnswer: "Pacific Ocean",
+},
+{
+question: "Who painted the Mona Lisa?",
+options: [
+"Pablo Picasso",
+"Vincent van Gogh",
+"Leonardo da Vinci",
+"Claude Monet",
+],
+correctAnswer: "Leonardo da Vinci",
+},
+{
+question: "What is the capital of Australia?",
+options: ["Sydney", "Melbourne", "Canberra", "Perth"],
+correctAnswer: "Canberra",
+},
+];
+
+//currentquestion
+//score
+//selectedOptions
+//showresult
+
+function Quiz() {
+const [currentQuestion, setCurrentQuestion] = useState(0);
+const [score, setScore] = useState(0);
+const [selectedOptions, setSelectedOptions] = useState(
+new Array(questions.length).fill(null)
+);
+const [showResult, setShowResult] = useState(false);
+
+function handleSelectedOption(getOptionItem){
+const updatedSelectedOptions = [...selectedOptions];
+updatedSelectedOptions[currentQuestion] = getOptionItem;
+setSelectedOptions(updatedSelectedOptions)
+}
+
+function handlePreviousQuestion() {
+if (currentQuestion > 0) {
+setCurrentQuestion(currentQuestion - 1);
+}
+}
+
+console.log(selectedOptions, score);
+
+function handleNextQuestion() {
+if (
+selectedOptions[currentQuestion] ===
+questions[currentQuestion].correctAnswer
+) {
+setScore(score + 1);
+}
+
+    if (currentQuestion < questions.length - 1) {
+      setCurrentQuestion(currentQuestion + 1);
+    } else {
+      setShowResult(true);
+    }
+
+}
+
+function handleRestartQuiz(){
+setCurrentQuestion(0);
+setScore(0);
+setSelectedOptions(new Array(questions.length).fill(null));
+setShowResult(false)
+}
+
+return (
+
+<div className="quiz">
+<h1>Quiz App</h1>
+{!showResult ? (
+<div className="options-wrapper">
+<h2>Question {currentQuestion + 1}</h2>
+<p>{questions[currentQuestion].question}</p>
+<div className="options">
+{questions[currentQuestion].options.map((optionItem) => (
+<button
+key={optionItem}
+className={`option ${
+                  selectedOptions[currentQuestion] === optionItem
+                    ? "selected"
+                    : ""
+                }`}
+onClick={()=> handleSelectedOption(optionItem)} >
+{optionItem}
+</button>
+))}
+</div>
+<div className="button-container">
+<button
+onClick={handlePreviousQuestion}
+disabled={currentQuestion === 0}
+className="prev-btn" >
+Previous
+</button>
+<button onClick={handleNextQuestion} className="next-btn">
+{currentQuestion < questions.length - 1 ? "Next" : "Finish"}
+</button>
+</div>
+</div>
+) : (
+<div className="show-result-wrapper">
+<h3>Quiz Completed</h3>
+<p>Your Score: {score}</p>
+<button onClick={handleRestartQuiz} className="restart-button">Restart Quiz</button>
+</div>
+)}
+</div>
+);
+}
+
+export default Quiz;
+
+<!-- ======================================================================================================================= -->
+
+File uploeded with preview
+
+import { useRef, useState } from "react";
+import './file-upload.css'
+
+function FileUpload() {
+const [file, setFile] = useState();
+const uploadReference = useRef();
+const progressReference = useRef();
+const statusReference = useRef();
+const loadReference = useRef();
+
+function handleUploadFile() {
+const file = uploadReference.current.files[0];
+setFile(URL.createObjectURL(file));
+let formData = new FormData();
+formData.append("image", file);
+let xhr = new XMLHttpRequest();
+xhr.upload.addEventListener("progress", handleProgress, false);
+xhr.addEventListener("load", handleSuccess, false);
+xhr.addEventListener("error", handleError, false);
+xhr.addEventListener("abort", handleAbort, false);
+
+    xhr.open("POST", "https://v2.convertapi.com/upload");
+    xhr.send(formData);
+
+}
+
+function handleProgress(event) {
+loadReference.current.innerHTML = `Uploaded ${event.loaded} bytes of ${event.total}`;
+const percentage = (event.loaded / event.total) \* 100;
+progressReference.current.value = Math.round(percentage);
+statusReference.current.innerHTML = `${Math.round(
+      percentage
+    )} % uploaded...`;
+}
+
+function handleSuccess(event) {
+statusReference.current.innerHTML = event.target.responseText;
+progressReference.current.value = 0;
+}
+
+function handleError() {
+statusReference.current.innerHTML = "Upload failed! Please try again";
+}
+
+function handleAbort() {
+statusReference.current.innerHTML = "Upload aborted! Please try again";
+}
+
+return (
+
+<div className="file-upload-container">
+<h1>File Upload with Progress Bar</h1>
+<input
+        onChange={handleUploadFile}
+        type="file"
+        name="file"
+        ref={uploadReference}
+      />
+<label>
+File Progress:{" "}
+<progress ref={progressReference} value={"0"} max={"100"} />
+</label>
+<p className="status" ref={statusReference}></p>
+<p className="load" ref={loadReference}></p>
+<img
+src={file}
+alt="File-upload"
+style={{ width: "300px", height: "300px" }}
+/>
+</div>
+);
+}
+
+export default FileUpload;
+
+<!-- ====================================================================================================================== -->
+
+PDF Viewer
+
+import {
+Document,
+PDFDownloadLink,
+PDFViewer,
+Page,
+Text,
+View,
+} from "@react-pdf/renderer";
+import { useEffect, useState } from "react";
+import './pdf.css'
+
+function PdfViewComponent({ productDetails }) {
+return (
+<Document>
+<Page>
+<View>
+<Text>{productDetails?.title}</Text>
+<Text>{productDetails?.description}</Text>
+<Text>{productDetails?.category}</Text>
+</View>
+</Page>
+</Document>
+);
+}
+
+function PdfViewer() {
+const [products, setProducts] = useState([]);
+const [productDetails, setProductDetails] = useState(null);
+
+async function fetchListOfProducts() {
+const apiResponse = await fetch(
+"https://dummyjson.com/products?limit=10&skip=0"
+);
+const result = await apiResponse.json();
+
+    if (result && result.products && result.products.length) {
+      setProducts(result.products);
+    }
+
+}
+
+useEffect(() => {
+fetchListOfProducts();
+}, []);
+
+async function handleFetchProductDetails(getId) {
+const apiResponse = await fetch(`https://dummyjson.com/products/${getId}`);
+const result = await apiResponse.json();
+
+    if (result) setProductDetails(result);
+
+}
+
+console.log(productDetails);
+return (
+
+<div className="pdf-viewer-container">
+<h1>PDF Viewer</h1>
+<ul>
+{products && products.length > 0
+? products.map((productItem) => (
+<li
+onClick={() => handleFetchProductDetails(productItem.id)}
+key={productItem.id} >
+{productItem.title}
+</li>
+))
+: null}
+</ul>
+<div className="pdf-viewer-page">
+<PDFViewer style={{ width: "100%", height: "800px" }}>
+<PdfViewComponent productDetails={productDetails} />
+</PDFViewer>
+</div>
+<PDFDownloadLink
+fileName="Product-Details.pdf"
+document={<PdfViewComponent productDetails={productDetails} />} >
+<button>Download PDF</button>
+</PDFDownloadLink>
+</div>
+);
+}
+
+export default PdfViewer;
+
+<!-- ============================================================================================================================= -->
+
+Debounce API Call
+
+<!-- src/components/22. debounce-api-call/index.jsx -->
+
+import { useEffect, useState } from "react";
+import useDebounce from "./use-debounce";
+import './debounce.css'
+
+function DebounceApiCall() {
+const [searchParam, setSearchParam] = useState("");
+const [recipes, setRecipes] = useState([]);
+const [pending, setPending] = useState(false);
+
+const debounceParamValue = useDebounce(searchParam, 1000);
+
+async function fetchListOfRecipes() {
+try {
+setPending(true);
+const apiResponse = await fetch(
+`https://dummyjson.com/recipes/search?q=${debounceParamValue}`
+);
+const result = await apiResponse.json();
+
+      if (result && result.recipes && result.recipes.length > 0) {
+        setPending(false);
+        setRecipes(result.recipes);
+      } else {
+        setPending(false)
+        setRecipes([])
+      }
+    } catch (error) {
+      console.log(error);
+      setPending(false);
+    }
+
+}
+
+useEffect(() => {
+fetchListOfRecipes();
+}, [debounceParamValue]);
+
+return (
+
+<div className="debounce-container">
+<h1>Debouce API Call</h1>
+<div className="search-wrapper">
+<input
+type="text"
+value={searchParam}
+onChange={(event) => setSearchParam(event.target.value)}
+placeholder="Enter Recipe Name"
+/>
+</div>
+{pending ? <h3>Pending ! Please wait</h3> : null}
+<ul>
+{recipes && recipes.length > 0
+? recipes.map((recipeItem) => <li>{recipeItem.name}</li>)
+: <h3>No Recipes found ! Please try with different search</h3>}
+</ul>
+</div>
+);
+}
+
+export default DebounceApiCall;
+
+<!-- src/components/22. debounce-api-call/use-debounce.jsx -->
+
+import { useEffect, useState } from "react";
+
+function useDebounce(paramValue, delay = 1000) {
+const [debounceValue, setDebounceValue] = useState(paramValue);
+
+useEffect(() => {
+const timeoutId = setTimeout(() => {
+setDebounceValue(paramValue);
+}, delay);
+
+    return () => clearTimeout(timeoutId);
+
+}, [paramValue, delay]);
+
+return debounceValue;
+}
+
+export default useDebounce;
+
+<!-- =================================================================================================================== -->
+
