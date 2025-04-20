@@ -3050,143 +3050,8 @@ className="completed" >
 
 export default DragAndDropFeature;
 
-<!-- ========================================================================================================================= -->
 
-<!-- Form Validation  -->
 
-import { useState } from "react";
-import './form.css'
-
-function FormValidation() {
-const [formData, setFormData] = useState({
-username: "",
-email: "",
-password: "",
-});
-const [errors, setErrors] = useState({
-username: "",
-password: "",
-email: "",
-});
-
-function handleFormChange(event) {
-const { name, value } = event.target;
-setFormData({
-...formData,
-[name]: value,
-});
-validateInput(name, value);
-}
-
-function validateInput(getName, getValue) {
-switch (getName) {
-case "username":
-setErrors((prevErrors) => ({
-...prevErrors,
-username:
-getValue.length < 3 ? "Username must be at least 3 characters" : "",
-}));
-
-        break;
-      case "email":
-        setErrors((prevErrors) => ({
-          ...prevErrors,
-          email: /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(getValue)
-            ? ""
-            : "Invalid email address",
-        }));
-
-        break;
-      case "password":
-        setErrors((prevErrors) => ({
-          ...prevErrors,
-          password:
-            getValue.length < 5 ? "Password must be at least 5 characters" : "",
-        }));
-
-        break;
-
-      default:
-        break;
-    }
-
-}
-
-function handleFormSubmit(event) {
-event.preventDefault();
-
-    // const validateErrors = {};
-
-    // Object.keys(formData).forEach((dataItem) => {
-    //   validateInput(dataItem, formData[dataItem]);
-    //   if (errors[dataItem]) {
-    //     validateErrors[dataItem] = errors[dataItem];
-    //   }
-    // });
-
-    // setErrors((prevErrors) => ({
-    //   ...prevErrors,
-    //   ...validateErrors,
-    // }));
-
-    // if (Object.values(validateErrors).every((error) => error === "")) {
-    //   //perform your form submission logic
-    // } else {
-    //   console.log("error is present. Please fix");
-    // }
-
-}
-
-console.log(errors);
-
-return (
-
-<div className="form-validation-container">
-<h1>Simple Form Validation</h1>
-<form onSubmit={handleFormSubmit}>
-<div className="input-wrapper">
-<label htmlFor="username">User Name</label>
-<input
-            type="text"
-            name="username"
-            id="username"
-            placeholder="Enter your username"
-            value={formData.username}
-            onChange={handleFormChange}
-          />
-<span>{errors?.username}</span>
-</div>
-<div className="input-wrapper">
-<label htmlFor="email">Email</label>
-<input
-            id="email"
-            type="email"
-            name="email"
-            value={formData.email}
-            placeholder="Enter your email"
-            onChange={handleFormChange}
-          />
-<span>{errors?.email}</span>
-</div>
-<div className="input-wrapper">
-<label htmlFor="password">Password</label>
-<input
-            type="password"
-            id="password"
-            name="password"
-            placeholder="Enter your password"
-            value={formData.password}
-            onChange={handleFormChange}
-          />
-<span>{errors?.password}</span>
-</div>
-<button type="submit">Submit</button>
-</form>
-</div>
-);
-}
-
-export default FormValidation;
 
 <!-- =================================================================================================================== -->
 
@@ -3364,257 +3229,281 @@ export default Quiz;
 
 File uploeded with preview
 
-import { useRef, useState } from "react";
-import './file-upload.css'
+import { useState, useRef } from "react";
+import './file-upload.css';
 
 function FileUpload() {
-const [file, setFile] = useState();
-const uploadReference = useRef();
-const progressReference = useRef();
-const statusReference = useRef();
-const loadReference = useRef();
+  const [filePreview, setFilePreview] = useState(null); // To hold the file preview URL
+  const fileInputRef = useRef(null); // To access the file input element
+  const progressBarRef = useRef(null); // To control the progress bar
+  const statusMessageRef = useRef(null); // To display the upload status
+  const loadMessageRef = useRef(null); // To show the bytes loaded during the upload
 
-function handleUploadFile() {
-const file = uploadReference.current.files[0];
-setFile(URL.createObjectURL(file));
-let formData = new FormData();
-formData.append("image", file);
-let xhr = new XMLHttpRequest();
-xhr.upload.addEventListener("progress", handleProgress, false);
-xhr.addEventListener("load", handleSuccess, false);
-xhr.addEventListener("error", handleError, false);
-xhr.addEventListener("abort", handleAbort, false);
+  // Function that handles the file upload
+  const handleFileUpload = () => {
+    const selectedFile = fileInputRef.current.files[0]; // Get the selected file
+    setFilePreview(URL.createObjectURL(selectedFile)); // Preview the file locally
 
+    // Prepare the FormData object to send the file in the request
+    let formData = new FormData();
+    formData.append("file", selectedFile); // Add the file to the form data
+
+    // Create a new XMLHttpRequest to handle the file upload
+    const xhr = new XMLHttpRequest();
+
+    // Event listener to track the upload progress
+    xhr.upload.addEventListener("progress", handleUploadProgress);
+
+    // Event listener when upload completes successfully
+    xhr.addEventListener("load", handleUploadSuccess);
+
+    // Event listener when there is an error during the upload
+    xhr.addEventListener("error", handleUploadError);
+
+    // Event listener if the upload is canceled
+    xhr.addEventListener("abort", handleUploadAbort);
+
+    // Open the request and send the form data to the server
     xhr.open("POST", "https://v2.convertapi.com/upload");
     xhr.send(formData);
+  };
 
-}
+  // This function is triggered during the upload to show progress
+  const handleUploadProgress = (event) => {
+    if (event.lengthComputable) {
+      // Calculate the percentage of the upload completed
+      const percentage = (event.loaded / event.total) * 100;
+      progressBarRef.current.value = Math.round(percentage); // Update the progress bar
+      statusMessageRef.current.innerText = `${Math.round(percentage)}% uploaded...`; // Show the upload percentage
+      loadMessageRef.current.innerText = `Uploaded ${event.loaded} bytes of ${event.total}`; // Show bytes uploaded
+    }
+  };
 
-function handleProgress(event) {
-loadReference.current.innerHTML = `Uploaded ${event.loaded} bytes of ${event.total}`;
-const percentage = (event.loaded / event.total) \* 100;
-progressReference.current.value = Math.round(percentage);
-statusReference.current.innerHTML = `${Math.round(
-      percentage
-    )} % uploaded...`;
-}
+  // This function is triggered when the upload is successful
+  const handleUploadSuccess = () => {
+    statusMessageRef.current.innerText = "Upload successful!";
+    progressBarRef.current.value = 0; // Reset the progress bar
+  };
 
-function handleSuccess(event) {
-statusReference.current.innerHTML = event.target.responseText;
-progressReference.current.value = 0;
-}
+  // This function is triggered if the upload fails
+  const handleUploadError = () => {
+    statusMessageRef.current.innerText = "Upload failed. Please try again!";
+  };
 
-function handleError() {
-statusReference.current.innerHTML = "Upload failed! Please try again";
-}
+  // This function is triggered if the upload is canceled
+  const handleUploadAbort = () => {
+    statusMessageRef.current.innerText = "Upload aborted. Please try again!";
+  };
 
-function handleAbort() {
-statusReference.current.innerHTML = "Upload aborted! Please try again";
-}
+  return (
+    <div className="file-upload-container">
+      <h1>Upload a File with Progress</h1>
 
-return (
-
-<div className="file-upload-container">
-<h1>File Upload with Progress Bar</h1>
-<input
-        onChange={handleUploadFile}
+      {/* File input element */}
+      <input
         type="file"
-        name="file"
-        ref={uploadReference}
+        onChange={handleFileUpload} // Call handleFileUpload when a file is selected
+        ref={fileInputRef}
       />
-<label>
-File Progress:{" "}
-<progress ref={progressReference} value={"0"} max={"100"} />
-</label>
-<p className="status" ref={statusReference}></p>
-<p className="load" ref={loadReference}></p>
-<img
-src={file}
-alt="File-upload"
-style={{ width: "300px", height: "300px" }}
-/>
-</div>
-);
+
+      {/* Progress bar to show upload progress */}
+      <label>
+        File Progress:
+        <progress ref={progressBarRef} value={0} max={100} />
+      </label>
+
+      {/* Displaying upload status and progress */}
+      <p className="status" ref={statusMessageRef}></p>
+      <p className="load" ref={loadMessageRef}></p>
+
+      {/* Preview of the uploaded image */}
+      {filePreview && (
+        <img
+          src={filePreview}
+          alt="File Preview"
+          style={{ width: "300px", height: "300px" }}
+        />
+      )}
+    </div>
+  );
 }
 
 export default FileUpload;
 
-<!-- ====================================================================================================================== -->
 
-PDF Viewer
 
-import {
-Document,
-PDFDownloadLink,
-PDFViewer,
-Page,
-Text,
-View,
-} from "@react-pdf/renderer";
-import { useEffect, useState } from "react";
-import './pdf.css'
-
-function PdfViewComponent({ productDetails }) {
-return (
-<Document>
-<Page>
-<View>
-<Text>{productDetails?.title}</Text>
-<Text>{productDetails?.description}</Text>
-<Text>{productDetails?.category}</Text>
-</View>
-</Page>
-</Document>
-);
-}
-
-function PdfViewer() {
-const [products, setProducts] = useState([]);
-const [productDetails, setProductDetails] = useState(null);
-
-async function fetchListOfProducts() {
-const apiResponse = await fetch(
-"https://dummyjson.com/products?limit=10&skip=0"
-);
-const result = await apiResponse.json();
-
-    if (result && result.products && result.products.length) {
-      setProducts(result.products);
-    }
-
-}
-
-useEffect(() => {
-fetchListOfProducts();
-}, []);
-
-async function handleFetchProductDetails(getId) {
-const apiResponse = await fetch(`https://dummyjson.com/products/${getId}`);
-const result = await apiResponse.json();
-
-    if (result) setProductDetails(result);
-
-}
-
-console.log(productDetails);
-return (
-
-<div className="pdf-viewer-container">
-<h1>PDF Viewer</h1>
-<ul>
-{products && products.length > 0
-? products.map((productItem) => (
-<li
-onClick={() => handleFetchProductDetails(productItem.id)}
-key={productItem.id} >
-{productItem.title}
-</li>
-))
-: null}
-</ul>
-<div className="pdf-viewer-page">
-<PDFViewer style={{ width: "100%", height: "800px" }}>
-<PdfViewComponent productDetails={productDetails} />
-</PDFViewer>
-</div>
-<PDFDownloadLink
-fileName="Product-Details.pdf"
-document={<PdfViewComponent productDetails={productDetails} />} >
-<button>Download PDF</button>
-</PDFDownloadLink>
-</div>
-);
-}
-
-export default PdfViewer;
 
 <!-- ============================================================================================================================= -->
 
 Debounce API Call
 
-<!-- src/components/22. debounce-api-call/index.jsx -->
+"use client";
 
-import { useEffect, useState } from "react";
-import useDebounce from "./use-debounce";
-import './debounce.css'
+import React, { useState } from 'react';
 
-function DebounceApiCall() {
-const [searchParam, setSearchParam] = useState("");
-const [recipes, setRecipes] = useState([]);
-const [pending, setPending] = useState(false);
+// This function will delay calling the API
+const debounce = (func, delay) => {
+  let timer;
+  return function (...args) {
+    clearTimeout(timer);
+    timer = setTimeout(() => func(...args), delay); // Call API after the delay
+  };
+};
 
-const debounceParamValue = useDebounce(searchParam, 1000);
+const DebounceSearch = () => {
+  const [query, setQuery] = useState(""); // Store search input
+  const [results, setResults] = useState([]); // Store results from API
 
-async function fetchListOfRecipes() {
-try {
-setPending(true);
-const apiResponse = await fetch(
-`https://dummyjson.com/recipes/search?q=${debounceParamValue}`
-);
-const result = await apiResponse.json();
+  // Fetch data from API
+  const fetchResults = async (query) => {
+    if (!query) return; // Don't make API call if query is empty
+    const response = await fetch(`https://api.example.com/search?q=${query}`);
+    const data = await response.json();
+    setResults(data); // Set API results to state
+  };
 
-      if (result && result.recipes && result.recipes.length > 0) {
-        setPending(false);
-        setRecipes(result.recipes);
-      } else {
-        setPending(false)
-        setRecipes([])
-      }
-    } catch (error) {
-      console.log(error);
-      setPending(false);
-    }
+  // Create a debounced version of the API call
+  const debouncedFetchResults = debounce(fetchResults, 500); // 500ms delay
 
-}
+  // Handle typing in the search input
+  const handleInputChange = (e) => {
+    setQuery(e.target.value); // Update query state
+    debouncedFetchResults(e.target.value); // Call debounced function
+  };
 
-useEffect(() => {
-fetchListOfRecipes();
-}, [debounceParamValue]);
+  return (
+    <div>
+      <input
+        type="text"
+        value={query}
+        onChange={handleInputChange} // Trigger function on change
+        placeholder="Search..."
+      />
+      <ul>
+        {results.length > 0 && results.map((result, index) => (
+          <li key={index}>{result.name}</li>
+        ))}
+      </ul>
+    </div>
+  );
+};
 
-return (
+export default DebounceSearch;
 
-<div className="debounce-container">
-<h1>Debouce API Call</h1>
-<div className="search-wrapper">
-<input
-type="text"
-value={searchParam}
-onChange={(event) => setSearchParam(event.target.value)}
-placeholder="Enter Recipe Name"
-/>
-</div>
-{pending ? <h3>Pending ! Please wait</h3> : null}
-<ul>
-{recipes && recipes.length > 0
-? recipes.map((recipeItem) => <li>{recipeItem.name}</li>)
-: <h3>No Recipes found ! Please try with different search</h3>}
-</ul>
-</div>
-);
-}
-
-export default DebounceApiCall;
-
-<!-- src/components/22. debounce-api-call/use-debounce.jsx -->
-
-import { useEffect, useState } from "react";
-
-function useDebounce(paramValue, delay = 1000) {
-const [debounceValue, setDebounceValue] = useState(paramValue);
-
-useEffect(() => {
-const timeoutId = setTimeout(() => {
-setDebounceValue(paramValue);
-}, delay);
-
-    return () => clearTimeout(timeoutId);
-
-}, [paramValue, delay]);
-
-return debounceValue;
-}
-
-export default useDebounce;
 
 <!-- =================================================================================================================== -->
+
+Video Player
+------------------
+
+    "use client";
+
+import React, { useRef, useState, useEffect } from 'react';
+
+
+const Currencyconverter = () => {
+  const videoRef = useRef(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [isMuted, setIsMuted] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [volume, setVolume] = useState(1); // volume between 0 and 1
+
+  // Update progress bar
+  const handleTimeUpdate = () => {
+    const video = videoRef.current;
+    if (video) {
+      const percent = (video.currentTime / video.duration) * 100;
+      setProgress(percent);
+    }
+  };
+
+  // Seek video when progress bar changes
+  const handleProgressChange = (e) => {
+    const video = videoRef.current;
+    const newTime = (e.target.value / 100) * video.duration;
+    video.currentTime = newTime;
+    setProgress(e.target.value);
+  };
+
+  // Volume slider
+  const handleVolumeChange = (e) => {
+    const video = videoRef.current;
+    const newVolume = e.target.value;
+    video.volume = newVolume;
+    setVolume(newVolume);
+    setIsMuted(newVolume === "0");
+  };
+
+  // Play / Pause
+  const togglePlayPause = () => {
+    const video = videoRef.current;
+    if (video) {
+      if (video.paused) {
+        video.play();
+        setIsPlaying(true);
+      } else {
+        video.pause();
+        setIsPlaying(false);
+      }
+    }
+  };
+
+  // Mute / Unmute
+  const toggleMute = () => {
+    const video = videoRef.current;
+    video.muted = !video.muted;
+    setIsMuted(video.muted);
+  };
+
+  // Keep video volume updated on first load
+  useEffect(() => {
+    const video = videoRef.current;
+    if (video) {
+      video.volume = volume;
+    }
+  }, []);
+
+  return (
+    <div className="video-container">
+      <video
+        ref={videoRef}
+        src="/myvideo.mp4"
+        className="video"
+        onTimeUpdate={handleTimeUpdate}
+      />
+
+      <div className="controls">
+        <button onClick={togglePlayPause}>
+          {isPlaying ? 'Pause' : 'Play'}
+        </button>
+
+        <button onClick={toggleMute}>
+          {isMuted ? 'Unmute' : 'Mute'}
+        </button>
+
+        <input
+          type="range"
+          min="0"
+          max="100"
+          value={progress}
+          onChange={handleProgressChange}
+          className="progress-bar"
+        />
+
+        <input
+          type="range"
+          min="0"
+          max="1"
+          step="0.01"
+          value={volume}
+          onChange={handleVolumeChange}
+          className="volume-slider"
+        />
+      </div>
+    </div>
+  );
+};
+
+export default Currencyconverter;
+
 
