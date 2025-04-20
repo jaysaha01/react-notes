@@ -2133,4 +2133,533 @@ index.jsx
 
   
 
+====================================================================================================
 
+      Redux tutoriyal
+====================================================================================================
+
+/* 
+✅ Let's Build our store -(Redux) (Build cart page)
+==========================================================
+*/
+
+/*
+Redux is not maedaroty. 
+
+example of outher than redux= zustand, React-redux is birdge between react and redux, Redux toolkit is latest way to writing redux. 
+
+Redux arcutecture
+====================
+
+Redux is like big object and it kept into a global central place.
+
+npm install @reduxjs/toolkit
+npm install react-redux
+
+*/
+
+// utils folder=> 📁appStore.js //✅1
+
+import {configureStore} from '@redux/toolkit';
+import cartReducer from './cartSlice';  //✅4
+
+const appStore= configureStore({
+    reducer:{ //✅4
+        cart: cartSlice
+    }
+})
+
+export default appStore;
+
+// 📁App.js  //✅2
+
+import {Provider, useDispatch, useSelector} from "react-redux";
+import  {appStore} from './utils/appStore'
+
+<Provider store={appStore}>
+    <div className='app'>
+        <header/>
+    </div>
+</Provider>
+
+// 📁cartSlice.js  //✅3
+
+import {createSlice} from '@redux/toolkit';
+
+const cartSlice= createSlice({
+    name:'cart',
+    initialState:{
+        items:[]
+    },
+    reducers:{
+        addItem:(state, action)=>{
+            //Mutating the state
+            state.items.push(action.payload);
+        },
+        removeItem:(state, action)=>{
+            state.items.pop();
+        },
+        clearCart:(state, action)=>{
+            state.items.length=0
+        }
+    }
+})
+
+export const {addItem, removeItem, clearCart}= cartSlice.actions;
+
+export default cartSlice.reducer;
+
+// 📁Header.js   (show items count from slice to header)
+
+import React from 'react'
+import { useSelector } from 'react-redux';  //✅5
+const Header = () => {
+
+//Subscribing to the store using selector
+const cartItems = useSelector((store)=> store.cart.items) //✅5
+  return (
+    <div>
+      <li>{cartItems.length}</li>//✅5
+    </div>
+  )
+}
+
+export default Header
+
+
+//📁ItemList.js                                     
+                             
+import { useDispatch } from 'react-redux';
+import {addItem} from "../utils/cartSlice"; //✅8
+
+const ItemList =({items})=>{
+
+    const dispatch= useDispatch(); //✅7
+
+    const handelAddItem =(item)=>{  //✅6
+        //Dispatch an action
+        dispatch(addItem(item)) //✅8
+
+        /*
+        {
+        payload:"cart"
+        }
+        */
+
+    }
+    
+    return(
+    
+    <div>
+    {items.map((item)=>{
+    <div key={item.card.info.id} onClick={handleClick}>      
+    <span>{item.card.info.name}</span>
+    <span>{item.card.info.price ? item.card.info.price /100 : item.card.info.defaultPrise}</span>
+    <button onClick={()=>{
+        handelAddItem(item)  //✅6
+    }}>Add+</button>
+    </div>    
+    })}
+    </div>
+    
+    ) 
+}
+
+export default ItemList
+
+/*
+onClick={handleClick(item)}❌This means you already called the function
+onClick={handleClick} ✅
+onClick={()=>handleClick()}
+*/
+
+
+// 📁Cart.js   //✅9
+
+//Adding to cart page
+import React from 'react'
+import { useSelector } from 'react-redux';
+
+//Remove items from cart page
+import { useDispatch } from 'react-redux';
+
+
+const cartItem= useSelector((store)=> store.cart.item); // Always do subscribe small and write porsion of the store
+/*
+(or)
+cosnt store= useSelector((store)=> store);
+const cartItem= store.cart.items;
+console.log(cartItem)
+*/
+
+const Cart = () => {
+
+     //Remove items from cart page
+    const dispatch= useDispatch();
+    const claerCart=()=>{
+        dispatch(cartItem())
+    }
+
+  return (
+    <div>
+      //Adding to cart page
+      <ItemList items={cartItem}/>
+
+
+      //Remove items from cart page
+      <button onClick={claerCart}>Clear Cart</button>
+      {cartItem.length === 0 && <h1>Please Add products to your cart</h1>}
+    </div>
+  )
+}
+
+export default Cart
+
+
+
+
+//🔥 Redux Thunk Middleware (Redux me api calling kase hotahe)
+
+/*
+Redux Thunkl is a middleware that allows you to write action creators that return a function instead of an action . This function can perform asynchronous logic (like API request) and dispatch actions after hte operation is coomplite (e.g. fatching task and then dipatching them to the store)
+
+when you retrn a function from an action creator, Redux thunk provides the function as a argument. THis allows you to manully dipatch other actions(e.g. When an API call succeeds or falls)
+
+Redux thunk ek middleware he jis k madat se hum action ko dispath kartahe . ya action hamare liya api call karta he or jo bhai data ata he use hamare satate me set kar detahe . 
+
+jab hume koi delay task parform karna hotahe tab hum thunk use kartehe. 
+
+*/
+
+redux / store.js
+
+import {configureStore} from "@redux/toolkit"
+import todoReducer  from './slice/todo'
+
+export const store = configureStore({
+    reducer:{
+        todo:todoReducer
+    }
+})
+
+
+redux / todo.js
+
+import {createSlice,createAsyncThunk} from "@reduxjs/toolkit";
+
+export const fetchTodos= createAsyncThunk('fetchTodos',async ()=>{
+
+    //jab fetchTodos actions dispatch hoga ya particular function run hone wala he
+
+    const response= await fetch('https://api.com/weather')
+    retrn response.json();
+})
+
+const todoSlice= createSlice({
+
+    name:"todo",
+    initialState:{
+        isLoading:false,
+        data:null,
+        isError:false
+    },
+    extraReducers:(builder)=>{
+        //to put on state we use extraReducers
+
+        builder.pending(fetchTodos.pending,{state, action}=>{
+            state.isLoading=true
+        });
+
+        builder.addCase(fetchTodos.fullfilled,{state, action}=>{
+            state.isLoading=false;
+            state.data= action.payload;
+        });
+
+        builder.addCase(fetchTodos.rejected,{state, action}=>{
+            console.log("Error", action.payload);
+            state.isError=true
+        });
+    }
+
+})
+
+export default todoSlice.reducer;
+
+
+App.js 
+-------
+
+import {useDispatch, useSelector} from "react-redux";
+import {fetchTodos} from './redux/slice/todo';
+
+function App(){
+    const dispatch= useDispatch();
+    const state= useSelector((state)=> state);
+
+    if(state.todo.isLoading){
+        return <h1>Loading....</h1>
+    }
+
+    return(
+        <>
+        <button onClick={(e)=> dispatch(fetchTodos())}>Fetchin Tdods..</button>
+        {
+            state.todo.data && state.todo.data.map((e)=> <li>{e.title}</li>)
+        }
+        </>
+    )
+}
+
+
+     (or)
+
+
+      
+//Async task on reducer (fetching the product details by redux thunk)
+
+
+// Create productSlice.js  into Redux(store) folder 
+
+// productSlice.js
+
+const { createSlice, createAsyncThunk } from '@redux/redux';
+
+
+const productSlice = cartSlice({
+    name: "product",
+    initialState: {
+        data: [],
+        status: "idle",
+
+    },
+    extraReducers: (builder) => {
+        builder
+
+            .addCase(fetchProducts.pending, (state, action) => {
+                state.state = "loading"
+            })
+
+            .addCase(fetchProducts.fullfilled, (state, action) => {
+                state.data = action.payload;
+                state.staus = "Idle"
+            })
+
+            .addCase(fetchProducts.rejected, (state, action) => {
+                state.staus = "Error"
+            })
+
+    }
+
+
+})
+
+
+export const { add, remove } = cartSlice.actions;
+
+export default cartSlice.reducer;
+
+//thunk ek function he
+
+export const fetchProducts = createAsyncThunk("anyname", async () => {
+    const res = await fetch("https://fecthstore.com/products");
+    const data = await res.json()
+    return data
+})
+
+
+
+//Product.jsx 
+
+import React from 'react'
+import { useSelector } from "react-redux";
+
+const Product = () => {
+
+    const {data: products,status}=useSelector((state)=>state.product);
+
+    if(status==="loading"){
+        return <h2>Loading...</h2>
+    }
+
+    if(status==="error"){
+        return <h2>Error</h2>
+    }
+
+  return (
+    <div>
+        {
+             products.map((products)=>{
+                <>
+                <img src={products.src}/>
+                <button>Add to cart</button>
+                </>
+            })
+        }
+
+    </div>
+  )
+}
+
+export default Product
+
+============================================================================================================
+
+
+  Next js with Typescript (useContext API)
+
+
+  cosnt dispatch= useDispatch();
+
+  const markTodoAdComplite=({id}:{id:string})=>{
+    if(todo.complited) return;
+    dispatch(completedTodo(id))
+  }
+
+
+  return(
+    <div>
+      <checkbox/>
+      <h3>{todo.title}</h3>
+      <Edit/>
+      <Complite onClick={()=> dispatch(deleteTodo(todo.id))} chechked={todo.complited && true}/>
+      <Delete onClick={()=>markTodoAdComplite({id:todo.id})}/>
+    </div>
+  )
+}
+
+
+//✅ Edit tood ------------
+
+// TodoTile.tsx 
+
+import {Todo} from '@/interface';
+import {createSlice} from '@redux/toolkit';
+import deleteTodo from 'redux/slice'
+import {maktodo} from 'redux/slice'
+
+
+TodoTile=({todo}:{todo:Todo})=>{
+
+  const [editable,setEditable]=useState(false);
+
+  const dispatch= useDispatch();
+
+  const markTodoAdComplite=({id}:{id:string})=>{
+    if(todo.complited) return;
+    dispatch(completedTodo(id))
+  }
+
+  const editTodo=({id}:{id:string})=>{
+
+
+  }
+
+
+  return(
+    <div>
+      <checkbox/>
+      <h3 contentEditable={editable}>{todo.title}</h3>
+      {
+        !todo.complited && editable ? <Save/> : 
+        <>
+        <Edit onClick={()=> setEditable(!editable)} onClick={()=>editTodo(id: todo.id)}/>
+        <Complite onClick={()=> dispatch(deleteTodo(todo.id))} chechked={todo.complited && true}/>
+        <Delete onClick={()=>markTodoAdComplite({id:todo.id})}/>
+        </>
+      }
+      
+    </div>
+  )
+}
+
+----------------------------------------------------------------------------------------------------------------
+
+Next js 15 with redux 
+----------------------
+
+npm install @reduxjs/toolkit react-redux
+
+
+✅ Set Up Redux Store
+📁 Create a folder: lib/store.js
+----------------------------------------
+// lib/store.js
+import { configureStore } from '@reduxjs/toolkit'
+import counterReducer from './features/counterSlice'
+
+export const store = configureStore({
+  reducer: {
+    counter: counterReducer,
+  },
+})
+
+
+✅ Create a Slice
+📁 Create: lib/features/counterSlice.js
+-------------------------------------------
+// lib/features/counterSlice.js
+import { createSlice } from '@reduxjs/toolkit'
+
+const initialState = {
+  value: 0,
+}
+
+const counterSlice = createSlice({
+  name: 'counter',
+  initialState,
+  reducers: {
+    increment: (state) => {
+      state.value += 1
+    },
+    decrement: (state) => {
+      state.value -= 1
+    },
+    reset: (state) => {
+      state.value = 0
+    },
+  },
+})
+
+export const { increment, decrement, reset } = counterSlice.actions
+export default counterSlice.reducer
+
+
+✅ Create Provider Component
+📁 Create: app/providers.js
+-------------------------------------
+'use client'
+
+import { Provider } from 'react-redux'
+import { store } from '../lib/store'
+
+export function Providers({ children }) {
+  return <Provider store={store}>{children}</Provider>
+}
+
+✅ Wrap App with Provider
+📁 Edit app/layout.js
+----------------------------
+// app/layout.js
+import './globals.css'
+import { Inter } from 'next/font/google'
+import { Providers } from './providers'
+
+const inter = Inter({ subsets: ['latin'] })
+
+export const metadata = {
+  title: 'Redux with Next.js 15',
+  description: 'A simple Redux example',
+}
+
+export default function RootLayout({ children }) {
+  return (
+    <html lang="en">
+      <body className={inter.className}>
+        <Providers>{children}</Providers>
+      </body>
+    </html>
+  )
+}
+
+
+============================================================================================================
