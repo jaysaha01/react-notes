@@ -1419,5 +1419,169 @@ export default function robots(): MetadataRoute.Robots {
 
 // ==================================================================================================
 
-// css Modules 
+Next js with Typescript (useContext API)
+
+
+  cosnt dispatch= useDispatch();
+
+  const markTodoAdComplite=({id}:{id:string})=>{
+    if(todo.complited) return;
+    dispatch(completedTodo(id))
+  }
+
+
+  return(
+    <div>
+      <checkbox/>
+      <h3>{todo.title}</h3>
+      <Edit/>
+      <Complite onClick={()=> dispatch(deleteTodo(todo.id))} chechked={todo.complited && true}/>
+      <Delete onClick={()=>markTodoAdComplite({id:todo.id})}/>
+    </div>
+  )
+}
+
+
+//✅ Edit tood ------------
+
+// TodoTile.tsx 
+
+import {Todo} from '@/interface';
+import {createSlice} from '@redux/toolkit';
+import deleteTodo from 'redux/slice'
+import {maktodo} from 'redux/slice'
+
+
+TodoTile=({todo}:{todo:Todo})=>{
+
+  const [editable,setEditable]=useState(false);
+
+  const dispatch= useDispatch();
+
+  const markTodoAdComplite=({id}:{id:string})=>{
+    if(todo.complited) return;
+    dispatch(completedTodo(id))
+  }
+
+  const editTodo=({id}:{id:string})=>{
+
+
+  }
+
+
+  return(
+    <div>
+      <checkbox/>
+      <h3 contentEditable={editable}>{todo.title}</h3>
+      {
+        !todo.complited && editable ? <Save/> : 
+        <>
+        <Edit onClick={()=> setEditable(!editable)} onClick={()=>editTodo(id: todo.id)}/>
+        <Complite onClick={()=> dispatch(deleteTodo(todo.id))} chechked={todo.complited && true}/>
+        <Delete onClick={()=>markTodoAdComplite({id:todo.id})}/>
+        </>
+      }
+      
+    </div>
+  )
+}
+
+----------------------------------------------------------------------------------------------------------------
+
+Next js 15 with redux 
+----------------------
+
+npm install @reduxjs/toolkit react-redux
+
+
+✅ Set Up Redux Store
+📁 Create a folder: lib/store.js
+----------------------------------------
+// lib/store.js
+import { configureStore } from '@reduxjs/toolkit'
+import counterReducer from './features/counterSlice'
+
+export const store = configureStore({
+  reducer: {
+    counter: counterReducer,
+  },
+})
+
+
+✅ Create a Slice
+📁 Create: lib/features/counterSlice.js
+-------------------------------------------
+// lib/features/counterSlice.js
+import { createSlice } from '@reduxjs/toolkit'
+
+const initialState = {
+  value: 0,
+}
+
+const counterSlice = createSlice({
+  name: 'counter',
+  initialState,
+  reducers: {
+    increment: (state) => {
+      state.value += 1
+    },
+    decrement: (state) => {
+      state.value -= 1
+    },
+    reset: (state) => {
+      state.value = 0
+    },
+  },
+})
+
+export const { increment, decrement, reset } = counterSlice.actions
+export default counterSlice.reducer
+
+
+✅ Create Provider Component
+📁 Create: app/providers.js
+-------------------------------------
+'use client'
+
+import { Provider } from 'react-redux'
+import { store } from '../lib/store'
+
+export function Providers({ children }) {
+  return <Provider store={store}>{children}</Provider>
+}
+
+✅ Wrap App with Provider
+📁 Edit app/layout.js
+----------------------------
+// app/layout.js
+import './globals.css'
+import { Inter } from 'next/font/google'
+import { Providers } from './providers'
+
+const inter = Inter({ subsets: ['latin'] })
+
+export const metadata = {
+  title: 'Redux with Next.js 15',
+  description: 'A simple Redux example',
+}
+
+export default function RootLayout({ children }) {
+  return (
+    <html lang="en">
+      <body className={inter.className}>
+        <Providers>{children}</Providers>
+      </body>
+    </html>
+  )
+}
+
+
+============================================================================================================
+
+  
+  
+
+
+
+
 
