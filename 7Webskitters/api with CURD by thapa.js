@@ -2601,315 +2601,180 @@ export default Product
 ============================================================================================================
 
 
-  
-// TODO APP with type script
+TODO APP With Next js 15, typescript and context api
 
-//✅ Basic Setup
+todo-app/
+├── app/
+│   ├── layout.tsx
+│   ├── page.tsx
+├── components/
+│   ├── AddTodo.tsx
+│   ├── TodoList.tsx
+├── context/
+│   └── TodoContext.tsx
+├── types/
+│   └── todo.ts
+├── styles/
+│   └── globals.css
+├── tsconfig.json
+└── package.json
 
-import React from 'react'
-
-const App = () => {
-  return (
-    <div>
-      <inputFiled/>
-      
-      
-    </div>
-  )
+Define Types – types/todo.ts
+----------------------------
+export interface Todo {
+  id: number;
+  task: string;
+  completed: boolean;
 }
 
-export default App
+Create Context – context/TodoContext.tsx
+---------------------------------------------
+'use client';
 
+import React, { createContext, useContext, useState, ReactNode } from 'react';
+import { Todo } from '../types/todo';
 
-
-// inputFile.tsx 
-
-import React from 'react'
-
-const InputFileld = () => {
-  return (
-    <div>
-      <form>
-      <input placeholder='Enter To do App' type='text'/>
-      <button>ADD TO DO</button>
-      </form>
-    </div>
-  )
+interface TodoContextType {
+  todos: Todo[];
+  addTodo: (task: string) => void;
+  removeTodo: (id: number) => void;
 }
 
-export default inputFile
+const TodoContext = createContext<TodoContextType | undefined>(undefined);
 
+export const useTodo = () => {
+  const context = useContext(TodoContext);
+  if (!context) throw new Error('useTodo must be used within TodoProvider');
+  return context;
+};
 
-//✅ setup redux toolkit and write logic
+export const TodoProvider = ({ children }: { children: ReactNode }) => {
+  const [todos, setTodos] = useState<Todo[]>([]);
 
-/*
-install redux
+  const addTodo = (task: string) => {
+    const newTodo: Todo = {
+      id: Date.now(),
+      task,
+      completed: false,
+    };
+    setTodos([...todos, newTodo]);
+  };
 
-create "redux" file into the root > "store.ts" >    
-*/
-
-// store.ts 
-
-import {configureStore} from "@redeuxjs/toolkit"
-import todoSlice from './slice/todoSlice'
-
-export const store= configureStore({
-  reducer:{
-    todo:todoSlice
-
-  }
-})
-
-
-// todoSlice.ts
-
-
-import {createSlice} from "@redux/toolkit";
-
-interface Todo{
-  id:string,
-  title:stirng,
-  complited:boolean
-}
-
-const todoSLice=createSlice({
-  name:"todo",
-
-  initialState:{
-    todos:[] as Todo[]
-  }
-
-  reducers:{
-    addTodo:(state, action: {payload:Todo})=>{
-      state.todos.push(action.payload)
-    },
-
-    updateTodo:(stete,action:{payload:Todo})=>{
-      const index= state.todo.findIndex((todo)=> todo,id === action.payload.id)
-      state.todos[index] = {...state.todos[index], ...action.payload}
-    }
-
-    deleteTodo:(state,action:{payload:string})=>{
-      state.todos= state.todos.filter((todo)=> todo.id !== action.payload)
-    }
-
-    compliteTodo:(state,action:{payload: string})=>{
-      const index = state.todos.findIndex((todo)=> todo.id === action.payload);
-      state.todos[index].complited= true
-      const {complitedTodo}= state.todos.splice(index,1);
-      complitedTodo.coomplited=true;
-      state.todos.push(completedTodo)
-    }
-
-  }
-})
-
-export const {addTodo, updateTodo, deleteTodo, completedTodo}= todoSLice.actions;
-
-export default todoSLice.reducer
-
-
-// main.tsx
-
-import Provider, { useDispatch } from 'react-redux';
-import {store} from 'redux/toolkit';
-
-<Provider store={store}>
-  <App/>
-</Provider>
-
-
-//✅ Set upDisplay ------------
-
-
-// interfaces.ts
-interface Todo{
-  id:string,
-  title:stirng,
-  complited:boolean
-}
-
-
-import React from 'react'
-
-const App = () => {
-  return (
-    <div>
-      <inputFiled/>
-      <todoDisplay/>
-    </div>
-  )
-}
-
-export default App
-
-
-// TodoTile.tsx 
-
-import {Todo} from '@/interface';
-import {createSlice} from '@redux/toolkit';
-
-
-TodoTile=({todo}:{todo:Todo})=>{
-  return(
-    <div>
-      <checkbox/>
-      <h3>{todo.title}</h3>
-      <Penclil/>
-      <Edit/>
-      <Delete/>
-    </div>
-  )
-}
-
-
-//✅ Add tood ------------
-
-
-// inputFile.tsx 
-
-import React from 'react'
-import {addTodo} from '../../redux/store/todoslice'
-import Dispatch form 'redux';
-
-const InputFileld = () => {
-
-  const dispatch= useDispatch();
-
-  const addTodoData=(e:FormEvent<HTMLElement>)=>{
-    e.preventDefault()
-    const todo= e.currentTarget.todo.value.trim();
-
-    if(todo){
-
-      dispatch(addTodo({
-
-        const id= crypto.currentUUID();
-
-        dispatch(addTodo({
-          id,
-          title:todo,
-          complited:false
-        }))
-
-        e.currentTarget.reset()
-        return
-
-      }))
-
-
-    }
-    console.log(todo)
-
-  }
-  return (
-    <div>
-      <form onSubmit={addTodoData}>
-      <input placeholder='Enter To do App' type='text'/>
-      <button>ADD TO DO</button>
-      </form>
-    </div>
-  )
-}
-
-export default inputFile
-
-
-// todoDisplay.tsx
-
-import React from 'react'
-import { useSelector } from 'react-redux';
-
-
-export const todoDisplay = () => {
-
-  const todos= useSelector((state: any)=> state.todo.todos as Todo[]);
+  const removeTodo = (id: number) => {
+    setTodos(todos.filter(todo => todo.id !== id));
+  };
 
   return (
-    <div>
-    {
-      todo.map((todo)=>{
-        <TodoTile todo={todo} key={todo.id}/>
-      })
-    }
-    
-    </div>
-  )
+    <TodoContext.Provider value={{ todos, addTodo, removeTodo }}>
+      {children}
+    </TodoContext.Provider>
+  );
+};
+
+
+
+
+Layout Setup – app/layout.tsx
+----------------------------
+
+  import './globals.css';
+import { TodoProvider } from '../context/TodoContext';
+
+export const metadata = {
+  title: 'Todo App',
+};
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="en">
+      <body>
+        <TodoProvider>
+          <main className="p-6 max-w-xl mx-auto">{children}</main>
+        </TodoProvider>
+      </body>
+    </html>
+  );
 }
 
 
-//✅ Delete tood ------------
+Home Page – app/page.tsx
+-------------------------
 
-// TodoTile.tsx 
+  import AddTodo from '../components/AddTodo';
+import TodoList from '../components/TodoList';
 
-import {Todo} from '@/interface';
-import {createSlice} from '@redux/toolkit';
-import deleteTodo from 'redux/slice'
-import {maktodo} from 'redux/slice'
-
-
-TodoTile=({todo}:{todo:Todo})=>{
-
-  cosnt dispatch= useDispatch();
-
-  const markTodoAdComplite=({id}:{id:string})=>{
-    if(todo.complited) return;
-    dispatch(completedTodo(id))
-  }
-
-
-  return(
+export default function Home() {
+  return (
     <div>
-      <checkbox/>
-      <h3>{todo.title}</h3>
-      <Edit/>
-      <Complite onClick={()=> dispatch(deleteTodo(todo.id))} chechked={todo.complited && true}/>
-      <Delete onClick={()=>markTodoAdComplite({id:todo.id})}/>
+      <h1 className="text-2xl font-bold mb-4">Todo App</h1>
+      <AddTodo />
+      <TodoList />
     </div>
-  )
+  );
 }
 
 
-//✅ Edit tood ------------
+AddTodo Component – components/AddTodo.tsx
+-------------------------------------------
 
-// TodoTile.tsx 
+'use client';
 
-import {Todo} from '@/interface';
-import {createSlice} from '@redux/toolkit';
-import deleteTodo from 'redux/slice'
-import {maktodo} from 'redux/slice'
+import { useState } from 'react';
+import { useTodo } from '../context/TodoContext';
 
+export default function AddTodo() {
+  const { addTodo } = useTodo();
+  const [task, setTask] = useState('');
 
-TodoTile=({todo}:{todo:Todo})=>{
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!task.trim()) return;
+    addTodo(task);
+    setTask('');
+  };
 
-  const [editable,setEditable]=useState(false);
-
-  const dispatch= useDispatch();
-
-  const markTodoAdComplite=({id}:{id:string})=>{
-    if(todo.complited) return;
-    dispatch(completedTodo(id))
-  }
-
-  const editTodo=({id}:{id:string})=>{
-
-
-  }
-
-
-  return(
-    <div>
-      <checkbox/>
-      <h3 contentEditable={editable}>{todo.title}</h3>
-      {
-        !todo.complited && editable ? <Save/> : 
-        <>
-        <Edit onClick={()=> setEditable(!editable)} onClick={()=>editTodo(id: todo.id)}/>
-        <Complite onClick={()=> dispatch(deleteTodo(todo.id))} chechked={todo.complited && true}/>
-        <Delete onClick={()=>markTodoAdComplite({id:todo.id})}/>
-        </>
-      }
-      
-    </div>
-  )
+  return (
+    <form onSubmit={handleSubmit} className="mb-4">
+      <input
+        type="text"
+        value={task}
+        onChange={e => setTask(e.target.value)}
+        placeholder="Enter a task"
+        className="border p-2 rounded mr-2"
+      />
+      <button type="submit" className="bg-blue-500 text-white p-2 rounded">
+        Add
+      </button>
+    </form>
+  );
 }
+
+
+TodoList Component – components/TodoList.tsx
+----------------------------------------------
+
+'use client';
+
+import { useTodo } from '../context/TodoContext';
+
+export default function TodoList() {
+  const { todos, removeTodo } = useTodo();
+
+  return (
+    <ul className="space-y-2">
+      {todos.map(todo => (
+        <li key={todo.id} className="flex justify-between items-center border p-2 rounded">
+          <span>{todo.task}</span>
+          <button
+            onClick={() => removeTodo(todo.id)}
+            className="text-red-500 hover:underline"
+          >
+            Delete
+          </button>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+
