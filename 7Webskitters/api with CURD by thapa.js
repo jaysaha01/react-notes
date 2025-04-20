@@ -624,96 +624,191 @@ export const updateData = (id, data) => {   //✅4
                                         ✅ React Hook Form
 ==============================================================================================================
 
-//✅ React Form (go to npm of react hook form to get more details of the configuration)
 
-// https://react-hook-form.com/
 
-// > npm install react-hook-form
+  npm install react-hook-form
 
-import React from 'react'
-import { useForm, SubmitHandler } from "react-hook-form"//✅1
 
-const realapi = () => {
+  🧩 Step 1: React Hook Form ব্যবহার করা – Basic Example
+-------------------------------------------------------
 
+import React from 'react';
+import { useForm } from 'react-hook-form';
+
+function App() {
+  const { register, handleSubmit, formState: { errors } } = useForm();
+
+  const onSubmit = (data) => {
+    console.log("Form Data:", data);
+  };
+
+  return (
+    <div style={{ margin: "20px" }}>
+      <h2>React Hook Form Tutorial</h2>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <div>
+          <label>Name:</label>
+          <input {...register("name", { required: true })} />
+          {errors.name && <p style={{ color: "red" }}>Name is required</p>}
+        </div>
+
+        <div>
+          <label>Email:</label>
+          <input {...register("email", { required: true })} />
+          {errors.email && <p style={{ color: "red" }}>Email is required</p>}
+        </div>
+
+        <input type="submit" />
+      </form>
+    </div>
+  );
+}
+
+export default App;
+
+
+📝 Explanation (বাংলায়):
+useForm() → React Hook Form এর main hook যেটা ফর্ম ম্যানেজ করতে সাহায্য করে।
+
+register("name") → ফর্ম ইনপুট কে রেজিস্টার করে।
+
+handleSubmit(onSubmit) → সাবমিট করার সময় এই ফাংশন কল হয়।
+
+errors → ফর্ম ভ্যালিডেশন error দেখায়।
+
+
+✅ Step 2: Default Values ও Reset করা
+----------------------------------------
+
+const { register, handleSubmit, reset } = useForm({
+  defaultValues: {
+    name: "Ranajay",
+    email: "ranajay@example.com"
+  }
+});
+
+const onSubmit = (data) => {
+  console.log(data);
+  reset(); // ফর্ম ক্লিয়ার করবে
+};
+
+
+
+🎯 Step 4: Validation Rules
+---------------------------------
+<input
+  {...register("email", {
+    required: "Email is required",
+    pattern: {
+      value: /^\S+@\S+$/i,
+      message: "Invalid email address"
+    }
+  })}
+/>
+{errors.email && <p>{errors.email.message}</p>}
+
+
+
+🔧 ১. setValue() কী?
+  ----------------------
+
+👉 setValue() হলো React Hook Form এর একটি ফাংশন যেটার মাধ্যমে তুমি ম্যানুয়ালি কোনো ইনপুট ফিল্ডের ভ্যালু সেট করতে পারো।
+
+  import React, { useEffect } from 'react';
+import { useForm } from 'react-hook-form';
+
+function App() {
+  const { register, handleSubmit, setValue } = useForm();
+
+  useEffect(() => {
+    setValue("username", "ranajay");
+  }, [setValue]);
+
+  const onSubmit = (data) => {
+    console.log(data);
+  };
+
+  return (
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <input {...register("username")} placeholder="Username" />
+      <button type="submit">Submit</button>
+    </form>
+  );
+}
+
+export default App;
+
+📌 আমরা কেন Controller ব্যবহার করি?
+
+React Hook Form এ register() হলো একটা ফাংশন — যেটা ইনপুট ফিল্ডকে ফর্মের সাথে যুক্ত করে। <input {...register("name")} />
+🧱 Step 2: সমস্যা কোথায় হয়?
+🎯 ধরো তুমি Material UI, React Select, অথবা DatePicker ইউজ করছো।
+  <TextField />
+<Select />
+<DatePicker />
+
+  ✅ এইসব ফিল্ডে আমরা register() দিতে পারি না, কারণ:
+
+এরা নিজেরা কাস্টম UI রেন্ডার করে
+
+ভিতরে আসলে আর input থাকে না
+
+React Hook Form বুঝতে পারে না, কোনটা value, কোনটা onChange
+
+  এখন এই সমস্যার সমাধান দিতে আসে 👉 Controller।
+যেমন translator যেমন দুই ভাষার মাঝে দোভাষী হয়ে কাজ করে, ঠিক তেমনই:
+
+
+<Controller
+  name="email"
+  control={control}
+  defaultValue=""
+  render={({ field }) => (
+    <TextField {...field} label="Email" />
+  )}
+/>
+
+
+
+🧠 isSubmitting কী?
+
+👉 isSubmitting হলো React Hook Form এর একটি built-in স্টেট (state)।
+এটা formState অবজেক্টের ভিতরে থাকে।
+
+📌 কাজ: যখন তুমি ফর্ম সাবমিট করো, তখন isSubmitting true হয়ে যায় এবং সাবমিশন শেষ হলে আবার false হয়ে যায়।
+
+import React from "react";
+import { useForm } from "react-hook-form";
+
+function ContactForm() {
   const {
     register,
     handleSubmit,
-    reset(), //to refresh the form
-    formState: { errors ,isSubmitting }, //✅6
-  } = useForm()  //✅2
+    formState: { isSubmitting }
+  } = useForm();
 
-  const onSubmit= (data) => console.log(data) //✅4 {username:"harray", password:"hrray123"}
-
-//{...register} is used to link with your input to react hook form. 
-
-  return (
-    <div>
-      { isSubmitting && <div>Loading</div>}  //✅7
-      <container>
-        <form action="" onSubmit={handleSubmit(onSubmit)}> //✅3
-          <input className={errors.username ? "input-error-class" ? ""}  type="text" {...register("username" , {required: true, minLength: {value: 3, message: "Min Length 3"}, maxLength:{value: 8, message: "Max Length 8"}} )} ></input>  //✅5
-          {errors.username && <div className="red">{errors.username.message}</div>} //for visible the error 
-
-
-          <input type="password" {...register("password", {pattern:{value:/^[A-Za-z]+$/i , message: "Last Name is not as per rules"}) } ></input>  //✅5
-            {errors.password && <div className="red">{errors.password.message}</div>}
-
-
-          <input disabled={isSubmitting} type="submit"/>
-
-        </form>
-      </container>
-    </div>
-  )
-}
-
-export default realapi
-
-//----------------------Submiting ke doran dubara submit nahi hone se kase bache (Debouncing) ----------------------
-
-//isSubmitting darshatahe ki appki from abhi submit ho rahahe ya nahi
-
-import React from 'react'
-import { useForm, SubmitHandler } from "react-hook-form"
-
-const realapi = () => {
-
-  const {
-    register,
-    handleSubmit,         ✅2
-    formState: { errors ,isSubmitting }, 
-  } = useForm() 
-
-  async const onSubmit= (data) => {
-    //API call ko simulate krte ✅1
-    await Promise((resolve) =>setTimeout(resolve, 5000))
-    console.log(data) 
-  }
-
+  const onSubmit = async (data) => {
+    console.log("Submitting:", data);
+    // simulate delay like API call
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+    console.log("Submitted!");
+  };
 
   return (
-    <div>
-      { isSubmitting && <div>Loading</div>}  
-      <container>
-        <form action="" onSubmit={handleSubmit(onSubmit)}> 
-          <input className={errors.username ? "input-error-class" ? ""}  type="text" {...register("username" , {required: true, minLength: {value: 3, message: "Min Length 3"}, maxLength:{value: 8, message: "Max Length 8"}} )} ></input>  //✅5
-          {errors.username && <div className="red">{errors.username.message}</div>} //for visible the error 
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <input {...register("name", { required: true })} placeholder="Your Name" />
+      <input {...register("email", { required: true })} placeholder="Your Email" />
 
-
-          <input type="password" {...register("password", {pattern:{value:/^[A-Za-z]+$/i , message: "Last Name is not as per rules"}) } ></input>  
-            {errors.password && <div className="red">{errors.password.message}</div>}
-
-                             ✅3                                ✅4
-          <input disabled={isSubmitting} type="submit" value={isSubmitting} ? "Submitting" ? "Submit" />
-
-        </form>
-      </container>
-    </div>
-  )
+      <button type="submit" disabled={isSubmitting}>
+        {isSubmitting ? "Submitting..." : "Submit"}
+      </button>
+    </form>
+  );
 }
 
-export default realapi
-  
+
+      
+
 
 ===========================================================================================================================================================
                                                             ✅ Axios Tutoruyal
@@ -1520,6 +1615,7 @@ delte => delete
 
 /*
 json server=> ceate api locally. if you fit the data into the json server then it will not remove
+
 
 install json server (it is a Dev dependancy)
 ==============================================
@@ -2505,8 +2601,254 @@ export default Product
 ============================================================================================================
 
 
-  Next js with Typescript (useContext API)
+  
+// TODO APP with type script
 
+//✅ Basic Setup
+
+import React from 'react'
+
+const App = () => {
+  return (
+    <div>
+      <inputFiled/>
+      
+      
+    </div>
+  )
+}
+
+export default App
+
+
+
+// inputFile.tsx 
+
+import React from 'react'
+
+const InputFileld = () => {
+  return (
+    <div>
+      <form>
+      <input placeholder='Enter To do App' type='text'/>
+      <button>ADD TO DO</button>
+      </form>
+    </div>
+  )
+}
+
+export default inputFile
+
+
+//✅ setup redux toolkit and write logic
+
+/*
+install redux
+
+create "redux" file into the root > "store.ts" >    
+*/
+
+// store.ts 
+
+import {configureStore} from "@redeuxjs/toolkit"
+import todoSlice from './slice/todoSlice'
+
+export const store= configureStore({
+  reducer:{
+    todo:todoSlice
+
+  }
+})
+
+
+// todoSlice.ts
+
+
+import {createSlice} from "@redux/toolkit";
+
+interface Todo{
+  id:string,
+  title:stirng,
+  complited:boolean
+}
+
+const todoSLice=createSlice({
+  name:"todo",
+
+  initialState:{
+    todos:[] as Todo[]
+  }
+
+  reducers:{
+    addTodo:(state, action: {payload:Todo})=>{
+      state.todos.push(action.payload)
+    },
+
+    updateTodo:(stete,action:{payload:Todo})=>{
+      const index= state.todo.findIndex((todo)=> todo,id === action.payload.id)
+      state.todos[index] = {...state.todos[index], ...action.payload}
+    }
+
+    deleteTodo:(state,action:{payload:string})=>{
+      state.todos= state.todos.filter((todo)=> todo.id !== action.payload)
+    }
+
+    compliteTodo:(state,action:{payload: string})=>{
+      const index = state.todos.findIndex((todo)=> todo.id === action.payload);
+      state.todos[index].complited= true
+      const {complitedTodo}= state.todos.splice(index,1);
+      complitedTodo.coomplited=true;
+      state.todos.push(completedTodo)
+    }
+
+  }
+})
+
+export const {addTodo, updateTodo, deleteTodo, completedTodo}= todoSLice.actions;
+
+export default todoSLice.reducer
+
+
+// main.tsx
+
+import Provider, { useDispatch } from 'react-redux';
+import {store} from 'redux/toolkit';
+
+<Provider store={store}>
+  <App/>
+</Provider>
+
+
+//✅ Set upDisplay ------------
+
+
+// interfaces.ts
+interface Todo{
+  id:string,
+  title:stirng,
+  complited:boolean
+}
+
+
+import React from 'react'
+
+const App = () => {
+  return (
+    <div>
+      <inputFiled/>
+      <todoDisplay/>
+    </div>
+  )
+}
+
+export default App
+
+
+// TodoTile.tsx 
+
+import {Todo} from '@/interface';
+import {createSlice} from '@redux/toolkit';
+
+
+TodoTile=({todo}:{todo:Todo})=>{
+  return(
+    <div>
+      <checkbox/>
+      <h3>{todo.title}</h3>
+      <Penclil/>
+      <Edit/>
+      <Delete/>
+    </div>
+  )
+}
+
+
+//✅ Add tood ------------
+
+
+// inputFile.tsx 
+
+import React from 'react'
+import {addTodo} from '../../redux/store/todoslice'
+import Dispatch form 'redux';
+
+const InputFileld = () => {
+
+  const dispatch= useDispatch();
+
+  const addTodoData=(e:FormEvent<HTMLElement>)=>{
+    e.preventDefault()
+    const todo= e.currentTarget.todo.value.trim();
+
+    if(todo){
+
+      dispatch(addTodo({
+
+        const id= crypto.currentUUID();
+
+        dispatch(addTodo({
+          id,
+          title:todo,
+          complited:false
+        }))
+
+        e.currentTarget.reset()
+        return
+
+      }))
+
+
+    }
+    console.log(todo)
+
+  }
+  return (
+    <div>
+      <form onSubmit={addTodoData}>
+      <input placeholder='Enter To do App' type='text'/>
+      <button>ADD TO DO</button>
+      </form>
+    </div>
+  )
+}
+
+export default inputFile
+
+
+// todoDisplay.tsx
+
+import React from 'react'
+import { useSelector } from 'react-redux';
+
+
+export const todoDisplay = () => {
+
+  const todos= useSelector((state: any)=> state.todo.todos as Todo[]);
+
+  return (
+    <div>
+    {
+      todo.map((todo)=>{
+        <TodoTile todo={todo} key={todo.id}/>
+      })
+    }
+    
+    </div>
+  )
+}
+
+
+//✅ Delete tood ------------
+
+// TodoTile.tsx 
+
+import {Todo} from '@/interface';
+import {createSlice} from '@redux/toolkit';
+import deleteTodo from 'redux/slice'
+import {maktodo} from 'redux/slice'
+
+
+TodoTile=({todo}:{todo:Todo})=>{
 
   cosnt dispatch= useDispatch();
 
@@ -2571,95 +2913,3 @@ TodoTile=({todo}:{todo:Todo})=>{
     </div>
   )
 }
-
-----------------------------------------------------------------------------------------------------------------
-
-Next js 15 with redux 
-----------------------
-
-npm install @reduxjs/toolkit react-redux
-
-
-✅ Set Up Redux Store
-📁 Create a folder: lib/store.js
-----------------------------------------
-// lib/store.js
-import { configureStore } from '@reduxjs/toolkit'
-import counterReducer from './features/counterSlice'
-
-export const store = configureStore({
-  reducer: {
-    counter: counterReducer,
-  },
-})
-
-
-✅ Create a Slice
-📁 Create: lib/features/counterSlice.js
--------------------------------------------
-// lib/features/counterSlice.js
-import { createSlice } from '@reduxjs/toolkit'
-
-const initialState = {
-  value: 0,
-}
-
-const counterSlice = createSlice({
-  name: 'counter',
-  initialState,
-  reducers: {
-    increment: (state) => {
-      state.value += 1
-    },
-    decrement: (state) => {
-      state.value -= 1
-    },
-    reset: (state) => {
-      state.value = 0
-    },
-  },
-})
-
-export const { increment, decrement, reset } = counterSlice.actions
-export default counterSlice.reducer
-
-
-✅ Create Provider Component
-📁 Create: app/providers.js
--------------------------------------
-'use client'
-
-import { Provider } from 'react-redux'
-import { store } from '../lib/store'
-
-export function Providers({ children }) {
-  return <Provider store={store}>{children}</Provider>
-}
-
-✅ Wrap App with Provider
-📁 Edit app/layout.js
-----------------------------
-// app/layout.js
-import './globals.css'
-import { Inter } from 'next/font/google'
-import { Providers } from './providers'
-
-const inter = Inter({ subsets: ['latin'] })
-
-export const metadata = {
-  title: 'Redux with Next.js 15',
-  description: 'A simple Redux example',
-}
-
-export default function RootLayout({ children }) {
-  return (
-    <html lang="en">
-      <body className={inter.className}>
-        <Providers>{children}</Providers>
-      </body>
-    </html>
-  )
-}
-
-
-============================================================================================================
