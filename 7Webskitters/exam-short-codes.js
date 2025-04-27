@@ -3506,4 +3506,574 @@ const Currencyconverter = () => {
 
 export default Currencyconverter;
 
+----------------------------------------------------------------------------------------------------------------
+
+Notes app
+
+
+
+{/* ✅ Desighn the UI and create show and hide icon */}
+
+
+//Use lordicon for animated icons
+
+import React from 'react'
+import {useRef} from 'react' //✅2
+
+const Manager = () => {
+  const ref = useRef() //✅3
+
+  const showPassword=()=>{
+
+    if(ref.current.src.includes("icon/eyeclose.png")){ //✅4
+      ref.current.src ="icon/eye.png"
+    }else{
+      ref.current.src ="icon/eyeclose.png"
+    }
+  }
+
+  return (
+    <div>
+      <input placeholder="Enter Website URL"/>
+
+      <input placeholder="Enter User name"/>
+
+      <input placeholder="Enter Password"/>
+      <img src="/icons/eye.png" onclick={showPassword} ref={ref}>Show</img> //✅1
+
+
+    </div>
+  )
+}
+
+export default Manager
+
+
+
+{/* ✅ collect data from input filds and show into console */}
+
+import React from 'react'
+import {useRef} from 'react'
+
+const Manager = () => {
+  const ref = useRef()
+
+  const [form, setForm]= useState({site:"", username:"", password:""})  //✅2
+
+  const showPassword=()=>{
+
+    if(ref.current.src.includes("icon/eyeclose.png")){
+      ref.current.src ="icon/eye.png"
+    }else{
+      ref.current.src ="icon/eyeclose.png"
+    }
+  }
+
+  const savePassword=()=>{   //✅5
+
+    console.log(form)
+
+  }
+
+  const handleChange=(event)=>{  //✅4
+    setForm(...form,[else.target.name]:else.target.value)
+  }
+
+  return (
+    <div>
+
+      <input value={form.username} name="username" placeholder="Enter User name" onChange={handleChange}/>  //✅3
+
+      <input value={form.site} name="site" placeholder="Enter Website URL" onChange={handleChange}/>    //✅3
+
+      <input value={form.password} name="password" placeholder="Enter Password" onChange={handleChange}/>   //✅3
+      <img src="/icons/eye.png" onclick={showPassword} ref={ref}>Show</img>
+
+      <button onClick={savePassword}>Save Password</button> //✅1
+
+
+    </div>
+  )
+}
+
+export default Manager
+
+
+
+{/* ✅  save the data to localstorage */}
+
+
+import React from 'react'
+import {useRef} from 'react'
+
+const Manager = () => {
+  const ref = useRef()
+
+  const [form, setForm]= useState({site:"", username:"", password:""})
+  const [passwordArray, setPasswordArray]= useState([]);   //✅1
+
+  useEffect(() => {   //✅2
+
+    let password=localStorage.getItem("passwords")
+    let passwordArray;
+
+    if(passwords){
+      setPasswordArray(json.parse(passwords))
+    }
+  }, [])
+
+  const showPassword=()=>{
+
+    if(ref.current.src.includes("icon/eyeclose.png")){
+      ref.current.src ="icon/eye.png"
+    }else{
+      ref.current.src ="icon/eyeclose.png"
+    }
+  }
+
+  const savePassword=()=>{
+
+    console.log(form)
+    setPasswordArray({...passwordArray,form})       //✅3
+    localStorage.setItem("passwords" , JSON.stingify([...passwordArray, form]))  //✅4
+  }
+
+  const handleChange=(event)=>{
+    setForm(...form,[else.target.name]:else.target.value)
+  }
+
+  return (
+    <div>
+
+      <input value={form.username} name="username" placeholder="Enter User name" onChange={handleChange}/>
+
+      <input value={form.site} name="site" placeholder="Enter Website URL" onChange={handleChange}/>
+
+      <input value={form.password} name="password" placeholder="Enter Password" onChange={handleChange}/>
+      <img src="/icons/eye.png" onclick={showPassword} ref={ref}>Show</img>
+
+      <button onClick={savePassword}>Save Password</button>
+
+    </div>
+  )
+}
+
+export default Manager
+
+
+{/* ✅  Display the passwords into the box */}
+
+
+import React from 'react'
+import {useRef} from 'react'
+
+const Manager = () => {
+  const ref = useRef()
+
+  const [form, setForm]= useState({site:"", username:"", password:""})
+  const [passwordArray, setPasswordArray]= useState([]);
+
+  useEffect(() => {
+
+    let password=localStorage.getItem("passwords")
+    let passwordArray;
+
+    if(passwords){
+      setPasswordArray(json.parse(passwords))
+    }
+  }, [])
+
+  const showPassword=()=>{
+
+    if(ref.current.src.includes("icon/eyeclose.png")){
+      ref.current.src ="icon/eye.png"
+    }else{
+      ref.current.src ="icon/eyeclose.png"
+    }
+  }
+
+  const savePassword=()=>{
+
+    console.log(form)
+    setPasswordArray({...passwordArray,form})
+    localStorage.setItem("passwords" , JSON.stingify([...passwordArray, form]))
+  }
+
+  const handleChange=(event)=>{
+    setForm(...form,[else.target.name]:else.target.value)
+  }
+
+  return (
+    <div>
+
+      <input value={form.username} name="username" placeholder="Enter User name" onChange={handleChange}/>
+
+      <input value={form.site} name="site" placeholder="Enter Website URL" onChange={handleChange}/>
+
+      <input value={form.password} name="password" placeholder="Enter Password" onChange={handleChange}/>
+      <img src="/icons/eye.png" onclick={showPassword} ref={ref}>Show</img>
+
+      <button onClick={savePassword}>Save Password</button>
+
+
+      <div className="displayitem
+
+
+      ">  //✅1
+        <h2>your passwords</h2>
+
+        { passwordArray.length === 0 && <div>No Passwords to show</div> }
+        { passwordArray.length != 0 &&
+        <div>
+          {
+            passwordArray.map((item)=>{
+              return (
+                <td>{item.site}</td>
+                <td>{item.username}</td>
+                <td>{item.password}</td>
+              )
+            })
+          }
+        </div>
+        }
+      </div>
+
+    </div>
+  )
+}
+
+export default Manager
+
+
+{/* ✅  show and hide password */}
+
+
+import React from 'react'
+import {useRef} from 'react'
+
+const Manager = () => {
+  const ref = useRef()
+  const passwordRef = useRef()  //✅2
+
+  const [form, setForm]= useState({site:"", username:"", password:""})
+  const [passwordArray, setPasswordArray]= useState([]);
+
+  useEffect(() => {
+
+    let password=localStorage.getItem("passwords")
+    let passwordArray;
+
+    if(passwords){
+      setPasswordArray(json.parse(passwords))
+    }
+  }, [])
+
+  const showPassword=()=>{
+
+    passwordRef.current.type= "text"; //✅3
+
+    if(ref.current.src.includes("icon/eyeclose.png")){
+      ref.current.src ="icon/eye.png"
+      passwordRef.current.type= "password";  //✅3
+
+    }else{
+      ref.current.src ="icon/eyeclose.png"
+      passwordRef.current.type= "text";  //✅3
+    }
+  }
+
+  const savePassword=()=>{
+
+    console.log(form)
+    setPasswordArray({...passwordArray,form})
+    localStorage.setItem("passwords" , JSON.stingify([...passwordArray, form]))
+  }
+
+  const handleChange=(event)=>{
+    setForm(...form,[else.target.name]:else.target.value)
+  }
+
+  return (
+    <div>
+
+      <input value={form.username} name="username" placeholder="Enter User name" onChange={handleChange}/>
+
+      <input value={form.site} name="site" placeholder="Enter Website URL" onChange={handleChange}/>
+
+      <input ref={passwordRef} type="password" value={form.password} name="password" placeholder="Enter Password" onChange={handleChange}/> //✅1
+      <img src="/icons/eye.png" onclick={showPassword} ref={ref}>Show</img>
+
+      <button onClick={savePassword}>Save Password</button>
+
+
+      <div className="displayitem
+
+
+      ">
+        <h2>your passwords</h2>
+
+        { passwordArray.length === 0 && <div>No Passwords to show</div> }
+        { passwordArray.length != 0 &&
+        <div>
+          {
+            passwordArray.map((item)=>{
+              return (
+                <td>{item.site}</td>
+                <td>{item.username}</td>
+                <td>{item.password}</td>
+              )
+            })
+          }
+        </div>
+        }
+      </div>
+
+    </div>
+  )
+}
+
+export default Manager
+
+
+{/* ✅ Coppy and paste feature of the passwords & and show tost message*/}
+
+https://fkhadra.github.io/react-toastify/introduction/
+
+
+> npm install --save react-tostify
+
+
+import React from 'react'
+import {useRef} from 'react'
+import { ToastContainer, toast } from 'react-toastify';  //✅3
+
+
+const Manager = () => {
+  const ref = useRef()
+  const passwordRef = useRef()
+
+  const [form, setForm]= useState({site:"", username:"", password:""})
+  const [passwordArray, setPasswordArray]= useState([]);
+
+  useEffect(() => {
+
+    let password=localStorage.getItem("passwords")
+    let passwordArray;
+
+    if(passwords){
+      setPasswordArray(json.parse(passwords))
+    }
+  }, [])
+
+  const showPassword=()=>{
+
+    passwordRef.current.type= "text";
+
+    if(ref.current.src.includes("icon/eyeclose.png")){
+      ref.current.src ="icon/eye.png"
+      passwordRef.current.type= "password";
+
+    }else{
+      ref.current.src ="icon/eyeclose.png"
+      passwordRef.current.type= "text";
+    }
+  }
+
+  const coppyText(text){  //✅2
+    toast('🦄 Wow so easy!', {     //✅5
+      position: "Coppy to clipboard",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: false,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+      transition: Bounce,
+      });
+
+    navigator.Clipboard.writeText(text)
+  }
+
+  const savePassword=()=>{
+
+    console.log(form)
+    setPasswordArray([...passwordArray,form])
+    localStorage.setItem("passwords" , JSON.stingify([...passwordArray, form]))
+  }
+
+  const handleChange=(event)=>{
+    setForm(...form,[else.target.name]:else.target.value)
+  }
+
+  return (
+
+    <ToastContainer           //✅4
+position="top-right"
+autoClose={5000}
+hideProgressBar={false}
+newestOnTop={false}
+closeOnClick={false}
+rtl={false}
+pauseOnFocusLoss
+draggable
+pauseOnHover
+theme="light"
+transition={Bounce}
+/>
+
+    <div>
+
+      <input value={form.username} name="username" placeholder="Enter User name" onChange={handleChange}/>
+
+      <input value={form.site} name="site" placeholder="Enter Website URL" onChange={handleChange}/>
+
+      <input ref={passwordRef} type="password" value={form.password} name="password" placeholder="Enter Password" onChange={handleChange}/>
+      <img src="/icons/eye.png" onclick={showPassword} ref={ref}>Show</img>
+
+      <button onClick={savePassword}>Save Password</button>
+
+
+      <div className="displayitem
+
+
+      ">
+        <h2>your passwords</h2>
+
+        { passwordArray.length === 0 && <div>No Passwords to show</div> }
+        { passwordArray.length != 0 &&
+        <div>
+          {
+            passwordArray.map((item)=>{
+              return (
+                <td>{item.site} <span>coppy site name</span onclick={()=>coppyText(item.site)}></td> //✅1
+                <td>{item.username} <span>coppy Username</span onclick={()=>coppyText(item.username)}></td> //✅1
+                <td>{item.password}<span>coppy Password</span onclick={()=>coppyText(item.password)}></td> //✅1
+              )
+            })
+          }
+        </div>
+        }
+      </div>
+
+    </div>
+  )
+}
+
+export default Manager
+
+
+
+{/* ✅ Delete and edit Passwords */}
+
+
+import React from 'react'
+import {useRef} from 'react'
+import { ToastContainer, toast } from 'react-toastify';
+
+
+const Manager = () => {
+  const ref = useRef()
+  const passwordRef = useRef()
+
+  const [form, setForm]= useState({site:"", username:"", password:""})
+  const [passwordArray, setPasswordArray]= useState([]);
+
+  useEffect(() => {
+
+    let password=localStorage.getItem("passwords")
+    let passwordArray;
+
+    if(passwords){
+      setPasswordArray(json.parse(passwords))
+    }
+  }, [])
+
+  const showPassword=()=>{
+
+    passwordRef.current.type= "text";
+
+    if(ref.current.src.includes("icon/eyeclose.png")){
+      ref.current.src ="icon/eye.png"
+      passwordRef.current.type= "password";
+
+    }else{
+      ref.current.src ="icon/eyeclose.png"
+      passwordRef.current.type= "text";
+    }
+  }
+
+  const coppyText(text){
+
+    navigator.Clipboard.writeText(text)
+  }
+
+  const savePassword=()=>{
+    console.log(form)
+    setPasswordArray([...passwordArray, {...form, uidv4()}]) //✅1
+    localStorage.setItem("passwords" , JSON.stingify([...passwordArray, {...form, uidv4()}])) //✅1
+    setForm({site:"", username:"", password:""})
+  }
+
+  const deletePassword=(id)=>{ //✅2
+    console.log(id);
+    setPasswordArray(passwordArray.filter(item=>item.id !== id));
+    localStorage.setItem("passwords",JSON.stringfy(passwordArray.filter(item=>item.id !== id)));
+  }
+
+  const editPassword=(id)=>{ //✅3
+
+    setForm(passwordArray.filter(i => i.id === id)[0]) //set the data into the form
+    setPasswordArray(passwordArray.filter(item=>item.id !== id)) //password array se delete kar do vo data
+
+  }
+
+  const handleChange=(event)=>{
+    setForm(...form,[else.target.name]:else.target.value)
+  }
+
+
+  return (
+
+    <div>
+
+      <input value={form.username} name="username" placeholder="Enter User name" onChange={handleChange}/>
+
+      <input value={form.site} name="site" placeholder="Enter Website URL" onChange={handleChange}/>
+
+      <input ref={passwordRef} type="password" value={form.password} name="password" placeholder="Enter Password" onChange={handleChange}/>
+      <img src="/icons/eye.png" onclick={showPassword} ref={ref}>Show</img>
+
+      <button onClick={savePassword}>Save Password</button>
+
+      <div className="displayitem
+
+      ">
+        <h2>your passwords</h2>
+
+        { passwordArray.length === 0 && <div>No Passwords to show</div> }
+        { passwordArray.length != 0 &&
+        <div>
+          {
+            passwordArray.map((item)=>{
+              return (
+                <td>{item.site} <span>coppy site name</span onclick={()=>coppyText(item.site)}></td>
+                <td>{item.username} <span>coppy Username</span onclick={()=>coppyText(item.username)}></td>
+                <td>{item.password}<span>coppy Password</span onclick={()=>coppyText(item.password)}></td>
+                <td onclick={()=>{editPassword(item.id)}}>Edit</td>  //✅4
+                <td onclick={()=>{deletePassword(item.id)}}>Delete</td> //✅4
+              )
+            })
+          }
+        </div>
+        }
+      </div>
+
+    </div>
+  )
+}
+
+export default Manager
+
+
 
