@@ -6,8 +6,6 @@ import { useEffect, useState } from "react";
 
 export default function Accordian() {
 
-
-
     const [selected, setSelected] = useState(null);
 
     function handleSingleSelection(getCurrentId) {
@@ -150,7 +148,7 @@ export default function RandomColor() {
 
 // ============================================================================================================
 
-//Start Ratting Component
+//Start Rating Component
 
 export default function StartRating({ noOfStar = 5 }) {
 
