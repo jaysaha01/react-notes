@@ -324,145 +324,6 @@ export default function LoadMoreData() {
     );
 }
 
-// ============================================================================================================
-
-//Nested treeview navigation (Resursive menu)
-
-// data.js  //✅1
-
-export const menus = [
-    {
-        label: "Home",
-        to: "/",
-    },
-    {
-        label: "Profile",
-        to: "/profile",
-        children: [
-            {
-                label: "Details",
-                to: "details",
-                children: [
-                    {
-                        label: "Location",
-                        to: "location",
-                        children: [
-                            {
-                                label: "City",
-                                to: "city",
-                            },
-                        ],
-                    },
-                ],
-            },
-        ],
-    },
-    {
-        label: "Settings",
-        to: "/settings",
-        children: [
-            {
-                label: "Account",
-                to: "account",
-            },
-            {
-                label: "Security",
-                to: "security",
-                children: [
-                    {
-                        label: "Login",
-                        to: "login",
-                    },
-                    {
-                        label: "Register",
-                        to: "register",
-                        children: [
-                            {
-                                label: 'Random data',
-                                to: ''
-                            }
-                        ]
-                    },
-                ],
-            },
-        ],
-    },
-];
-
-export default menus;
-
-//   index.jsx   //✅2
-
-import MenuList from "./menu-list";
-import './styles.css'
-
-export default function TreeView({ menus = [] }) {
-    return (
-        <div className="tree-view-container">
-            <MenuList list={menus} />
-        </div>
-    );
-}
-
-// menu-list.jsx    //✅3
-
-import MenuItem from "./menu-item";
-
-export default function MenuList({ list = [] }) {
-    return (
-        <ul className="menu-list-container">
-            {list && list.length
-                ? list.map((listItem) => <MenuItem item={listItem} />)
-                : null}
-        </ul>
-    );
-}
-
-
-//App,js
-<TreeView menus={menus} />
-
-
-// menu-item.jsx
-
-import { useState } from "react";
-import MenuList from "./menu-list";
-import { FaMinus, FaPlus } from 'react-icons/fa'
-
-export default function MenuItem({ item }) {
-    const [displayCurrentChildren, setDisplayCurrentChildren] = useState({}); //✅5
-
-    function handleToggleChildren(getCurrentlabel) {  //✅7
-        setDisplayCurrentChildren({
-            ...displayCurrentChildren,
-            [getCurrentlabel]: !displayCurrentChildren[getCurrentlabel],
-        });
-    }
-
-    console.log(displayCurrentChildren);
-
-    return (
-        <li>
-            <div className="menu-item">
-                <p>{item.label}</p>
-                {item && item.children && item.children.length ? (  //✅6
-                    <span onClick={() => handleToggleChildren(item.label)}>
-                        {
-                            displayCurrentChildren[item.label] ? <FaMinus color="#fff" size={25} /> : <FaPlus color="#fff" size={25} />
-                        }
-                    </span>
-                ) : null}
-            </div>
-
-
-
-      //✅4 , 8
-            {item && item.children && item.children.length > 0 && displayCurrentChildren[item.label] ? (
-                <MenuList list={item.children} />
-            ) : null}
-        </li>
-    );
-}
 
 // ============================================================================================================
 
@@ -1144,198 +1005,6 @@ export default function UseOnclickOutsideTest() {
 
 <UseOnclickOutsideTest />
 
-// ================================================================================================
-
-//! use-window-resize  ❌
-
-//index.js
-
-import { useLayoutEffect } from "react";
-import { useState } from "react";
-
-export default function useWindowResize() {
-    const [windowSize, setWindowSize] = useState({    //✅1
-        width: 0,
-        height: 0,
-    });
-
-    function handleResize() {  //✅3
-        setWindowSize({
-            width: window.innerWidth,
-            height: window.innerHeight,
-        });
-    }
-
-    useLayoutEffect(() => { //✅2
-        handleResize();
-
-        window.addEventListener("resize", handleResize);
-
-        //! it call when we go to another component in useEffect
-        return () => {
-            window.removeEventListener("resize", handleResize);
-        };
-    }, []);
-
-    return windowSize;
-}
-
-// test.jsx
-
-import useWindowResize from ".";
-
-export default function UseWindowResizeTest() {
-    const windowSize = useWindowResize();
-    const { width, height } = windowSize;  //✅4
-
-    return (
-        <div>  //✅5
-            <h1>Use Window resize Hook</h1>
-            <p>Width is {width}</p>
-            <p>Height is {height}</p>
-        </div>
-    );
-}
-
-// ================================================================================================
-
-// Scroll to top and bottom feature ❌
-
-// scroll-to-section.jsx
-
-import { useRef } from "react";
-import useFetch from "../use-fetch";
-
-export default function ScrollToTopAndBottom() {
-    const { data, error, pending } = useFetch(
-        "https://dummyjson.com/products?limit=100",
-        {}
-    );
-
-    const bottomRef = useRef(null); //✅4
-
-    function handleScrollToTop() {  //✅2
-        window.scrollTo({
-            top: 0,
-            left: 0,
-            behavior: "smooth",
-        });
-    }
-
-    function handleScrollToBottom() {   //✅6
-        bottomRef.current.scrollIntoView({ behavior: "smooth" });
-    }
-
-    /*
-    const goToTop = document.getElementById("go-to-top");
-    const goToBottom = document.getElementById("go-to-bottom");
-    goToBottom.addEventListener("click", () => {
-        goToTop.scrollIntoView({ behavior: "instant", block: "end" });
-    });
-    goToTop.addEventListener("click", () => {
-        goToBottom.scrollIntoView({ behavior: "instant", block: "start" });
-    });
-    */
-
-    if (error) {
-        return <h1>Error occured ! Please try again.</h1>;
-    }
-
-    if (pending) {
-        return <h1>Loading ! Please wait</h1>;
-    }
-
-    return (
-        <div>  //✅1
-            <h1>Scroll To Top And Bottom Feature</h1>
-            <h3>This is the top section</h3>
-            <button onClick={handleScrollToBottom}>Scroll To Bottom</button>  //✅5
-            <ul style={{ listStyle: "none" }}>
-                {data && data.products && data.products.length
-                    ? data.products.map((item) => <li>{item.title}</li>)
-                    : null}
-            </ul>
-            <button onClick={handleScrollToTop}>Scroll To Top</button>//✅2
-            <div ref={bottomRef}></div> //✅3
-            <h3>This is the bottom of the page</h3>
-        </div>
-    );
-}
-
-// ================================================================================================
-
-
-//! scroll-to-Selection.jsx ❌
-
-import { useRef } from "react"; //✅4
-
-export default function ScrollToSection() {
-    const ref = useRef();   //✅4
-
-    const data = [  //✅2
-        {
-            label: "First Card",
-            style: {
-                width: "100%",
-                height: "600px",
-                background: "red",
-            },
-        },
-        {
-            label: "Second Card",
-            style: {
-                width: "100%",
-                height: "600px",
-                background: "grey",
-            },
-        },
-        {
-            label: "Third Card",
-            style: {
-                width: "100%",
-                height: "600px",
-                background: "blue",
-            },
-        },
-        {
-            label: "Fourth Card",
-            style: {
-                width: "100%",
-                height: "600px",
-                background: "green",
-            },
-        },
-        {
-            label: "Fifth Card",
-            style: {
-                width: "100%",
-                height: "600px",
-                background: "orange",
-            },
-        },
-    ];
-
-    function handleScrollToSection() { //✅3
-        let pos = ref.current.getBoundingClientRect().top;
-
-        window.scrollTo({
-            top: pos,
-            behavior: "smooth",
-        });
-    }
-
-    return (
-        <div>   //✅1
-            <h1>Scroll to a particular section</h1>
-            <button onClick={handleScrollToSection}>Click To Scroll</button> //✅3
-            {data.map((dataItem, index) => (
-                <div ref={index === 2 ? ref : null} style={dataItem.style}> //✅4
-                    <h3>{dataItem.label}</h3>
-                </div>
-            ))}
-        </div>
-    );
-}
 
 // ================================================================================================
 
@@ -2572,937 +2241,402 @@ export default TableForm=()=>{
 
 
 
-
-# Multi select search
-
-## reactjs-interview-questions/multi-select-input/src/components/pill.jsx
-
-/_ eslint-disable react/prop-types _/
-const Pill = ({image, text, onClick}) => {
-return (
-<span className="user-pill" onClick={onClick}>
-<img src={image} alt={text} />
-<span>{text} &times;</span>
-</span>
-);
-};
-
-export default Pill;
-
-## reactjs-interview-questions/multi-select-input/src/App.jsx
-
-import {useEffect, useRef, useState} from "react";
-import "./App.css";
-
-import Pill from "./components/pill";
-
-function App() {
-const [searchTerm, setSearchTerm] = useState("");
-const [suggestions, setSuggestions] = useState([]);
-const [selectedUsers, setSelectedUsers] = useState([]);
-const [selectedUserSet, setSelectedUserSet] = useState(new Set());
-const [activeSuggestion, setActiveSuggestion] = useState(0);
-
-const inputRef = useRef(null);
-
-// https://dummyjson.com/users/search?q=Jo
-
-useEffect(() => {
-const fetchUsers = () => {
-setActiveSuggestion(0);
-if (searchTerm.trim() === "") {
-setSuggestions([]);
-return;
-}
-
-      fetch(`https://dummyjson.com/users/search?q=${searchTerm}`)
-        .then((res) => res.json())
-        .then((data) => setSuggestions(data))
-        .catch((err) => {
-          console.error(err);
-        });
-    };
-
-    fetchUsers();
-
-}, [searchTerm]);
-
-const handleSelectUser = (user) => {
-setSelectedUsers([...selectedUsers, user]);
-setSelectedUserSet(new Set([...selectedUserSet, user.email]));
-setSearchTerm("");
-setSuggestions([]);
-inputRef.current.focus();
-};
-
-const handleRemoveUser = (user) => {
-const updatedUsers = selectedUsers.filter(
-(selectedUser) => selectedUser.id !== user.id
-);
-setSelectedUsers(updatedUsers);
-
-    const updatedEmails = new Set(selectedUserSet);
-    updatedEmails.delete(user.email);
-    setSelectedUserSet(updatedEmails);
-
-};
-
-const handleKeyDown = (e) => {
-if (
-e.key === "Backspace" &&
-e.target.value === "" &&
-selectedUsers.length > 0
-) {
-const lastUser = selectedUsers[selectedUsers.length - 1];
-handleRemoveUser(lastUser);
-setSuggestions([]);
-} else if (e.key === "ArrowDown" && suggestions?.users?.length > 0) {
-e.preventDefault();
-setActiveSuggestion((prevIndex) =>
-prevIndex < suggestions.users.length - 1 ? prevIndex + 1 : prevIndex
-);
-} else if (e.key === "ArrowUp" && suggestions?.users?.length > 0) {
-e.preventDefault();
-setActiveSuggestion((prevIndex) => (prevIndex > 0 ? prevIndex - 1 : 0));
-} else if (
-e.key === "Enter" &&
-activeSuggestion >= 0 &&
-activeSuggestion < suggestions.users.length
-) {
-handleSelectUser(suggestions.users[activeSuggestion]);
-}
-};
-
-return (
-
-<div className="user-search-container">
-<div className="user-search-input">
-{/_ Pills _/}
-{selectedUsers.map((user) => {
-return (
-<Pill
-key={user.email}
-image={user.image}
-text={`${user.firstName} ${user.lastName}`}
-onClick={() => handleRemoveUser(user)}
-/>
-);
-})}
-{/_ input feild with search suggestions _/}
-<div>
-<input
-ref={inputRef}
-type="text"
-value={searchTerm}
-onChange={(e) => setSearchTerm(e.target.value)}
-placeholder="Search For a User..."
-onKeyDown={handleKeyDown}
-/>
-{/_ Search Suggestions _/}
-<ul className="suggestions-list">
-{suggestions?.users?.map((user, index) => {
-return !selectedUserSet.has(user.email) ? (
-<li
-className={index === activeSuggestion ? "active" : ""}
-key={user.email}
-onClick={() => handleSelectUser(user)} >
-<img
-src={user.image}
-alt={`${user.firstName} ${user.lastName}`}
-/>
-<span>
-{user.firstName} {user.lastName}
-</span>
-</li>
-) : (
-<></>
-);
-})}
-</ul>
-</div>
-</div>
-</div>
-);
-}
-
-export default App;
-
-<!-- ================================================================================================================================= -->
-
-<!-- Music Player  -->
-
-import { useEffect, useRef, useState } from "react";
-import './music.css'
-
-function MusicPlayer() {
-
-
-const audioRef = useRef(null);  //✅1
-const [isPlaying, setIsPlaying] = useState(false); //✅1
-const [currentMusicTrack, SetCurrentMusicTrack] = useState(0); //✅1
-const [trackProgress, setTrackProgress] = useState(0); //✅1
-
-
-
-const tracks = [
-{
-title: "Track 1",
-source: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
-image: "https://via.placeholder.com/150",
-},
-{
-title: "Track 2",
-source: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
-image: "https://via.placeholder.com/150",
-},
-// Add more tracks as needed
-];
-
-
-
-useEffect(() => { //✅5
-if (isPlaying) {
-const interval = setInterval(() => {
-setTrackProgress(
-(audioRef.current.currentTime / audioRef.current.duration) * 100
-);
-}, 1000);
-
-      return () => clearInterval(interval);
-}
-
-}, [isPlaying]);
-
-
-
-
-function handlePauseAndPlay() {
-if (isPlaying) {
-audioRef.current.pause();
-} else {
-audioRef.current.play();
-}
-setIsPlaying(!isPlaying);
-}
-
-
-
-function handleSkipTrack(getDirection) {
-if (getDirection === "forward") {
-SetCurrentMusicTrack((prevTrack) => (prevTrack + 1) % tracks.length);
-} else if (getDirection === "backward") {
-SetCurrentMusicTrack(
-(prevTrack) => (prevTrack - 1 + tracks.length) % tracks.length
-);
-}
-
-    setTrackProgress(0);
-
-}
-
-return (
-
-<div className="music-player">
-<h1>Music Player</h1>
-<h2>{tracks[currentMusicTrack].title}</h2> //✅2
-
-<img                                          
-        src={tracks[currentMusicTrack].image}
-        alt={tracks[currentMusicTrack].title}
-      />  //✅2
-
-
-<audio ref={audioRef} src={tracks[currentMusicTrack].source} /> //✅2
-
-
-
-<div className="progress-bar"> //✅3
-<div
-className="progress"
-style={{
-            width: `${trackProgress}%`,
-            background: isPlaying ? "#3498db" : "#a43636",
-            height: '15px'
-          }} ></div>
-</div>
-
-
-
-<div className="track-controls">
-<button onClick={() => handleSkipTrack("backward")}>Backward</button>
-
-<button onClick={handlePauseAndPlay}> //✅4
-{isPlaying ? "Pause" : "Play"}
-</button>
-
-<button onClick={() => handleSkipTrack("forward")}>Forward</button>
-</div>
-</div>
-);
-}
-
-export default MusicPlayer;
-
-
-currentTime = This gives you the number of seconds that have already played from the audio.
-duration = This gives you the total length of the audio in seconds.
-
-<!-- ======================================================================================================= -->
-
-
-BMI Calculator
-
-import { useState } from "react";
-import './bmi.css'
-
-function BMICalculator() {
-const [weight, setWeight] = useState(null);
-const [height, setHeight] = useState(null);
-const [bmi, setBMI] = useState(null);
-const [errorMsg, setErrorMsg] = useState("");
-
-function calculateBmi() {
-if (!height || !weight) {
-setErrorMsg("Please enter both height and weight");
-return;
-}
-
-    const numericHeight = parseFloat(height);
-    const numericWeight = parseFloat(weight);
-
-    if (
-      isNaN(numericHeight) ||
-      isNaN(numericWeight) ||
-      numericHeight <= 0 ||
-      numericWeight <= 0
-    ) {
-      setErrorMsg(
-        "Please enter valid numeric values for both height and weight"
-      );
-      return;
-    }
-
-    const calculateHeightInMeters = numericHeight / 100;
-    const calculateBmiValue = (
-      numericWeight /
-      (calculateHeightInMeters * calculateHeightInMeters)
-    ).toFixed(2);
-
-    setBMI(calculateBmiValue);
-    setErrorMsg("");
-
-}
-
-console.log(bmi);
-
-return (
-
-<div className="bmi-calculator-container">
-<h1>BMI Calculator</h1>
-<div className="input-container">
-<label>Height (cm):</label>
-<input
-onChange={(event) => setHeight(event.target.value)}
-type="number"
-value={height}
-/>
-</div>
-<div className="input-container">
-<label>Weight (kg):</label>
-<input
-onChange={(event) => setWeight(event.target.value)}
-type="number"
-value={weight}
-/>
-</div>
-<button onClick={calculateBmi}>Calculate BMI</button>
-{errorMsg ? <p className="error-msg-text">{errorMsg}</p> : null}
-{errorMsg !== "" ? null : (
-<p className="bmi-result-text">
-{bmi < 18.5
-? "Underweight"
-: bmi >= 18.5 && bmi < 24.9
-? "Normal Weight"
-: bmi >= 25 && bmi < 29.9
-? "Overweight"
-: "Obese"}
-</p>
-)}
-</div>
-);
-}
-
-export default BMICalculator;
-
-<!-- ============================================================================================================================= -->
-
-Drag and drop
-
-import { useEffect, useState } from "react";
-import './draganddrop.css'
-
-function DragAndDropFeature() {
-const [loading, setLoading] = useState(false);
-const [todos, setTodos] = useState([]);
-
-async function fetchListOfTodos() {
-try {
-setLoading(true);
-const apiResponse = await fetch(
-"https://dummyjson.com/todos?limit=5&skip=0"
-);
-const result = await apiResponse.json();
-
-      if (result && result.todos && result.todos.length > 0) {
-        setLoading(false);
-        const updatedTodos = result.todos.map((todoItem) => ({
-          ...todoItem,
-          status: "wip",
-        }));
-        setTodos(updatedTodos);
-      }
-    } catch (e) {
-      console.log(e);
-      setLoading(false);
-    }
-
-}
-
-useEffect(() => {
-fetchListOfTodos();
-}, []);
-
-console.log(todos);
-
-function onDragStart(event, id){
-event.dataTransfer.setData('id',id)
-}
-
-function onDrop(event,status){
-const id = event.dataTransfer.getData('id');
-console.log(event.dataTransfer.getData('id'));
-let updateTodos = todos.filter(todoItem=> {
-
-        if(todoItem.id.toString() === id){
-            todoItem.status = status
-        }
-        return todoItem
-    })
-
-    setTodos(updateTodos)
-
-}
-
-function renderTodos() {
-const todoListToRender = {
-wip: [],
-completed: [],
-};
-
-    todos.forEach((todoItem) => {
-      todoListToRender[todoItem.status].push(
-        <div
-          onDragStart={(event) => onDragStart(event, todoItem.id)}
-          draggable
-          key={todoItem.id}
-          className="todo-card"
-        >
-          {todoItem.todo}
-        </div>
-      );
-    });
-
-    return todoListToRender
-
-}
-
-if(loading) return <h1>Loading data! Please wait</h1>
-
-return (
-
-<div className="drag-and-drop-container">
-<h1>Drag and Drop</h1>
-<div className="drag-and-drop-board">
-<div
-onDrop={(event) => onDrop(event, "wip")}
-onDragOver={(event) => event.preventDefault()}
-className="work-in-progress" >
-<h3>In Progress</h3>
-<div className="todo-list-wrapper">
-{renderTodos().wip}
-</div>
-</div>
-<div
-onDrop={(event) => onDrop(event, "completed")}
-onDragOver={(event) => event.preventDefault()}
-className="completed" >
-<h3>Completed</h3>
-<div className="todo-list-wrapper">
-{renderTodos().completed}
-</div>
-</div>
-</div>
-</div>
-);
-}
-
-export default DragAndDropFeature;
-
-
-
-
 <!-- =================================================================================================================== -->
 
-<!-- Quiz App -->
+    // ======================================================================================================================
 
-import { useState } from "react";
-import './quiz.css'
+// OTP 
 
-const questions = [
-{
-question: "What is the capital of France?",
-options: ["Paris", "Berlin", "Madrid", "Rome"],
-correctAnswer: "Paris",
-},
-{
-question: "Which planet is known as the Red Planet?",
-options: ["Mars", "Venus", "Jupiter", "Saturn"],
-correctAnswer: "Mars",
-},
-{
-question: 'Who wrote "Romeo and Juliet"?',
-options: [
-"Charles Dickens",
-"Jane Austen",
-"William Shakespeare",
-"Mark Twain",
-],
-correctAnswer: "William Shakespeare",
-},
-{
-question: "What is the largest mammal?",
-options: ["Elephant", "Whale Shark", "Blue Whale", "Giraffe"],
-correctAnswer: "Blue Whale",
-},
-{
-question: "In which year did the Titanic sink?",
-options: ["1905", "1912", "1920", "1931"],
-correctAnswer: "1912",
-},
-{
-question: "What is the currency of Japan?",
-options: ["Yen", "Won", "Ringgit", "Baht"],
-correctAnswer: "Yen",
-},
-{
-question: "Which programming language is also a gem?",
-options: ["Ruby", "Python", "Java", "C++"],
-correctAnswer: "Ruby",
-},
-{
-question: "What is the largest ocean on Earth?",
-options: [
-"Atlantic Ocean",
-"Indian Ocean",
-"Southern Ocean",
-"Pacific Ocean",
-],
-correctAnswer: "Pacific Ocean",
-},
-{
-question: "Who painted the Mona Lisa?",
-options: [
-"Pablo Picasso",
-"Vincent van Gogh",
-"Leonardo da Vinci",
-"Claude Monet",
-],
-correctAnswer: "Leonardo da Vinci",
-},
-{
-question: "What is the capital of Australia?",
-options: ["Sydney", "Melbourne", "Canberra", "Perth"],
-correctAnswer: "Canberra",
-},
-];
+import React from 'react'
+//✅0
+const OTP = ({ otpLength = 6 }) => {
 
-//currentquestion
-//score
-//selectedOptions
-//showresult
+    const [otpFields, setOtpFields] = useState(new Array(otpLength).fill(""))//✅1
 
-function Quiz() {
-const [currentQuestion, setCurrentQuestion] = useState(0);
-const [score, setScore] = useState(0);
-const [selectedOptions, setSelectedOptions] = useState(
-new Array(questions.length).fill(null)
-);
-const [showResult, setShowResult] = useState(false);
+    const ref = useRef([]); //✅4
 
-function handleSelectedOption(getOptionItem){
-const updatedSelectedOptions = [...selectedOptions];
-updatedSelectedOptions[currentQuestion] = getOptionItem;
-setSelectedOptions(updatedSelectedOptions)
-}
+    const handleKeyDown = (e, index) => {  //✅3
+        const key = e.key;
 
-function handlePreviousQuestion() {
-if (currentQuestion > 0) {
-setCurrentQuestion(currentQuestion - 1);
-}
-}
+        if (key === "ArrowLeft") { //✅6
+            if (index > 0) {
+                ref.current[index - 1].focus()
+            }
+            return;
+        }
 
-console.log(selectedOptions, score);
+        if (key === "ArrowRight") { //✅6
+            ref.current[index + 1].focus()
+            return;
+        }
 
-function handleNextQuestion() {
-if (
-selectedOptions[currentQuestion] ===
-questions[currentQuestion].correctAnswer
-) {
-setScore(score + 1);
-}
+        const coppyOtpFields = [...otpFields];
+        if (key === "Backspace") {
+            coppyOtpFields[index] = "";
+            setOtpFields(coppyOtpFields)
+            if (index > 0) {
+                ref.current[index - 1].focus()
+            }
+            return
+        }
+        if (!isNaN(key)) {
+            return
+        }
+        coppyOtpFields[index] = key
 
-    if (currentQuestion < questions.length - 1) {
-      setCurrentQuestion(currentQuestion + 1);
-    } else {
-      setShowResult(true);
+        if (index + 1 < otpFields.length) {
+            ref.current[index + 1].focus() //✅4  
+        }
+        setOtpFields(coppyOtpFields)
     }
 
+
+    useEffect(() => { //✅5
+        ref.current["0"].focus()
+    })
+
+    return (
+        <div>
+            {
+                otpFields.map((elm, index) => { //✅2                          //✅4                                             //✅3
+                    return <input type="text" key={index} ref={(currentInput) => (ref.current[index] = currentInput)} value={value} onKeyDown={(e) => handleKeyDown(e, index)} />
+                })
+            }
+        </div>
+    )
 }
 
-function handleRestartQuiz(){
-setCurrentQuestion(0);
-setScore(0);
-setSelectedOptions(new Array(questions.length).fill(null));
-setShowResult(false)
+export default OTP
+
+
+// ======================================================================================================================
+
+// infanite scross 
+
+import React from 'react'
+
+const InfiniteScroll = () => {
+
+    const [data, setData] = useState([]); //✅2
+    const [pageNo, setpageNo] = useState(1); //✅3
+
+    useEffect(() => { //✅1
+        fetch(`https://api data url/${pageNo}`).then((res) => {
+            return res.json()
+        }).then((arr) => {
+            setData((oldData) => [...oldData, ...arr])
+        })
+    })
+
+    return (
+        <div>
+            <Post data={data} setPageNo={setpageNo} />  //✅2
+        </div>
+    )
 }
 
-return (
+export default InfiniteScroll
 
-<div className="quiz">
-<h1>Quiz App</h1>
-{!showResult ? (
-<div className="options-wrapper">
-<h2>Question {currentQuestion + 1}</h2>
-<p>{questions[currentQuestion].question}</p>
-<div className="options">
-{questions[currentQuestion].options.map((optionItem) => (
-<button
-key={optionItem}
-className={`option ${
-                  selectedOptions[currentQuestion] === optionItem
-                    ? "selected"
-                    : ""
-                }`}
-onClick={()=> handleSelectedOption(optionItem)} >
-{optionItem}
-</button>
-))}
-</div>
-<div className="button-container">
-<button
-onClick={handlePreviousQuestion}
-disabled={currentQuestion === 0}
-className="prev-btn" >
-Previous
-</button>
-<button onClick={handleNextQuestion} className="next-btn">
-{currentQuestion < questions.length - 1 ? "Next" : "Finish"}
-</button>
-</div>
-</div>
-) : (
-<div className="show-result-wrapper">
-<h3>Quiz Completed</h3>
-<p>Your Score: {score}</p>
-<button onClick={handleRestartQuiz} className="restart-button">Restart Quiz</button>
-</div>
-)}
-</div>
-);
+
+
+// Post.jsx 
+
+export default function Post({ data, setPageNo }) {
+
+    useEffect(() => { //✅4
+        const observer = new IntersectionObserver((param) => {
+            if (param[0].isIntersecting) {
+                observer.unobserve(lastImage);
+                setPageNo((pageNo) => pageNo + 1)
+            }
+        })
+
+        const lastImage = document.querySelector(".image-post:last-child")
+
+        if (!lastImage) {
+            return
+        }
+        observer.observe(lastImage)
+    }, [data])
+
+
+    return (
+        <div>
+
+            { //✅3
+                data.map((item, index) => {
+                    return (
+                        <img src={item.url} />
+                    )
+                })
+            }
+        </div>
+
+    )
 }
 
-export default Quiz;
+// ======================================================================================================================
 
-<!-- ======================================================================================================================= -->
 
-File uploeded with preview
+// Trafic light 
 
-import { useState, useRef } from "react";
-import './file-upload.css';
+import React from 'react' //✅2
 
-function FileUpload() {
-  const [filePreview, setFilePreview] = useState(null); // To hold the file preview URL
-  const fileInputRef = useRef(null); // To access the file input element
-  const progressBarRef = useRef(null); // To control the progress bar
-  const statusMessageRef = useRef(null); // To display the upload status
-  const loadMessageRef = useRef(null); // To show the bytes loaded during the upload
+const Signal = ({ color }) => {
 
-  // Function that handles the file upload
-  const handleFileUpload = () => {
-    const selectedFile = fileInputRef.current.files[0]; // Get the selected file
-    setFilePreview(URL.createObjectURL(selectedFile)); // Preview the file locally
-
-    // Prepare the FormData object to send the file in the request
-    let formData = new FormData();
-    formData.append("file", selectedFile); // Add the file to the form data
-
-    // Create a new XMLHttpRequest to handle the file upload
-    const xhr = new XMLHttpRequest();
-
-    // Event listener to track the upload progress
-    xhr.upload.addEventListener("progress", handleUploadProgress);
-
-    // Event listener when upload completes successfully
-    xhr.addEventListener("load", handleUploadSuccess);
-
-    // Event listener when there is an error during the upload
-    xhr.addEventListener("error", handleUploadError);
-
-    // Event listener if the upload is canceled
-    xhr.addEventListener("abort", handleUploadAbort);
-
-    // Open the request and send the form data to the server
-    xhr.open("POST", "https://v2.convertapi.com/upload");
-    xhr.send(formData);
-  };
-
-  // This function is triggered during the upload to show progress
-  const handleUploadProgress = (event) => {
-    if (event.lengthComputable) {
-      // Calculate the percentage of the upload completed
-      const percentage = (event.loaded / event.total) * 100;
-      progressBarRef.current.value = Math.round(percentage); // Update the progress bar
-      statusMessageRef.current.innerText = `${Math.round(percentage)}% uploaded...`; // Show the upload percentage
-      loadMessageRef.current.innerText = `Uploaded ${event.loaded} bytes of ${event.total}`; // Show bytes uploaded
-    }
-  };
-
-  // This function is triggered when the upload is successful
-  const handleUploadSuccess = () => {
-    statusMessageRef.current.innerText = "Upload successful!";
-    progressBarRef.current.value = 0; // Reset the progress bar
-  };
-
-  // This function is triggered if the upload fails
-  const handleUploadError = () => {
-    statusMessageRef.current.innerText = "Upload failed. Please try again!";
-  };
-
-  // This function is triggered if the upload is canceled
-  const handleUploadAbort = () => {
-    statusMessageRef.current.innerText = "Upload aborted. Please try again!";
-  };
-
-  return (
-    <div className="file-upload-container">
-      <h1>Upload a File with Progress</h1>
-
-      {/* File input element */}
-      <input
-        type="file"
-        onChange={handleFileUpload} // Call handleFileUpload when a file is selected
-        ref={fileInputRef}
-      />
-
-      {/* Progress bar to show upload progress */}
-      <label>
-        File Progress:
-        <progress ref={progressBarRef} value={0} max={100} />
-      </label>
-
-      {/* Displaying upload status and progress */}
-      <p className="status" ref={statusMessageRef}></p>
-      <p className="load" ref={loadMessageRef}></p>
-
-      {/* Preview of the uploaded image */}
-      {filePreview && (
-        <img
-          src={filePreview}
-          alt="File Preview"
-          style={{ width: "300px", height: "300px" }}
-        />
-      )}
-    </div>
-  );
+    return (
+        <div style={{ backgroundColor: color }}>
+        </div>
+    )
 }
 
-export default FileUpload;
+export default Signal
 
 
+// Traffic.jsx 
 
+import React, { useEffect, useState } from "react";
+import Lights from "./Lights";
 
-<!-- ============================================================================================================================= -->
+const Mainbox = () => {
+  const [data, setData] = useState(["red", "yellow", "green"]);
+  const [active, setActive] = useState(0);
 
-Debounce API Call
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setActive((prev) => (prev + 1) % data.length); // loop from 0 to 2
+    }, 1000);
 
-"use client";
-
-import React, { useState } from 'react';
-
-// This function will delay calling the API
-const debounce = (func, delay) => {
-  let timer;
-  return function (...args) {
-    clearTimeout(timer);
-    timer = setTimeout(() => func(...args), delay); // Call API after the delay
-  };
-};
-
-const DebounceSearch = () => {
-  const [query, setQuery] = useState(""); // Store search input
-  const [results, setResults] = useState([]); // Store results from API
-
-  // Fetch data from API
-  const fetchResults = async (query) => {
-    if (!query) return; // Don't make API call if query is empty
-    const response = await fetch(`https://api.example.com/search?q=${query}`);
-    const data = await response.json();
-    setResults(data); // Set API results to state
-  };
-
-  // Create a debounced version of the API call
-  const debouncedFetchResults = debounce(fetchResults, 500); // 500ms delay
-
-  // Handle typing in the search input
-  const handleInputChange = (e) => {
-    setQuery(e.target.value); // Update query state
-    debouncedFetchResults(e.target.value); // Call debounced function
-  };
+    return () => clearInterval(interval); // cleanup on unmount
+  }, [data.length]);
 
   return (
     <div>
-      <input
-        type="text"
-        value={query}
-        onChange={handleInputChange} // Trigger function on change
-        placeholder="Search..."
-      />
-      <ul>
-        {results.length > 0 && results.map((result, index) => (
-          <li key={index}>{result.name}</li>
-        ))}
-      </ul>
+      {data.map((elm, i) => (
+        <Lights key={i} data={elm} isActive={active === i} />
+      ))}
     </div>
   );
 };
 
-export default DebounceSearch;
+export default Mainbox;
 
 
-<!-- =================================================================================================================== -->
+// Lights.jsx 
 
-Video Player
-------------------
+import React from "react";
 
-    "use client";
-
-import React, { useRef, useState, useEffect } from 'react';
-
-
-const Currencyconverter = () => {
-  const videoRef = useRef(null);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [isMuted, setIsMuted] = useState(false);
-  const [progress, setProgress] = useState(0);
-  const [volume, setVolume] = useState(1); // volume between 0 and 1
-
-  // Update progress bar
-  const handleTimeUpdate = () => {
-    const video = videoRef.current;
-    if (video) {
-      const percent = (video.currentTime / video.duration) * 100;
-      setProgress(percent);
-    }
-  };
-
-  // Seek video when progress bar changes
-  const handleProgressChange = (e) => {
-    const video = videoRef.current;
-    const newTime = (e.target.value / 100) * video.duration;
-    video.currentTime = newTime;
-    setProgress(e.target.value);
-  };
-
-  // Volume slider
-  const handleVolumeChange = (e) => {
-    const video = videoRef.current;
-    const newVolume = e.target.value;
-    video.volume = newVolume;
-    setVolume(newVolume);
-    setIsMuted(newVolume === "0");
-  };
-
-  // Play / Pause
-  const togglePlayPause = () => {
-    const video = videoRef.current;
-    if (video) {
-      if (video.paused) {
-        video.play();
-        setIsPlaying(true);
-      } else {
-        video.pause();
-        setIsPlaying(false);
-      }
-    }
-  };
-
-  // Mute / Unmute
-  const toggleMute = () => {
-    const video = videoRef.current;
-    video.muted = !video.muted;
-    setIsMuted(video.muted);
-  };
-
-  // Keep video volume updated on first load
-  useEffect(() => {
-    const video = videoRef.current;
-    if (video) {
-      video.volume = volume;
-    }
-  }, []);
+const Lights = ({ data ,isActive}) => {
 
   return (
-    <div className="video-container">
-      <video
-        ref={videoRef}
-        src="/myvideo.mp4"
-        className="video"
-        onTimeUpdate={handleTimeUpdate}
-      />
-
-      <div className="controls">
-        <button onClick={togglePlayPause}>
-          {isPlaying ? 'Pause' : 'Play'}
-        </button>
-
-        <button onClick={toggleMute}>
-          {isMuted ? 'Unmute' : 'Mute'}
-        </button>
-
-        <input
-          type="range"
-          min="0"
-          max="100"
-          value={progress}
-          onChange={handleProgressChange}
-          className="progress-bar"
-        />
-
-        <input
-          type="range"
-          min="0"
-          max="1"
-          step="0.01"
-          value={volume}
-          onChange={handleVolumeChange}
-          className="volume-slider"
-        />
-      </div>
-    </div>
+    <>
+      <div
+        style={{
+          height: "40px",
+          width: "40px",
+          background: `${isActive ? data : "gray"}`,
+          borderRadius: "100%",
+          marginBottom: "10px",
+        }}
+        className="round"
+      ></div>
+    </>
   );
 };
 
-export default Currencyconverter;
+export default Lights;
+
+
+
+
+
+// ============================================================================================================================
+
+// Drag and Drop 
+
+// App.jsx
+
+const initiaData = {
+    Todo: [
+        "Deisgn UI mockups",
+        "Set up projects repository",
+        "write unite test",
+        "intigrating payment getway"
+    ],
+    Inprogress: ["Develop the altentticaton flow", "Implementing App"],
+    Complited: [
+        "Set up CI/CD",
+        "Conduct code reviews",
+        "Deploy inital versions to staging"
+    ]
+};
+
+
+export default function App() {
+    return <DragAndDrop initialSate={initiaData} /> //✅1
+}
+
+
+// DragAndDrop.jsx  //✅2
+import React from 'react'
+
+const DragAndDrop = ({ initialSate }) => {
+
+    const [data, setData] = useState(initiaData);
+    const dragItem = useRef(); //✅4
+    const dragContainer = useRef(); //✅4
+
+    const handleDragStart = (e, item, container) => { //✅3 
+        dragItem.current = item //✅4
+        dragContainer.current = container //✅4
+        e.target.style.opacity = "0.5"
+    }
+
+    const handleDragEnd = (e) => { //✅3 
+        e.target.style.opacity = "1"
+    }
+
+    const handleDrop = (e, targetContainer) => { //✅5 
+
+        const item = dragItem.current;
+
+        const sourceContainer = dragContainer.current;
+
+        setData((prev) => {
+            const newData = { ...prev };
+            newData[sourceContainer] = newData[sourceContainer].filter((i) => i !== item)
+            newData[targetContainer] = [...newData[targetContainer], item]
+            return newData
+        })
+    }
+
+    const handleDrapOver = (e) => { //✅5 
+        e.preventDefault()
+    }
+
+    return (
+        <div>
+            {
+                Object.keys(data).map((container, index) => {
+                    return (
+                        <div key={index} onDrop={(e) => handleDrop(e, container)} onDragOver={handleDrapOver}>  //✅5
+                            {container}
+                            {
+                                data[container].map((item, idx) => {
+                                    return <div key={idx} onDragStart={(e) => handleDragStart(e, item, container)} onDragEnd={handleDragEnd} draggable>{item}</div>  //✅3
+                                })
+                            }
+                        </div>
+                    )
+                })
+            }
+
+        </div>
+    )
+}
+
+export default DragAndDrop
+
+
+// ============================================================================================================================
+
+// File Uploader 
+
+import React from 'react'
+
+const FileUploader = () => {
+
+    let [files, setFiles]= useState([])
+
+    let [isDragging, setDragging]= useState(false); //✅7
+
+    const handleChege = (e) => {
+         //✅2
+         const selectTedFiles = e.target.files;
+         setFiles([...files, ...selectTedFiles])
+    }
+
+    const removeFile=(fileName)=>{ //✅4
+        const filteredFiles = files.filter((file)=> file.name !== fileName) 
+        setFiles(filteredFiles)
+    }
+
+    const handleDragEnter=(e)=>{ //✅7 
+        e.preventDefault()
+        setDragging(true)
+    }
+
+    const handleDragLeave=(e)=>{ //✅7 
+        e.preventDefault()
+         setDragging(false)
+    }
+
+    const handleDrop=(e)=>{ //✅7 
+        e.preventDefault()
+        const droppedFile = e.dataTransfer.files//Drag guya file yaha add hota he
+        setFiles([...files, ...droppedFile])
+    }
+
+
+    return (
+        <div>
+            <div className="file-uploader">
+                {/* Drap and Drop Zone */}
+                                    //✅7                     //✅7                        //✅7                           //✅7                   //✅7
+                <div  onDragEnter={handleDragEnter} onDragOver={handleDragEnter}   onDragLeave={handleDragLeave}    onDrop={handleDrop}   className={`dragzone ${isDragging ? "drapzone" : ""}`}>
+                    <p>Drap and Drap Hare</p>
+ 
+                                        //✅1
+                    <input onChange={handleChege} type="file" multiple id="data-input" className="hidden" />
+                    <label htmlFor="data-input">Browse Files</label>
+                </div>
+
+                {/* Preview Zone  */}
+
+                <div className="preview-zone">
+                    {
+                        files.map((file, i)=>{
+                            return <PreviewZone key={file.name} fileDetail={file} onRemove={removeFile}/> //✅3, 5
+                        })
+                    }
+
+                </div>
+
+            
+            </div>
+
+        </div>
+    )
+}
+
+export default FileUploader
+
+
+
+// PreviewZone.jsx  //✅3
+
+import React from 'react'
+
+const PreviewZone = ({fileDetail, onRemove}) => {
+  return (
+    <div>
+        <img src={URL.createObjectURL(fileDetail)} alt={fileDetail.name}/>
+        <span>{fileDetail.name}</span>
+        <span>{(fileDetail.size/1024).toFixed(2)}KB</span>
+
+                          //✅6
+        <button onClick={()=> onRemove(fileDetail.name)}>Remove</button>
+      
+    </div>
+  )
+}
+
+export default PreviewZone
+
+// ============================================================================================================
+
+
+
 
 ----------------------------------------------------------------------------------------------------------------
 
