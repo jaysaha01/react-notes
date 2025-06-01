@@ -1365,217 +1365,203 @@ Stack হল একটি LIFO (Last In, First Out) ডেটা স্ট্র
 🌐 ব্রাউজার হিস্ট্রি	Back বাটন চাপলে শেষ ওয়েবসাইটে যাওয়া যায়
 🧠 ফাংশনের কল Stack	JS ফাংশন কল হলে Stack এ Push হয়
 
-
 */
-
-// ✅ Stack Implement (Without Class – Using Array)
-// Stack with Array
-let stack = [];
-
-// push
-stack.push(10);
-stack.push(20);
-stack.push(30);
-console.log("Stack now:", stack); // [10, 20, 30]
-
-// pop
-let popped = stack.pop();
-console.log("Popped:", popped); // 30
-console.log("After pop:", stack); // [10, 20]
-
-// peek
-console.log("Top:", stack[stack.length - 1]); // 20
-
-// isEmpty
-console.log("Is Empty?", stack.length === 0); // false
-
-
-
-// ✅ বাস্তবসম্মত সমস্যা (Real World Problem) - ১
-function isValidParentheses(str) {
-  let stack = [];
-
-  for (let char of str) {
-    if (char === '(') {
-      stack.push(char);
-    } else if (char === ')') {
-      if (stack.length === 0) return false;
-      stack.pop();
-    }
-  }
-
-  return stack.length === 0;
-}
-
-console.log(isValidParentheses("(()())")); // true
-console.log(isValidParentheses("((())"));  // false
-
-
-/*
-🔍 কি হচ্ছে এখানে?
-
-( আসলে Push করছি
-
-) আসলে Pop করছি
-
-শেষে যদি Stack ফাঁকা থাকে, মানে সব বন্ধনী মেলানো ✅
-*/
-
-
-// 📂 Problem: Browser Back Button
-
-let historyStack = [];
-
-function visitPage(page) {
-  historyStack.push(page);
-  console.log("Visited:", page);
-}
-
-function goBack() {
-  if (historyStack.length === 0) {
-    console.log("No history to go back.");
-    return;
-  }
-  const lastPage = historyStack.pop();
-  console.log("Going back from:", lastPage);
-  console.log("Now at:", historyStack[historyStack.length - 1] || "Home");
-}
-
-visitPage("Home");
-visitPage("About");
-visitPage("Contact");
-
-goBack(); // Back to About
-goBack(); // Back to Home
-
-
-// ১. Undo Operation (Text Editor)
-
-function textEditor(actions) {
-  let stack = [];
-
-  for (let action of actions) {
-    if (action.startsWith("Type ")) {
-      stack.push(action.split(" ")[1]); // শুধু letter
-    } else if (action === "Undo") {
-      stack.pop();
-    }
-  }
-
-  return stack.join("");
-}
-
-console.log(textEditor(["Type A", "Type B", "Undo", "Type C"])); 
-// Output: "AC"
-
-
-// ২. Reverse a String using Stack
+🧪 Problem 1: Reverse a String using Stack
 function reverseString(str) {
   let stack = [];
 
+  // Push each character to stack
   for (let char of str) {
     stack.push(char);
   }
 
   let reversed = "";
-  while (stack.length) {
-    reversed += stack.pop();
+  while (stack.length > 0) {
+    reversed += stack.pop(); // Pop characters
   }
 
   return reversed;
 }
 
-console.log(reverseString("hello")); // "olleh"
+console.log(reverseString("hello")); // Output: "olleh"
 
 
-// Check Balanced Brackets (HTML-like)
-function isBalanced(s) {
+🧮 Problem 3: Valid Parentheses (Balanced Brackets Checker)
+function isValidParentheses(str) {
   const stack = [];
-  const map = {
-    ')': '(',
-    ']': '[',
-    '}': '{',
-  };
+  const map = { ")": "(", "}": "{", "]": "[" };
 
-  for (let char of s) {
-    if (['(', '[', '{'].includes(char)) {
+  for (let char of str) {
+    if (char === "(" || char === "{" || char === "[") {
       stack.push(char);
-    } else if ([')', ']', '}'].includes(char)) {
-      if (stack.pop() !== map[char]) return false;
+    } else if (char === ")" || char === "}" || char === "]") {
+      if (stack.pop() !== map[char]) {
+        return false;
+      }
     }
   }
 
   return stack.length === 0;
 }
 
-console.log(isBalanced("{[()]}")); // true
-console.log(isBalanced("{[(])}")); // false
+console.log(isValidParentheses("({[]})")); // true
+console.log(isValidParentheses("({[})")); // false
 
-// Evaluate Postfix Expression
-function evalPostfix(tokens) {
+
+🔁 Problem 4: Implement Stack using Array (Push, Pop, Peek, IsEmpty)
+let stack = [];
+
+function push(val) {
+  stack.push(val);
+}
+
+function pop() {
+  return stack.pop();
+}
+
+function peek() {
+  return stack[stack.length - 1];
+}
+
+function isEmpty() {
+  return stack.length === 0;
+}
+
+// Example
+push(1);
+push(2);
+push(3);
+console.log(pop()); // 3
+console.log(peek()); // 2
+console.log(isEmpty()); // false
+
+
+✅ 1. Undo/Redo Functionality (Text Editor Example)
+let undoStack = [];
+let redoStack = [];
+
+function type(text) {
+  undoStack.push(text);
+  redoStack = []; // Clear redoStack
+}
+
+function undo() {
+  if (undoStack.length === 0) return;
+  const last = undoStack.pop();
+  redoStack.push(last);
+  console.log("Undo:", last);
+}
+
+function redo() {
+  if (redoStack.length === 0) return;
+  const last = redoStack.pop();
+  undoStack.push(last);
+  console.log("Redo:", last);
+}
+
+// Example
+type("Hello");
+type("World");
+undo();   // Undo: World
+redo();   // Redo: World
+
+
+✅ 2. Browser History (Back / Forward Button)
+let backStack = [];
+let forwardStack = [];
+let currentPage = "Home";
+
+function visit(page) {
+  backStack.push(currentPage);
+  currentPage = page;
+  forwardStack = [];
+  console.log("Visit:", page);
+}
+
+function goBack() {
+  if (backStack.length === 0) return;
+  forwardStack.push(currentPage);
+  currentPage = backStack.pop();
+  console.log("Back to:", currentPage);
+}
+
+function goForward() {
+  if (forwardStack.length === 0) return;
+  backStack.push(currentPage);
+  currentPage = forwardStack.pop();
+  console.log("Forward to:", currentPage);
+}
+
+// Example
+visit("Page1");
+visit("Page2");
+goBack();      // Back to: Page1
+goForward();   // Forward to: Page2
+
+
+✅ 3. Function Call Stack (Recursion Visualization)
+function greet(n) {
+  if (n === 0) return;
+  console.log("Hi", n);
+  greet(n - 1);
+  console.log("Bye", n);
+}
+
+greet(3);
+
+// Execution flow:
+// Hi 3
+// Hi 2
+// Hi 1
+// Bye 1
+// Bye 2
+// Bye 3
+
+✅ 4. Reversing a Sentence Word-by-Word
+function reverseSentence(sentence) {
+  let words = sentence.split(" ");
+  let stack = [];
+
+  for (let word of words) {
+    stack.push(word);
+  }
+
+  let reversed = "";
+  while (stack.length) {
+    reversed += stack.pop() + " ";
+  }
+
+  return reversed.trim();
+}
+
+console.log(reverseSentence("I love JavaScript")); 
+// Output: JavaScript love I
+
+
+✅ 5. Balanced HTML Tags Checker
+function isValidHTML(str) {
   const stack = [];
+  const tags = str.match(/<\/?[^>]+>/g);
 
-  for (let token of tokens) {
-    if (!isNaN(token)) {
-      stack.push(Number(token));
+  for (let tag of tags) {
+    if (!tag.includes("/")) {
+      stack.push(tag);
     } else {
-      const b = stack.pop();
-      const a = stack.pop();
-      switch (token) {
-        case "+": stack.push(a + b); break;
-        case "-": stack.push(a - b); break;
-        case "*": stack.push(a * b); break;
-        case "/": stack.push(Math.trunc(a / b)); break;
+      const last = stack.pop();
+      if (!last || last.slice(1) !== tag.slice(2)) {
+        return false;
       }
     }
   }
 
-  return stack.pop();
+  return stack.length === 0;
 }
 
-console.log(evalPostfix(["2", "3", "+", "4", "*"])); // (2+3)*4 = 20
+console.log(isValidHTML("<div><p></p></div>")); // true
+console.log(isValidHTML("<div><p></div></p>")); // false
 
 
-// Backspace String Compare (Leetcode Style Problem)
-function process(str) {
-  let stack = [];
 
-  for (let ch of str) {
-    if (ch !== "#") stack.push(ch);
-    else stack.pop();
-  }
-
-  return stack.join("");
-}
-
-function backspaceCompare(s, t) {
-  return process(s) === process(t);
-}
-
-console.log(backspaceCompare("ab#c", "ad#c")); // true
-console.log(backspaceCompare("a##c", "#a#c")); // true
-
-
-//  Next Greater Element
-📌 Array: [4, 5, 2, 10]
-👉 Output: [5, 10, 10, -1]
-
-function nextGreater(arr) {
-  let stack = [];
-  let result = Array(arr.length).fill(-1);
-
-  for (let i = 0; i < arr.length; i++) {
-    while (stack.length && arr[stack[stack.length - 1]] < arr[i]) {
-      let index = stack.pop();
-      result[index] = arr[i];
-    }
-    stack.push(i);
-  }
-
-  return result;
-}
-
-console.log(nextGreater([4, 5, 2, 10])); // [5, 10, 10, -1]
 
 
 // ======================================================================================================
@@ -1592,50 +1578,6 @@ console.log(nextGreater([4, 5, 2, 10])); // [5, 10, 10, -1]
 কাস্টমার সার্ভিস সিস্টেম
 
 */
-// 🛠️ JavaScript দিয়ে Queue (ক্লাস ছাড়া)
-
-function createQueue() {
-  const queue = [];
-
-  return {
-    enqueue(item) {
-      queue.push(item); // শেষের দিকে যোগ
-    },
-    dequeue() {
-      return queue.shift(); // সামনে থেকে সরানো
-    },
-    peek() {
-      return queue[0]; // সামনে কে আছে দেখো
-    },
-    isEmpty() {
-      return queue.length === 0;
-    },
-    size() {
-      return queue.length;
-    },
-    print() {
-      console.log(queue.join(" <- "));
-    }
-  };
-}
-
-// 📌 ইউজাররা প্রিন্ট দিতে চায়। একেকজন করে সার্ভ করা হবে।
-
-const printQueue = createQueue();
-
-printQueue.enqueue("PDF File");
-printQueue.enqueue("Word File");
-printQueue.enqueue("Image");
-
-while (!printQueue.isEmpty()) {
-  console.log("Printing:", printQueue.dequeue());
-}
-
-// Output:
-// Printing: PDF File
-// Printing: Word File
-// Printing: Image
-
 
 
 // 🔶 সমস্যা:
