@@ -1366,201 +1366,91 @@ Stack হল একটি LIFO (Last In, First Out) ডেটা স্ট্র
 🧠 ফাংশনের কল Stack	JS ফাংশন কল হলে Stack এ Push হয়
 
 */
-🧪 Problem 1: Reverse a String using Stack
-function reverseString(str) {
-  let stack = [];
 
-  // Push each character to stack
-  for (let char of str) {
-    stack.push(char);
-  }
+// Ques 1 : Given an input string s, reverse the order of the words
 
-  let reversed = "";
-  while (stack.length > 0) {
-    reversed += stack.pop(); // Pop characters
-  }
+// Input: "the sky is blue"     ----->>>>>     Output: "blue is sky the"
+// Input: "  hello world  "     ----->>>>>     Output: "world hello"
+// Input: "a good   example"    ----->>>>>     Output: "example good a"
 
-  return reversed;
-}
+// "the sky is blue" => [the,sky,is,blue]
+// [] => [the,sky,is,blue] => blue is sky the
 
-console.log(reverseString("hello")); // Output: "olleh"
-
-
-🧮 Problem 3: Valid Parentheses (Balanced Brackets Checker)
-function isValidParentheses(str) {
+const reverseWords = function (s) {
+  const splitS = s.split(" ");
   const stack = [];
-  const map = { ")": "(", "}": "{", "]": "[" };
 
-  for (let char of str) {
-    if (char === "(" || char === "{" || char === "[") {
-      stack.push(char);
-    } else if (char === ")" || char === "}" || char === "]") {
-      if (stack.pop() !== map[char]) {
-        return false;
-      }
-    }
+  for (let i of splitS) {
+    stack.push(i);
   }
 
-  return stack.length === 0;
-}
+  let finalS = "";
 
-console.log(isValidParentheses("({[]})")); // true
-console.log(isValidParentheses("({[})")); // false
-
-
-🔁 Problem 4: Implement Stack using Array (Push, Pop, Peek, IsEmpty)
-let stack = [];
-
-function push(val) {
-  stack.push(val);
-}
-
-function pop() {
-  return stack.pop();
-}
-
-function peek() {
-  return stack[stack.length - 1];
-}
-
-function isEmpty() {
-  return stack.length === 0;
-}
-
-// Example
-push(1);
-push(2);
-push(3);
-console.log(pop()); // 3
-console.log(peek()); // 2
-console.log(isEmpty()); // false
-
-
-✅ 1. Undo/Redo Functionality (Text Editor Example)
-let undoStack = [];
-let redoStack = [];
-
-function type(text) {
-  undoStack.push(text);
-  redoStack = []; // Clear redoStack
-}
-
-function undo() {
-  if (undoStack.length === 0) return;
-  const last = undoStack.pop();
-  redoStack.push(last);
-  console.log("Undo:", last);
-}
-
-function redo() {
-  if (redoStack.length === 0) return;
-  const last = redoStack.pop();
-  undoStack.push(last);
-  console.log("Redo:", last);
-}
-
-// Example
-type("Hello");
-type("World");
-undo();   // Undo: World
-redo();   // Redo: World
-
-
-✅ 2. Browser History (Back / Forward Button)
-let backStack = [];
-let forwardStack = [];
-let currentPage = "Home";
-
-function visit(page) {
-  backStack.push(currentPage);
-  currentPage = page;
-  forwardStack = [];
-  console.log("Visit:", page);
-}
-
-function goBack() {
-  if (backStack.length === 0) return;
-  forwardStack.push(currentPage);
-  currentPage = backStack.pop();
-  console.log("Back to:", currentPage);
-}
-
-function goForward() {
-  if (forwardStack.length === 0) return;
-  backStack.push(currentPage);
-  currentPage = forwardStack.pop();
-  console.log("Forward to:", currentPage);
-}
-
-// Example
-visit("Page1");
-visit("Page2");
-goBack();      // Back to: Page1
-goForward();   // Forward to: Page2
-
-
-✅ 3. Function Call Stack (Recursion Visualization)
-function greet(n) {
-  if (n === 0) return;
-  console.log("Hi", n);
-  greet(n - 1);
-  console.log("Bye", n);
-}
-
-greet(3);
-
-// Execution flow:
-// Hi 3
-// Hi 2
-// Hi 1
-// Bye 1
-// Bye 2
-// Bye 3
-
-✅ 4. Reversing a Sentence Word-by-Word
-function reverseSentence(sentence) {
-  let words = sentence.split(" ");
-  let stack = [];
-
-  for (let word of words) {
-    stack.push(word);
-  }
-
-  let reversed = "";
   while (stack.length) {
-    reversed += stack.pop() + " ";
+    const current = stack.pop();
+
+    if (current) {
+      finalS += " " + current;
+    }
   }
 
-  return reversed.trim();
-}
+  return finalS.trim();
+};
 
-console.log(reverseSentence("I love JavaScript")); 
-// Output: JavaScript love I
+console.log(reverseWords("the sky is blue"));
+console.log(reverseWords("a good   example"));
+
+// Time Complexity = O(n)
+// Space Complexity = O(n)
 
 
-✅ 5. Balanced HTML Tags Checker
-function isValidHTML(str) {
+
+// Ques 2 : Given a string s containing just the characters '(', ')', '{', '}', '[' and ']',
+//          determine if the input string is valid.
+// Open brackets must be closed by the same type of brackets.
+// Open brackets must be closed in the correct order.
+// Every close bracket has a corresponding open bracket of the same type.
+
+// Input: "()"             ----->>>>>        Output: true
+// Input: "([]{})"         ----->>>>>        Output: true
+// Input: "(]"             ----->>>>>        Output: false
+
+function isValid(s) {
   const stack = [];
-  const tags = str.match(/<\/?[^>]+>/g);
 
-  for (let tag of tags) {
-    if (!tag.includes("/")) {
-      stack.push(tag);
-    } else {
-      const last = stack.pop();
-      if (!last || last.slice(1) !== tag.slice(2)) {
+  for (let i = 0; i < s.length; i++) {
+    const char = s[i];
+
+    if (char === "(" || char === "[" || char === "{") {
+      stack.push(char);
+    } else if (char === ")" || char === "]" || char === "}") {
+      if (isEmpty(stack)) {
+        return false;
+      }
+
+      const top = stack.pop();
+      if (
+        (char === ")" && top !== "(") ||
+        (char === "]" && top !== "[") ||
+        (char === "}" && top !== "{")
+      ) {
         return false;
       }
     }
   }
 
+  return isEmpty(stack);
+}
+
+function isEmpty(stack) {
   return stack.length === 0;
 }
 
-console.log(isValidHTML("<div><p></p></div>")); // true
-console.log(isValidHTML("<div><p></div></p>")); // false
+const string1 = "([{})";
+console.log(isValid(string1));
 
-
+// Time Complexity = O(n)
+// Space Complexity = O(n)
 
 
 
@@ -1580,150 +1470,289 @@ console.log(isValidHTML("<div><p></div></p>")); // false
 */
 
 
-// 🔶 সমস্যা:
-// একটা কল সেন্টারে কলাররা লাইন ধরে বসে আছে। যেই আগে ফোন করলো, তাকে আগে সার্ভ করা হবে।
 
-const callQueue = [];
+// Ques 1 : Circular Queue Implementation
+// Design your implementation of the circular queue. The circular queue is a
+// linear data structure in which the operations are performed based on First In First Out
+// principle, and the last position is connected back to the first position to make a circle.
 
-function receiveCall(caller) {
-  callQueue.push(caller); // নতুন কলার কিউতে ঢুকবে
-}
+var MyCircularQueue = function (k) {
+  this.queue = [];
+  this.size = k;
+};
 
-function answerCall() {
-  if (callQueue.length === 0) {
-    console.log("No callers in queue.");
-  } else {
-    const served = callQueue.shift(); // প্রথম কলারকে সার্ভ করো
-    console.log("Serving:", served);
+MyCircularQueue.prototype.enQueue = function (value) {
+  if (this.size === this.queue.length) return false;
+  this.queue.push(value);
+  return true;
+};
+
+MyCircularQueue.prototype.deQueue = function () {
+  if (this.queue.length === 0) return false;
+  this.queue.shift();
+  return true;
+};
+
+MyCircularQueue.prototype.Front = function () {
+  if (this.queue.length === 0) return -1;
+  return this.queue[0];
+};
+
+MyCircularQueue.prototype.Rear = function () {
+  if (this.queue.length === 0) return -1;
+  return this.queue[this.queue.length - 1];
+};
+
+MyCircularQueue.prototype.isEmpty = function () {
+  return this.queue.length === 0;
+};
+
+MyCircularQueue.prototype.isFull = function () {
+  return this.size === this.queue.length;
+};
+
+// [2,5,72]
+
+var obj = new MyCircularQueue(3);
+obj.enQueue(1);
+obj.enQueue(4);
+obj.enQueue(2);
+obj.deQueue();
+obj.enQueue(5);
+obj.deQueue();
+obj.enQueue(72);
+
+console.log(obj.Front(), obj.Rear());
+
+
+
+
+// Ques 2 : Implement Stack using Queues
+// Implement a last -in -first - out(LIFO) stack using only two queues.
+// The implemented stack should support all the functions of a stack (push, top, pop, and empty).
+
+var MyStack = function () {
+  this.q1 = [];
+  this.q2 = [];
+};
+
+// q1 - [4,2,3,5]
+// q2 - []
+
+MyStack.prototype.push = function (x) {
+  while (this.q1.length !== 0) {
+    this.q2.push(this.q1.shift());
   }
-}
-
-// Example
-receiveCall("Caller 1");
-receiveCall("Caller 2");
-receiveCall("Caller 3");
-
-answerCall(); // Serving: Caller 1
-answerCall(); // Serving: Caller 2
-
-
-
-// 🔶 সমস্যা:
-// একটি ওয়েব সার্ভারে অনেক টাস্ক এসেছে, যেগুলোকে FIFO পদ্ধতিতে প্রসেস করতে হবে।
-
-const taskQueue = [];
-
-function addTask(taskName) {
-  taskQueue.push(taskName);
-}
-
-function processTask() {
-  if (taskQueue.length > 0) {
-    const task = taskQueue.shift();
-    console.log(`Processing: ${task}`);
-  } else {
-    console.log("No tasks in queue.");
+  this.q1.push(x);
+  while (this.q2.length !== 0) {
+    this.q1.push(this.q2.shift());
   }
-}
+};
 
-// Usage
-addTask("Send Email");
-addTask("Generate Report");
-addTask("Backup Database");
+MyStack.prototype.pop = function () {
+  return this.q1.shift();
+};
 
-processTask(); // Processing: Send Email
-processTask(); // Processing: Generate Report
+MyStack.prototype.top = function () {
+  return this.q1[0];
+};
 
+MyStack.prototype.empty = function () {
+  return this.q1.length === 0;
+};
 
-
-// 🔶 সমস্যা:
-// একটা রেস্টুরেন্টে অর্ডার গুলো এক এক করে প্রসেস করতে হবে – যেই আগে অর্ডার দিলো, সে আগে খাবার পাবে।
-
-const orderQueue = [];
-
-function placeOrder(order) {
-  orderQueue.push(order);
-  console.log(`${order} added to order queue.`);
-}
-
-function serveOrder() {
-  if (orderQueue.length > 0) {
-    console.log(`${orderQueue.shift()} is served.`);
-  } else {
-    console.log("No orders to serve.");
-  }
-}
-
-// Usage
-placeOrder("Burger");
-placeOrder("Pizza");
-placeOrder("Fries");
-
-serveOrder(); // Burger is served.
-serveOrder(); // Pizza is served.
+var stack = new MyStack();
+stack.push(3);
+stack.push(5);
+stack.push(96);
+stack.push(24);
+stack.pop();
+console.log(stack.top());
 
 
 
-// 🔶 সমস্যা:
-// একটি প্রিন্টার সব ফাইল সিরিয়ালে প্রিন্ট করে, একটা শেষ না হলে আরেকটা শুরু হয় না।
+// Ques 3 : Implement Queue using Stacks
+// Implement a first in first out(FIFO) queue using only two stacks.
+// The implemented queue should have all functions of queue(enqueue, front, dequeue, and empty).
 
-const printQueue = [];
+var MyQueue = function () {
+  this.stack1 = [];
+  this.stack2 = [];
+};
 
-function addPrintJob(file) {
-  printQueue.push(file);
-  console.log(`${file} added to print queue.`);
-}
+MyQueue.prototype.enqueue = function (x) {
+  this.stack1.push(x);
+};
 
-function startPrinting() {
-  if (printQueue.length === 0) {
-    console.log("No files to print.");
-    return;
+// stack1 = [9,10]
+// stack2 = []
+
+MyQueue.prototype.dequeue = function () {
+  if (this.stack2.length === 0) {
+    while (this.stack1.length > 0) {
+      this.stack2.push(this.stack1.pop());
+    }
   }
 
-  const file = printQueue.shift();
-  console.log(`Printing ${file}...`);
-  
-  setTimeout(startPrinting, 2000); // প্রতি 2 সেকেন্ডে এক প্রিন্ট
-}
+  return this.stack2.pop();
+};
 
-// Usage
-addPrintJob("Resume.pdf");
-addPrintJob("Invoice.docx");
-addPrintJob("Design.png");
-
-startPrinting();
-
-
-// 🔶 সমস্যা:
-// একটা কনসার্ট বা সিনেমার জন্য টিকিট বিক্রি হচ্ছে, আর সবাই লাইন দিয়ে টিকিট পাচ্ছে।
-
-const ticketLine = [];
-
-function getTicket(person) {
-  ticketLine.push(person);
-  console.log(`${person} got in line.`);
-}
-
-function issueTicket() {
-  if (ticketLine.length > 0) {
-    const person = ticketLine.shift();
-    console.log(`Ticket issued to ${person}`);
-  } else {
-    console.log("No one in line.");
+MyQueue.prototype.front = function () {
+  if (this.stack2.length === 0) {
+    while (this.stack1.length > 0) {
+      this.stack2.push(this.stack1.pop());
+    }
   }
-}
 
-// Usage
-getTicket("Amit");
-getTicket("Sumi");
-getTicket("Rahul");
+  return this.stack2[this.stack2.length - 1];
+};
 
-issueTicket(); // Ticket issued to Amit
-issueTicket(); // Ticket issued to Sumi
+MyQueue.prototype.empty = function () {
+  return this.stack1.length === 0 && this.stack2.length === 0;
+};
+
+[3, 6, 7];
+
+const queue = new MyQueue();
+queue.enqueue(3);
+queue.enqueue(6);
+queue.enqueue(7);
+queue.dequeue();
+console.log(queue.front());
 
 
+
+// Ques 4 : Sliding Window Maximum
+// You are given an array of integers nums, there is a sliding window of size k which is
+// moving from the very left of the array to the very right.You can only see the k numbers
+// in the window. Each time the sliding window moves right by one position. For each window,
+// take the maximum element and add them to a final result array.
+
+// Input: nums = [1, 3, -1, -3, 5, 3, 6, 7], k = 3
+// Output: [3, 3, 5, 5, 6, 7]
+
+// Brute Force Solution
+const maxSlidingWindowNaive = function (nums, k) {
+  const result = [];
+  const n = nums.length;
+
+  for (i = 0; i <= n - k; i++) {
+    // O(n)
+    let max = nums[i];
+    for (j = 1; j < k; j++) {
+      // O(k)
+      if (nums[i + j] > max) {
+        max = nums[j + i];
+      }
+    }
+
+    result.push(max);
+  }
+
+  return result;
+};
+
+// Time Complexity - O(n*k) => O(n^2)
+// Space Complexity - O(n)
+console.log(maxSlidingWindowNaive([1, 3, -1, -3, 5, 3, 6, 7], 3));
+
+// Optimised Solution - Deque
+const maxSlidingWindowQueue = function (nums, k) {
+  const result = [];
+  const deque = [];
+
+  for (let i = 0; i < nums.length; i++) {
+    // O(n)
+    if (deque.length > 0 && deque[0] <= i - k) {
+      deque.shift();
+    }
+
+    while (deque.length > 0 && nums[deque[deque.length - 1]] < nums[i]) {
+      deque.pop();
+    }
+
+    deque.push(i);
+
+    if (i >= k - 1) {
+      result.push(nums[deque[0]]);
+    }
+  }
+
+  return result;
+};
+
+// Time Complexity - O(n)
+// Space Complexity - O(n)
+console.log(maxSlidingWindowQueue([1, 3, -1, -3, 5, 3, 6, 7], 3));
 
 // =======================================================================================================
+
+
+// Ques 4 : Sliding Window Maximum
+// You are given an array of integers nums, there is a sliding window of size k which is
+// moving from the very left of the array to the very right.You can only see the k numbers
+// in the window. Each time the sliding window moves right by one position. For each window,
+// take the maximum element and add them to a final result array.
+
+// Input: nums = [1, 3, -1, -3, 5, 3, 6, 7], k = 3
+// Output: [3, 3, 5, 5, 6, 7]
+
+// Brute Force Solution
+const maxSlidingWindowNaive = function (nums, k) {
+  const result = [];
+  const n = nums.length;
+
+  for (i = 0; i <= n - k; i++) {
+    // O(n)
+    let max = nums[i];
+    for (j = 1; j < k; j++) {
+      // O(k)
+      if (nums[i + j] > max) {
+        max = nums[j + i];
+      }
+    }
+
+    result.push(max);
+  }
+
+  return result;
+};
+
+// Time Complexity - O(n*k) => O(n^2)
+// Space Complexity - O(n)
+console.log(maxSlidingWindowNaive([1, 3, -1, -3, 5, 3, 6, 7], 3));
+
+// Optimised Solution - Deque
+const maxSlidingWindowQueue = function (nums, k) {
+  const result = [];
+  const deque = [];
+
+  for (let i = 0; i < nums.length; i++) {
+    // O(n)
+    if (deque.length > 0 && deque[0] <= i - k) {
+      deque.shift();
+    }
+
+    while (deque.length > 0 && nums[deque[deque.length - 1]] < nums[i]) {
+      deque.pop();
+    }
+
+    deque.push(i);
+
+    if (i >= k - 1) {
+      result.push(nums[deque[0]]);
+    }
+  }
+
+  return result;
+};
+
+// Time Complexity - O(n)
+// Space Complexity - O(n)
+console.log(maxSlidingWindowQueue([1, 3, -1, -3, 5, 3, 6, 7], 3));
+
+
+//========================================================================================================
 
 /*
 📌 What is Recursion? (রিকারশন কী?)
@@ -1833,6 +1862,374 @@ console.log(sumDigits(1234)); // Output: 10
 
 
 // ===========================================================================================================
+
+// Ques 1: Implement Linear Search in JavaScript
+// Write a function to search "target" in nums. If target exists, then return its index.
+// Otherwise, return -1. You must write an algorithm with O(n) runtime complexity.
+
+// Input: nums = [4,5,6,7,0,1,2], target = 0  ----->>>>>  Output:  4
+// Input: nums = [4,5,6,7,0,1,2], target = 3  ----->>>>>  Output: -1
+
+const linearSearch = (nums, target) => {
+  for (let i = 0; i < nums.length; i++) {
+    if (target === nums[i]) {
+      return i;
+    }
+  }
+  return -1;
+};
+
+// Time Complexity  - O(n)
+// Space Complexity - O(1)
+// console.log(linearSearch([4, 5, 6, 7, 0, 1, 2], 0));
+// console.log(linearSearch([4, 5, 6, 7, 0, 1, 2], 3));
+
+// Global Linear Search
+
+const globalLinearSearch = (nums, target) => {
+  const result = [];
+  for (let i = 0; i < nums.length; i++) {
+    if (target === nums[i]) {
+      result.push(i);
+    }
+  }
+  if (result.length === 0) return -1;
+  return result;
+};
+
+// Time Complexity  - O(n)
+// Space Complexity - O(n)
+console.log(globalLinearSearch([4, 5, 0, 7, 0, 1, 2], 0));
+
+
+
+// Ques 2: Implement Binary Search in JavaScript
+// Given an array of integers nums which is sorted in ascending order, and an integer target,
+// Write a function to search target in nums. If target exists, then return its index.
+// Otherwise, return -1. You must write an algorithm with O(log n) runtime complexity.
+
+// Input: nums = [-1,0,3,5,9,12], target = 9  ----->>>>>  Output:  4
+// Input: nums = [-1,0,3,5,9,12], target = 2  ----->>>>>  Output: -1
+
+function search(nums, target) {
+  let start = 0;
+  let end = nums.length - 1;
+
+  while (start <= end) {
+    let middle = Math.floor((start + end) / 2);
+
+    if (nums[middle] === target) {
+      return middle;
+    } else if (nums[middle] < target) {
+      start = middle + 1;
+    } else {
+      end = middle - 1;
+    }
+  }
+
+  return -1;
+}
+
+// Time Complexity  - O(logn)
+// Space Complexity - O(1)
+console.log(search([-1, 0, 3, 5, 9, 12], 9));
+console.log(search([-1, 0, 3, 5, 9, 12], 69));
+
+
+// Ques 3: Kth Missing Positive Number
+// Given an array arr of positive integers sorted in a strictly increasing order,
+// and an integer k. Return the kth positive integer that is missing from this array.
+
+// Input: arr = [2,3,4,7,11], k = 5  ----->>>>>  Output: 9
+// Explanation: The missing positive integers are [1,5,6,8,9,10,12,13,...].
+//              The 5th missing positive integer is 9.
+
+// arr = [2,3,4,7,11], k = 5
+// count = 4
+// 11 <= 9
+function findKthPositive(arr, k) {
+  let count = 0;
+  for (let i = 0; i < arr.length; i++) {
+    if (arr[i] <= k + count) {
+      count++;
+    }
+  }
+
+  return k + count;
+}
+
+console.log(findKthPositive([2, 3, 4, 7, 11], 5));
+
+
+
+// Ques 4: Maximum Count of Positive Integer and Negative Integer
+// Given an array nums sorted in non-decreasing order, return the maximum between
+// the number of positive integers and the number of negative integers.
+
+// Input: nums = [-2,-1,-1,1,2,3]  ----->>>>>  Output: 3
+// Explanation: There are 3 positive integers and 3 negative integers.
+//              The maximum count among them is 3.
+
+function maximumCount(nums) {
+  return Math.max(upperBound(nums), lowerBound(nums));
+}
+
+// [-2,-1,-1,1,2,3]
+// low = 2 , high = 2
+// mid = 3 => nums[3] = 1
+function upperBound(nums) {
+  let low = 0,
+    high = nums.length - 1;
+
+  while (low < high) {
+    let mid = Math.ceil((low + high) / 2);
+    if (nums[mid] < 0) low = mid;
+    else high = mid - 1;
+  }
+
+  return nums[0] >= 0 ? 0 : low + 1;
+}
+
+function lowerBound(nums) {
+  let low = 0,
+    high = nums.length - 1;
+
+  while (low < high) {
+    let mid = Math.floor((low + high) / 2);
+    if (nums[mid] > 0) high = mid;
+    else low = mid + 1;
+  }
+
+  return nums[nums.length - 1] <= 0 ? 0 : nums.length - low;
+}
+
+console.log(maximumCount([-2, -1, -1, 1, 2, 3]));
+
+//==========================================================================================================
+
+
+Sorting 
+
+// Ques 1: Implement Bubble Sort in JavaScript
+// Write a function to sort the given array nums in ascending order.
+
+// Input: nums = [29,10,14,37,14] ----->>>>>  Output: [10,14,14,29,37]
+
+const bubbleSort = (arr) => {
+  const n = arr.length;
+  for (let i = 0; i < n; i++) {
+    for (j = 0; j < n - i - 1; j++) {
+      if (arr[j] > arr[j + 1]) {
+        [arr[j], arr[j + 1]] = [arr[j + 1], arr[j]];
+      }
+    }
+  }
+
+  return arr;
+};
+
+console.log(bubbleSort([29, 10, 14, 37, 14]));
+
+// Best Time Complexity = O(n)
+// Worst Time Complexity = O(n^2)
+// Average Time Complexity = O(n^2)
+
+// Space Complexity = O(1)
+
+// Ques 2: Implement Selection Sort in JavaScript
+// Write a function to sort the given array nums in ascending order.
+
+// Input: nums = [29,10,14,37,14]  ----->>>>>  Output: [10,14,14,29,37]
+
+const selectionSort = (arr) => {
+  const n = arr.length;
+  for (let i = 0; i < n - 1; i++) {
+    // n
+    let minIndex = i;
+    for (let j = i + 1; j < n; j++) {
+      // n
+      if (arr[j] < arr[minIndex]) {
+        minIndex = j;
+      }
+    }
+    if (minIndex !== i) {
+      [arr[i], arr[minIndex]] = [arr[minIndex], arr[i]];
+    }
+  }
+
+  return arr;
+};
+
+console.log(selectionSort([29, 10, 14, 37, 14]));
+
+// Time Complexity = O(n^2)
+// Space Complexity = O(1)
+
+
+// Ques 3: Implement Insertion Sort in JavaScript
+// Write a function to sort the given array nums in ascending order.
+
+// Input: nums = [29,10,14,37,14,33,8,11] ----->>>>>  Output: [8,10,11,14,14,29,33,37]
+
+function insertionSort(arr) {
+  const n = arr.length;
+
+  for (let i = 1; i < n; i++) {
+    // n
+    const key = arr[i];
+    let j = i - 1;
+    while (j >= 0 && arr[j] > key) {
+      // n
+      arr[j + 1] = arr[j];
+      j--;
+    }
+    arr[j + 1] = key;
+  }
+
+  return arr;
+}
+
+console.log(insertionSort([29, 10, 14, 37, 14, 33, 8, 11]));
+
+// Best Case Time Complexity = O(n)
+// Worst Case Time Complexity = O(n^2)
+// Average Case Time Complexity = O(n^2)
+// Space Complexity = O(1)
+
+
+
+// Ques 3: Implement Insertion Sort in JavaScript
+// Write a function to sort the given array nums in ascending order.
+
+// Input: nums = [29,10,14,37,14,33,8,11] ----->>>>>  Output: [8,10,11,14,14,29,33,37]
+
+function insertionSort(arr) {
+  const n = arr.length;
+
+  for (let i = 1; i < n; i++) {
+    // n
+    const key = arr[i];
+    let j = i - 1;
+    while (j >= 0 && arr[j] > key) {
+      // n
+      arr[j + 1] = arr[j];
+      j--;
+    }
+    arr[j + 1] = key;
+  }
+
+  return arr;
+}
+
+console.log(insertionSort([29, 10, 14, 37, 14, 33, 8, 11]));
+
+// Best Case Time Complexity = O(n)
+// Worst Case Time Complexity = O(n^2)
+// Average Case Time Complexity = O(n^2)
+// Space Complexity = O(1)
+
+
+
+// Ques 6: Implement Quick Sort in JavaScript
+// Write a function to sort the given array nums in ascending order.
+
+// Input: nums = [8,3,5,4,7,6,1,2]  ----->>>>>  Output: [1,2,3,4,5,6,7,8]
+
+function quickSort(arr) {
+  if (arr.length <= 1) {
+    return arr;
+  }
+
+  const pivot = arr[0];
+  const left = [];
+  const right = [];
+
+  for (let i = 1; i < arr.length; i++) {
+    if (arr[i] < pivot) {
+      left.push(arr[i]);
+    } else {
+      right.push(arr[i]);
+    }
+  }
+
+  return [...quickSort(left), pivot, ...quickSort(right)];
+}
+
+// Time Complexity -
+// Average Case - O(nlog n)
+// Best Case - O(nlog n)
+// Worst Case - O(n^2)
+
+// Space Complexity -
+// Average Case - O(log n)
+// Worst Case - O(n)
+console.log(quickSort([5, 2, 9, 3, 6, 1, 8, 7]));
+
+// Approach 2 - Without using left and right Arrays
+function quickSort(arr, start = 0, end = arr.length - 1) {
+  if (start < end) {
+    const pivotIndex = pivot(arr, start, end);
+    quickSort(arr, start, pivotIndex - 1);
+    quickSort(arr, pivotIndex + 1, end);
+  }
+
+  return arr;
+}
+
+function pivot(arr, start = 0, end = arr.length - 1) {
+  function swap(array, i, j) {
+    let temp = array[i];
+    array[i] = array[j];
+    array[j] = temp;
+  }
+
+  let pivot = arr[start];
+  let swapIdx = start;
+
+  for (let i = start + 1; i < arr.length; i++) {
+    if (arr[i] < pivot) {
+      swapIdx++;
+      swap(arr, swapIdx, i);
+    }
+  }
+
+  swap(arr, start, swapIdx);
+  return swapIdx;
+}
+//===========================================================================================================
+
+
+// Ques 1 : Given the head of a singly linked list, return true if it is
+// a palindrome or false otherwise
+
+// Input: head = [1,2,2,1]      ----->>>>>      Output: true;
+// Input: head = [1,2]          ----->>>>>      Output: false;
+
+/**
+ * Definition for singly-linked list.
+ * function ListNode(val, next) {
+ *     this.val = (val===undefined ? 0 : val)
+ *     this.next = (next===undefined ? null : next)
+ * }
+ */
+var isPalindrome = function (head) {
+  let string1 = (string2 = "");
+  let node = head;
+
+  while (node != null) {
+    string1 = `${string1}${node.val}`;
+    string2 = `${node.val}${string2}`;
+    node = node.next;
+  }
+  return string1 === string2;
+};
+
+
+
+
+
+
+//===========================================================================================================
 
 // ⭐ Pattern Printing
 
