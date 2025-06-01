@@ -251,3 +251,33 @@ const Header = () => {
 }
 
 export default Header
+
+==========================================================================================================================================
+
+    
+✅ Protected Route
+ -------------------
+
+IsAuth.js
+--------------
+src > Roouting > IsAuth.js > ProtectedRoutes
+
+import Route from 'ract'
+import {Navigate, Outlet} from 'ract-router-dom'
+
+const ProtectedRoutes=()=>{
+ const isAuthToken = window.sessionStorage.getItem('tokenValue');
+ return isAuthToken ? <Outlet/> : <Navigate to="/error"/>
+}
+
+ export default ProtectedRoutes
+
+
+  Routing.js
+  ------------
+   import ProtectedRoutes from './IsAuth.js'
+   
+   <Route element={<ProtectedRoutes/>}>
+   <Route path ="products" element={<ViewProduct/>}/>
+   </Route>
+
