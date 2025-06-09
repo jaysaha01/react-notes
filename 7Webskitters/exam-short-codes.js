@@ -2380,74 +2380,49 @@ export default function Post({ data, setPageNo }) {
 
 // Trafic light 
 
-import React from 'react' //✅2
-
-const Signal = ({ color }) => {
-
-    return (
-        <div style={{ backgroundColor: color }}>
-        </div>
-    )
-}
-
-export default Signal
-
-
-// Traffic.jsx 
-
 import React, { useEffect, useState } from "react";
-import Lights from "./Lights";
 
-const Mainbox = () => {
-  const [data, setData] = useState(["red", "yellow", "green"]);
-  const [active, setActive] = useState(0);
+const Mylights = () => {
+  let [active, setActive] = useState(0);
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setActive((prev) => (prev + 1) % data.length); // loop from 0 to 2
-    }, 1000);
+  let myData = [
+    {
+      id: 0,
+      color: "red",
+    },
+    {
+      id: 1,
+      color: "yellow",
+    },
+    {
+      id: 2,
+      color: "green",
+    },
+  ];
 
-    return () => clearInterval(interval); // cleanup on unmount
-  }, [data.length]);
+   useEffect(() => {
+    const time = setInterval(() => {
+      setActive((prev) => (prev === 2 ? 0 : prev + 1));
+    }, 2000);
+
+    return () => clearInterval(time); // Clear interval on component unmount
+  }, []); // Run only once on mount
 
   return (
-    <div>
-      {data.map((elm, i) => (
-        <Lights key={i} data={elm} isActive={active === i} />
-      ))}
+    <div className="box">
+      {myData.map((ligt, i) => {
+        return (
+          <div
+            className="lightsbx"
+            style={active === i ? {backgroundColor:ligt.color} : {background:"gray"}}
+          ></div>
+        );
+      })}
     </div>
   );
 };
 
-export default Mainbox;
-
-
-// Lights.jsx 
-
-import React from "react";
-
-const Lights = ({ data ,isActive}) => {
-
-  return (
-    <>
-      <div
-        style={{
-          height: "40px",
-          width: "40px",
-          background: `${isActive ? data : "gray"}`,
-          borderRadius: "100%",
-          marginBottom: "10px",
-        }}
-        className="round"
-      ></div>
-    </>
-  );
-};
-
-export default Lights;
-
-
-
+export default Mylights;
 
 
 // ============================================================================================================================
