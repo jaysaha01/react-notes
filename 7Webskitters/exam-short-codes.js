@@ -3182,5 +3182,150 @@ const Manager = () => {
 
 export default Manager
 
+// =====================================================================================================================================
+
+// File Explorer 
+
+
+// data.json ✅1
+
+let explorer = [
+    {
+        "name":"public",
+        "isFolder": true ,
+        "children":[
+            {
+            "name":"index.html",
+            "isFolder": false ,
+            }
+        ]
+
+    },
+    {
+        "name":"src",
+        "isFolder": true ,
+        "children":[
+            {
+            "name":"component",
+            "isFolder": true ,
+            'children':[
+                {
+               "name":"test",
+               "isFolder": true,
+               "children":[
+                 {
+                 "name":"file.js",
+                 "isFolder": false
+                 }
+                ]
+                }
+            ]
+            },
+            {
+            "name":"app.js",
+            "isFolder": false
+            },
+            {
+            "name":"data.json",
+            "isFolder": false
+            },
+            {
+            "name":"index.js",
+            "isFolder": false
+            }
+        ]
+    },
+    {
+        "name":"package.json",
+        "isFolder": false
+    }
+]
+
+// App.js 
+
+import React from 'react'
+import json from './data.json';
+
+//Render list of objects ✅2
+const List = ((list, addNodeToList, deleteNodeFromList)=>{
+
+    const [isExpanded, setIsExpanded] = useState({public: true})
+
+    return(
+        <div className="container">
+            {
+                list.map((node)=>{
+                    {node.isFolder && 
+                    <span 
+                    onClick={()=> 
+                        setIsExpanded((prev) => ({...prev, [node?.name]: !prev[node.name]
+                        }))}>{isExpanded?.[node.name] ? "-" : "+"}</span>}
+                    <div key={node.id}>{node?.name}</div>
+
+                    {node?.isFolder && (<img src={"./folder.jpg"} className="icon" onClick={()=> addNodeToList(node.id)}/>)}  //✅4
+
+                    <span onClick={()=>deleteNodeFromList(node.id)}><img src="/deleteicons"/></span> //✅6
+                    
+                    {isExpanded?.[node.name] && node?.children && <List list={node.children} addNodeToList={addNodeToList} deleteNodeFromList={deleteNodeFromList}/>}
+                })
+            }
+        </div>
+    )
+})
+
+
+const App = () => {
+  const [data, setData]= useState(json);
+
+  //✅5
+  const addNodeToList =(parentId)=>{
+
+    const name = prompt("Enter Name");
+
+    const updateTree =(list)=>{
+
+        return list.map((node)=>{
+
+            if(node.id === parentId){
+                return {
+                    ...node,
+                    children:[
+                        ...node.children,
+                        {id:"123", name:name, isFolder:true, children:[]},
+                    ]
+                };
+            };
+
+            if(node.children){
+                return {...node, children:updateTree(node.children)}
+            }
+            return node
+        })
+    }
+    setData((prev)=> updateTree(prev))
+  }
+
+  //✅7
+  const deleteNodeFromList =(itemId)=>{
+
+    const updateTree = (list)=>{
+        return list.filter(node => node.id !== itemId).map((node)=> {
+            if(node.children){
+                return {...node, children: updateTree(node.children)}
+            }
+            return node
+        })
+    }
+    setData(prev => updateTree(prev))
+  }
+
+  return (
+    <div>                                   //✅5
+      <List list={data} addNodeToList={addNodeToList} deleteNodeFromList={deleteNodeFromList}/>  //✅3
+    </div>
+  )
+}
+
+export default App
 
 
