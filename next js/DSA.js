@@ -1,125 +1,824 @@
-/*
-✅ Beginner-Friendly DSA Roadmap (For React & Frontend Developers)
-Here’s a step-by-step DSA learning plan just for you:
-
-🟢 1. conditionals, loops, pattern programming
-
-
-🟢 1. Arrays & Matrix
-📌 Very important in React (you use .map(), .filter(), .reduce() etc.)
-
-🔑 Learn:
-
-Traversing (looping)
-
-Insertion, Deletion
-
-Searching
-
-Sorting (Bubble, Selection, Inbuilt .sort())
-
-Array methods (map, filter, reduce, slice, splice)
-
-✅ Use in React: Rendering lists, filtering data, table sorting, pagination.
-
-🟢 2. Strings
-🔑 Learn:
-
-Reversing a string
-
-Checking palindrome
-
-String methods: split, join, substring, includes, replace, etc.
-
-✅ Use in React: Search bars, form validations, filters.
-
-🟡 3. Stack
-🔑 LIFO (Last In First Out)
-
-Learn:
-
-Push, Pop, Peek
-
-Implement using array
-
-✅ Use in React: Undo/Redo, browser history, back button logic
-
-🟡 4. Queue
-🔑 FIFO (First In First Out)
-
-Learn:
-
-Enqueue, Dequeue
-
-Implement using array
-
-✅ Use in React: Chat apps, task queue, notifications, animations
-
-🟠 5. Object / HashMap
-🔑 Key-value pairs (like React props, state)
-
-Learn:
-
-Lookup, Insert, Delete
-
-Looping over object keys/values
-
-JavaScript Map, Set
-
-✅ Use in React: Fast lookups, filtering, managing state
-
-🟠 6. Recursion
-🔑 Function calling itself
-
-Learn:
-
-Base condition
-
-Factorial, Fibonacci
-
-Tree traversal
-
-✅ Use in React: Nested comments, nested menus
-
-🔵 7. Tree (Optional for Intermediate)
-🔑 Hierarchical data structure
-
-Learn:
-
-Binary Tree (BT)
-
-Tree Traversals (DFS, BFS)
-
-Parent-child relationships
-
-✅ Use in React: DOM structure, nested components, folders, menus
-
-🟣 8. Sorting Algorithms (Optional)
-🔑 Learn basic sorting:
-
-Bubble Sort
-
-Selection Sort
-
-Merge Sort (if you're comfortable)
-
-✅ Use in React: Sorting lists, leaderboards, tables
-
-🎯 Summary Table
-
-DSA Topic	React Use Case	Priority
-Arrays	Rendering lists, filtering, mapping	⭐⭐⭐⭐ done
-Strings	Searching, form validations	⭐⭐⭐⭐ done
-Stack	Undo/Redo, browser history	⭐⭐⭐ done
-Queue	Task queue, notifications, chat messages	⭐⭐⭐ done
-Object / Map	Fast lookup, storing data	⭐⭐⭐⭐ done
-Recursion	Nested UI, trees	⭐⭐done
-Tree	Nested comments, folders, menus	⭐⭐
-Sorting	Sort lists and tables	⭐⭐
-
-*/
 
 // ===================================================================================================================
+
+//>Check if the Strings are an Anagram
+
+function checkAnagram(s, t) {
+        let Obj1 = {};
+        let Obj2 = {};
+        
+        if (str1.length !== str2.length) {
+          return false;
+        }  
+
+        for(let i=0; i<s.length; i++){
+          obj1[s[i]] = (Obj1[s[i]] || 0) + 1;
+          obj2[t[i]] = (Obj1[t[i]] || 0) + 1;
+        }
+
+        for (const key in Obj1) {
+         if(Obj1[key] !== Obj2[key]) return false
+        }
+  
+        return true
+      }
+
+      console.warn(checkAnagram("anil", "nila"));
+
+
+
+
+
+
+
+
+// Delete Element in Array
+ function removeEl() {
+        let data = [30, 20, 45, 76, 20, 80];
+        let position = document.getElementById("position").value;
+        position = parseInt(position);
+        for (let i = position; i < data.length - 1; i++) {
+          data[i] = data[i + 1];
+        }
+        data.length = data.length - 1;
+        console.warn(data);
+  }
+
+
+
+//Insert Element in Array
+function insertEl() {
+        let data = [60, 30, 10, 67, 40];
+        let newEl = document.getElementById('newEl').value;
+        newEl = parseInt(newEl)
+        let position = document.getElementById('position').value
+        console.warn(data);
+
+        for (let i = data.length - 1; i >= 0; i--) {
+          // console.warn(data[i])
+          if (i >= position) {
+            data[i + 1] = data[i];
+            if (i == position) {
+              data[i] = newEl;
+            }
+          }
+        }
+        console.warn(data)
+      }
+
+
+
+// Merge Two in Array
+let data = [3, 7, 12, 34, 56, 90];
+let data2 = [20, 30, 40, 50]
+let data3 = [];
+for (i = 0; i < data.length; i++) {
+  data3[i] = data[i];
+}
+for (i = 0; i < data2.length; i++) {
+  data3[data.length + i] = data2[i];
+}
+console.warn(data3);
+
+
+
+// Search Element in Array
+function searchElement() {
+  let data = [20, 40, 60, 5, 10, 70, 80, 99];
+  let item = document.getElementById('searchEl').value;
+  let index = undefined;
+  for (i = 0; i <= data.length - 1; i++) {
+    // console.warn(data[i])
+    if (data[i] === parseInt(item)) {
+      index = i;
+      break;
+    }
+  }
+  console.warn(index);
+}
+
+
+// Sort Element in Array
+let data = [34, 3, 1, 25, 54, 12, 89, 5, 76, 789];
+
+for (i = 0; i < data.length; i++) {
+
+  for (j = 0; j < data.length; j++) {
+    console.warn(data)
+
+    if (data[j] > data[j + 1]) {
+      let temp = data[j];
+      data[j] = data[j + 1];
+      data[j + 1] = temp;
+    }
+  }
+}
+
+
+// Array Traversing
+let data = [9, 45, 2, 8, 45, 23, 7, 78, 0, 11, 41, 77];
+
+function getElement() {
+  let el = document.getElementById("element").value;
+  if (el < data.length && typeof parseInt(el) === "number") {
+    alert(data[el]);
+  } else {
+    alert("Please enter valid input");
+  }
+}
+
+
+// Binary Search with Iterative approach
+let data = [5, 9, 13, 17, 45, 67, 89, 100];
+let find = 89;
+let start = 0;
+let end = data.length - 1;
+let position = undefined;
+while (start <= end) {
+  let mid = Math.floor((start + end) / 2);
+  // console.warn(data[mid]);
+  if (data[mid] === find) {
+    position = mid;
+    break;
+  } else if (data[mid] < find) {
+    start = mid + 1;
+  } else {
+    end = mid - 1;
+  }
+}
+console.warn(position)
+
+
+// Bubble Sort With Recursion
+let arr = [64, 34, 25, 12];
+
+function recursiveBubbleSort(data, count) {
+  if (count == 1) {
+    return;
+  }
+  let currentEl = 0;
+
+  for (let i = 0; i < count - 1; i++) {
+    if (data[i] > data[i + 1]) {
+      let temp = data[i];
+      data[i] = data[i + 1];
+      data[i + 1] = temp;
+      currentEl++;
+    }
+  }
+  recursiveBubbleSort(data, count - 1)
+}
+
+recursiveBubbleSort(arr, arr.length);
+console.warn(arr)
+
+
+
+// Descending Order with Selection Sorting
+let items = [20, 12, 53, 3, 56, 78, 0, 5, 89, 34];
+function selectionSort(data) {
+  let minId;
+  for (let i = 0; i < data.length; i++) {
+    minId = i;
+    for (let j = i + 1; j < data.length; j++) {
+      if (data[j] > data[minId]) {
+        minId = j;
+      }
+    }
+    let temp = data[minId];
+    data[minId] = data[i];
+    data[i] = temp;
+  }
+}
+
+selectionSort(items);
+console.warn(items)
+
+
+//Graph
+let data = [
+  [0, 1, 1, 0],
+  [1, 0, 1, 1],
+  [1, 1, 0, 0],
+  [0, 1, 0, 0,],
+]
+console.warn(data)
+
+
+// Graph Adjacency List
+let adjList = {
+  'a': ['b', 'c'],
+  'b': ['a', 'c', 'd'],
+  'c': ['a', 'b'],
+  'd': ['b'],
+}
+
+console.warn(adjList)
+
+
+// Head and Tail Recursion
+function test(x) {
+  console.warn(x)
+  if (x > 0) {
+    test(x - 1)
+  }
+  console.warn(x)
+}
+
+
+let data = 5
+test(data)
+
+
+// Insertion Sort in JavaScript
+let arr = [12, 11, 13, 5, 6];
+function insertionSort(data) {
+  let i, current, j;
+  for (i = 1; i < data.length; i++) {
+    current = data[i];
+    j = i - 1;
+    while (j >= 0 && data[j] > current) {
+      data[j + 1] = data[j];
+      j = j - 1;
+    }
+    data[j + 1] = current
+  }
+}
+
+insertionSort(arr);
+console.warn(arr)
+
+
+
+//Linked List in JavaScript
+class List {
+  constructor(data) {
+    this.head = {
+      value: data,
+      next: null,
+    };
+    this.tail = this.head;
+    this.size = 1;
+  }
+  appendNode(nodeData) {
+    let newNode = {
+      value: nodeData,
+      next: null,
+    };
+    this.tail.next = newNode;
+    this.tail = newNode;
+    this.size += 1;
+  }
+  traversing() {
+    let counter = 0;
+    let currentNode = this.head;
+    while (counter < this.size) {
+      // console.warn(currentNode);
+      currentNode = currentNode.next;
+      counter++;
+    }
+  }
+  deleteNode(index) {
+    let counter = 1;
+    let lead = this.head;
+    if (index === 1) {
+      this.head = this.head.next;
+    } else {
+      while (counter < index - 1) {
+        lead = lead.next;
+        counter++;
+      }
+      let nextNode = lead.next.next;
+      lead.next = nextNode;
+      console.warn(lead);
+    }
+  }
+  searchNode(data) {
+    let result = undefined;
+    let lead = this.head;
+    let loop = true;
+    while (loop) {
+      lead = lead.next;
+      // console.warn(lead)
+      loop = !!lead;
+      if (loop && lead.value === data) {
+        loop = false;
+        result = lead;
+      }
+    }
+    console.warn(result)
+  }
+
+}
+
+let list = new List(200);
+list.appendNode(300);
+list.appendNode(400);
+list.appendNode(500);
+list.appendNode(600);
+list.appendNode(700);
+list.traversing();
+list.deleteNode(1);
+list.searchNode(900)
+
+// console.warn(list);
+
+
+
+
+
+
+
+// Maximum occurring character in string
+let str = "hello peter ooo";
+let strObj = {};
+let maxKey = '';
+for (let i = 0; i < str.length; i++) {
+  // console.warn(str[i])
+  let key = str[i];
+  if (!strObj[key]) {
+    strObj[key] = 0;
+  };
+  strObj[key]++;
+  if (maxKey == '' || strObj[key] > strObj[maxKey]) {
+    maxKey = key;
+  }
+}
+console.warn(maxKey)
+console.warn(strObj)
+
+
+//merge_sort
+function merge(arr, l, m, r) {
+  var n1 = m - l + 1;
+  var n2 = r - m;
+
+  // Create temp arrays
+  var L = new Array(n1);
+  var R = new Array(n2);
+
+  for (var i = 0; i < n1; i++) L[i] = arr[l + i];
+  for (var j = 0; j < n2; j++) R[j] = arr[m + 1 + j];
+
+  // Merge the temp arrays back into arr[l..r]
+
+  // Initial index of first subarray
+  var i = 0;
+
+  // Initial index of second subarray
+  var j = 0;
+
+  // Initial index of merged subarray
+  var k = l;
+
+  while (i < n1 && j < n2) {
+    if (L[i] <= R[j]) {
+      arr[k] = L[i];
+      i++;
+    } else {
+      arr[k] = R[j];
+      j++;
+    }
+    k++;
+  }
+
+  // Copy the remaining elements of
+  // L[], if there are any
+  while (i < n1) {
+    arr[k] = L[i];
+    i++;
+    k++;
+  }
+
+  // Copy the remaining elements of
+  // R[], if there are any
+  while (j < n2) {
+    arr[k] = R[j];
+    j++;
+    k++;
+  }
+}
+
+// l is for left index and r is
+// right index of the sub-array
+// of arr to be sorted */
+function mergeSort(arr, l, r) {
+  console.warn(r)
+  if (l >= r) {
+    return; //returns recursively
+  }
+  var m = l + parseInt((r - l) / 2);
+  // console.warn(m)
+  mergeSort(arr, l, m);
+  mergeSort(arr, m + 1, r);
+  merge(arr, l, m, r);
+
+}
+
+var arr = [12, 11, 13, 5, 6, 7];
+var arr_size = arr.length;
+
+mergeSort(arr, 0, arr_size - 1);
+console.warn(arr)
+
+
+//Check String is palindrome or not
+function palindrome(data) {
+  let start = 0;
+  let end = data.length - 1;
+  let result = true;
+  while (end > start) {
+    if (data[start] != data[end]) {
+      result = false;
+    }
+    start++;
+    end--;
+  }
+  return result;
+}
+
+let str = "level";
+console.warn(palindrome(str))
+
+
+//Queue in JavaScript
+
+let queue = [];
+let currentSize = queue.length;
+let maxSize = 5;
+
+function enqueue(newVal) {
+  if (currentSize >= maxSize) {
+    alert("Queue is already full");
+  } else {
+    queue[currentSize] = newVal;
+    currentSize++;
+  }
+}
+
+function display() {
+  console.warn(queue);
+}
+function dequeue() {
+  if (currentSize > 0) {
+    for (let i = 0; i < queue.length; i++) {
+      queue[i] = queue[i + 1];
+    }
+    currentSize--;
+    queue.length = currentSize;
+  } else {
+    alert("queue is already empty");
+  }
+}
+
+enqueue(10);
+enqueue(20);
+enqueue(30);
+
+display();
+
+
+//Circular Queue in Javascript
+class Queue {
+  constructor(size) {
+    this.max = size;
+    this.items = new Array(size);
+    this.currentSize = 0;
+    this.rear = -1;
+    this.front = -1;
+  }
+  enqueue(val) {
+    if (this.currentSize != this.max) {
+      if (this.rear == this.max - 1) {
+        this.rear = 0;
+      } else {
+        this.rear++;
+      }
+      this.items[this.rear] = val;
+      this.currentSize++;
+      if ((this.front == -1)) {
+        this.front = this.rear;
+      }
+    }
+  }
+  dequeue() {
+    if (this.currentSize != 0) {
+      this.items[this.front] = null;
+      if (this.front == this.max - 1) {
+        this.front = 0;
+      } else {
+        this.front++;
+      }
+      this.currentSize--;
+
+    } else {
+      this.front = -1;
+      this.rear = -1;
+      alert("queue is empty")
+    }
+  }
+}
+
+let queue = new Queue(5);
+
+
+//Queue in JavaScript
+let queue = [];
+let currentSize = queue.length;
+let maxSize = 5;
+
+// function enqueue(newVal) {
+//   if (currentSize >= maxSize) {
+//     alert("Queue is already full");
+//   } else {
+//     queue[currentSize] = newVal;
+//     currentSize++;
+//   }
+// }
+
+function enqueueWithBtn() {
+  let newVal = document.getElementById("qEl").value;
+  if (currentSize >= maxSize) {
+    alert("Queue is already full");
+  } else {
+    queue[currentSize] = newVal;
+    currentSize++;
+  }
+}
+
+function display() {
+  console.warn(queue);
+}
+function dequeue() {
+  if (!isEmpty()) {
+    for (let i = 0; i < queue.length; i++) {
+      queue[i] = queue[i + 1];
+    }
+    currentSize--;
+    queue.length = currentSize;
+  } else {
+    alert("queue is already empty");
+  }
+}
+function front() {
+  if (!isEmpty()) {
+    console.warn(queue[0]);
+  } else {
+    alert("queue is already empty");
+  }
+}
+
+function rear() {
+  if (!isEmpty()) {
+    console.warn(queue[currentSize - 1]);
+  } else {
+    alert("queue is already empty");
+  }
+}
+function isEmpty() {
+  if (currentSize <= 0) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+// enqueue(10);
+// enqueue(20);
+// enqueue(30);
+
+// front();
+// rear();
+
+// display();
+
+
+// Recursion
+function factorial(item) {
+  if (item == 0) {
+    return 1
+  }
+  return item * factorial(item - 1)
+
+}
+let data = 5
+console.warn(factorial(data))
+
+
+// Recursion Array with Reverse
+let data = [5, 12, 65, 89, 0, 100, 200];
+let temp;
+function customReverse(data, start, end) {
+  console.warn(data)
+  if (start <= end) {
+    temp = data[start];
+    data[start] = data[end];
+    data[end] = temp;
+    customReverse(data, start + 1, end - 1);
+  }
+}
+
+customReverse(data, 0, data.length - 1);
+
+
+// Recursive Binary Search in JavaScript
+let data = [10, 15, 18, 34, 67, 70, 89];
+let start = 0;
+let end = data.length - 1;
+let find = 15;
+let position = undefined;
+function recursiveBinary(data, start, end) {
+  mid = Math.floor((start + end) / 2);
+  if (data[mid] === find) {
+    position = mid;
+    return true;
+  } else if (data[mid] < find) {
+    recursiveBinary(data, mid + 1, end);
+  } else {
+    recursiveBinary(data, start, mid - 1);
+  }
+}
+
+recursiveBinary(data, start, end);
+console.warn(position);
+
+
+
+// Selection Sort with JavaScript
+let items = [20, 12, 53, 3, 56, 78, 0, 5, 89, 34];
+function selectionSort(data) {
+  let minId;
+  for (let i = 0; i < data.length; i++) {
+    minId = i;
+    for (let j = i + 1; j < data.length; j++) {
+      if (data[j] < data[minId]) {
+        minId = j;
+      }
+    }
+    let temp = data[minId];
+    data[minId] = data[i];
+    data[i] = temp;
+  }
+}
+
+selectionSort(items);
+console.warn(items)
+
+
+
+// Set DSA with JavaScript
+let data = new Set(["anil", "peter", "anil"]);
+data.add({ "email": "test@test.com" })
+console.warn(data.has("peter1"))
+data.delete('anil');
+console.warn(data);
+for (x of data) {
+  console.warn(x)
+}
+
+data.forEach((val) => {
+  console.warn(val)
+})
+console.warn(data.entries())
+
+
+
+// Stack in JavaScript
+let data = [];
+let currentSize = data.length;
+let max = 5;
+function push(newVal) {
+  if (currentSize >= max) {
+    alert("Stack is full you can not add" + newVal);
+  }
+  data[currentSize] = newVal;
+  currentSize += 1;
+}
+
+function pop() {
+  if (currentSize > 0) {
+    currentSize -= 1;
+    data.length = currentSize;
+  } else {
+    alert("stack is already empty");
+  }
+}
+
+push(20);
+push(30);
+push(10);
+push(2);
+pop();
+pop();
+pop();
+push(25);
+push(23);
+push(67);
+// pop()
+// pop()
+
+
+
+// Reverse String with Stack in JavaScript
+let data = [];
+let currentSize = data.length;
+function push(newVal) {
+  data[currentSize] = newVal;
+  currentSize += 1;
+}
+function pop() {
+  lastRemovedItem = data[currentSize - 1];
+  currentSize -= 1;
+  data.length = currentSize;
+  return lastRemovedItem;
+}
+
+function reverseStr(item) {
+  for (let i = 0; i < item.length; i++) {
+    push(item[i])
+  }
+  for (let i = 0; i < item.length; i++) {
+    item[i] = pop();
+  }
+
+}
+
+
+let str = "anil";
+str = str.split("");
+reverseStr(str)
+console.warn(str.join(""))
+
+
+//  Stack with class in JavaScript
+class Stack {
+  item = [];
+  currentSize;
+  maxSize;
+  constructor(size) {
+    this.maxSize = size;
+    this.currentSize = this.item.length;
+  }
+  push(newVal) {
+    if (this.currentSize >= this.maxSize) {
+      alert("stack is full");
+    } else {
+      this.item[this.currentSize] = newVal;
+      this.currentSize++;
+    }
+  }
+  pop() {
+    if (this.currentSize > 0) {
+      this.currentSize--;
+      this.item.length = this.currentSize;
+    } else {
+      alert("stack is already empty")
+    }
+  }
+  display() {
+    console.warn(this.item)
+  }
+}
+st1 = new Stack(5);
+//   st1.push(20)
+//   st1.display();
+
+
+
+// Stack in JavaScript
+let data = [];
+let currentSize = data.length;
+let max = 5;
+function push() {
+  let newVal = document.getElementById('newEl').value;
+  if (currentSize >= max) {
+    alert("Stack is full you can not add" + newVal);
+  } else {
+    data[currentSize] = newVal;
+    currentSize += 1;
+    document.getElementById('newEl').value = "";
+    console.warn("element added")
+  }
+}
+
+function pop() {
+  if (currentSize > 0) {
+    currentSize -= 1;
+    data.length = currentSize;
+  } else {
+    alert("stack is already empty");
+  }
+}
+function display() {
+  for (let i = 0; i <= currentSize - 1; i++) {
+    console.warn("el. no", i, "and value is ", data[i])
+  }
+}
+
+
+
+
+// ==========================================================================================================================================================
 
 // 🧩 Step 1: What is an Array?
 
