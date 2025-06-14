@@ -1,823 +1,4 @@
 
-// ===================================================================================================================
-
-//>Check if the Strings are an Anagram
-
-function checkAnagram(s, t) {
-        let Obj1 = {};
-        let Obj2 = {};
-        
-        if (str1.length !== str2.length) {
-          return false;
-        }  
-
-        for(let i=0; i<s.length; i++){
-          obj1[s[i]] = (Obj1[s[i]] || 0) + 1;
-          obj2[t[i]] = (Obj1[t[i]] || 0) + 1;
-        }
-
-        for (const key in Obj1) {
-         if(Obj1[key] !== Obj2[key]) return false
-        }
-  
-        return true
-      }
-
-      console.warn(checkAnagram("anil", "nila"));
-
-
-
-
-
-
-
-
-// Delete Element in Array
- function removeEl() {
-        let data = [30, 20, 45, 76, 20, 80];
-        let position = document.getElementById("position").value;
-        position = parseInt(position);
-        for (let i = position; i < data.length - 1; i++) {
-          data[i] = data[i + 1];
-        }
-        data.length = data.length - 1;
-        console.warn(data);
-  }
-
-
-
-//Insert Element in Array
-function insertEl() {
-        let data = [60, 30, 10, 67, 40];
-        let newEl = document.getElementById('newEl').value;
-        newEl = parseInt(newEl)
-        let position = document.getElementById('position').value
-        console.warn(data);
-
-        for (let i = data.length - 1; i >= 0; i--) {
-          // console.warn(data[i])
-          if (i >= position) {
-            data[i + 1] = data[i];
-            if (i == position) {
-              data[i] = newEl;
-            }
-          }
-        }
-        console.warn(data)
-      }
-
-
-
-// Merge Two in Array
-let data = [3, 7, 12, 34, 56, 90];
-let data2 = [20, 30, 40, 50]
-let data3 = [];
-for (i = 0; i < data.length; i++) {
-  data3[i] = data[i];
-}
-for (i = 0; i < data2.length; i++) {
-  data3[data.length + i] = data2[i];
-}
-console.warn(data3);
-
-
-
-// Search Element in Array
-function searchElement() {
-  let data = [20, 40, 60, 5, 10, 70, 80, 99];
-  let item = document.getElementById('searchEl').value;
-  let index = undefined;
-  for (i = 0; i <= data.length - 1; i++) {
-    // console.warn(data[i])
-    if (data[i] === parseInt(item)) {
-      index = i;
-      break;
-    }
-  }
-  console.warn(index);
-}
-
-
-// Sort Element in Array
-let data = [34, 3, 1, 25, 54, 12, 89, 5, 76, 789];
-
-for (i = 0; i < data.length; i++) {
-
-  for (j = 0; j < data.length; j++) {
-    console.warn(data)
-
-    if (data[j] > data[j + 1]) {
-      let temp = data[j];
-      data[j] = data[j + 1];
-      data[j + 1] = temp;
-    }
-  }
-}
-
-
-// Array Traversing
-let data = [9, 45, 2, 8, 45, 23, 7, 78, 0, 11, 41, 77];
-
-function getElement() {
-  let el = document.getElementById("element").value;
-  if (el < data.length && typeof parseInt(el) === "number") {
-    alert(data[el]);
-  } else {
-    alert("Please enter valid input");
-  }
-}
-
-
-// Binary Search with Iterative approach
-let data = [5, 9, 13, 17, 45, 67, 89, 100];
-let find = 89;
-let start = 0;
-let end = data.length - 1;
-let position = undefined;
-while (start <= end) {
-  let mid = Math.floor((start + end) / 2);
-  // console.warn(data[mid]);
-  if (data[mid] === find) {
-    position = mid;
-    break;
-  } else if (data[mid] < find) {
-    start = mid + 1;
-  } else {
-    end = mid - 1;
-  }
-}
-console.warn(position)
-
-
-// Bubble Sort With Recursion
-let arr = [64, 34, 25, 12];
-
-function recursiveBubbleSort(data, count) {
-  if (count == 1) {
-    return;
-  }
-  let currentEl = 0;
-
-  for (let i = 0; i < count - 1; i++) {
-    if (data[i] > data[i + 1]) {
-      let temp = data[i];
-      data[i] = data[i + 1];
-      data[i + 1] = temp;
-      currentEl++;
-    }
-  }
-  recursiveBubbleSort(data, count - 1)
-}
-
-recursiveBubbleSort(arr, arr.length);
-console.warn(arr)
-
-
-
-// Descending Order with Selection Sorting
-let items = [20, 12, 53, 3, 56, 78, 0, 5, 89, 34];
-function selectionSort(data) {
-  let minId;
-  for (let i = 0; i < data.length; i++) {
-    minId = i;
-    for (let j = i + 1; j < data.length; j++) {
-      if (data[j] > data[minId]) {
-        minId = j;
-      }
-    }
-    let temp = data[minId];
-    data[minId] = data[i];
-    data[i] = temp;
-  }
-}
-
-selectionSort(items);
-console.warn(items)
-
-
-//Graph
-let data = [
-  [0, 1, 1, 0],
-  [1, 0, 1, 1],
-  [1, 1, 0, 0],
-  [0, 1, 0, 0,],
-]
-console.warn(data)
-
-
-// Graph Adjacency List
-let adjList = {
-  'a': ['b', 'c'],
-  'b': ['a', 'c', 'd'],
-  'c': ['a', 'b'],
-  'd': ['b'],
-}
-
-console.warn(adjList)
-
-
-// Head and Tail Recursion
-function test(x) {
-  console.warn(x)
-  if (x > 0) {
-    test(x - 1)
-  }
-  console.warn(x)
-}
-
-
-let data = 5
-test(data)
-
-
-// Insertion Sort in JavaScript
-let arr = [12, 11, 13, 5, 6];
-function insertionSort(data) {
-  let i, current, j;
-  for (i = 1; i < data.length; i++) {
-    current = data[i];
-    j = i - 1;
-    while (j >= 0 && data[j] > current) {
-      data[j + 1] = data[j];
-      j = j - 1;
-    }
-    data[j + 1] = current
-  }
-}
-
-insertionSort(arr);
-console.warn(arr)
-
-
-
-//Linked List in JavaScript
-class List {
-  constructor(data) {
-    this.head = {
-      value: data,
-      next: null,
-    };
-    this.tail = this.head;
-    this.size = 1;
-  }
-  appendNode(nodeData) {
-    let newNode = {
-      value: nodeData,
-      next: null,
-    };
-    this.tail.next = newNode;
-    this.tail = newNode;
-    this.size += 1;
-  }
-  traversing() {
-    let counter = 0;
-    let currentNode = this.head;
-    while (counter < this.size) {
-      // console.warn(currentNode);
-      currentNode = currentNode.next;
-      counter++;
-    }
-  }
-  deleteNode(index) {
-    let counter = 1;
-    let lead = this.head;
-    if (index === 1) {
-      this.head = this.head.next;
-    } else {
-      while (counter < index - 1) {
-        lead = lead.next;
-        counter++;
-      }
-      let nextNode = lead.next.next;
-      lead.next = nextNode;
-      console.warn(lead);
-    }
-  }
-  searchNode(data) {
-    let result = undefined;
-    let lead = this.head;
-    let loop = true;
-    while (loop) {
-      lead = lead.next;
-      // console.warn(lead)
-      loop = !!lead;
-      if (loop && lead.value === data) {
-        loop = false;
-        result = lead;
-      }
-    }
-    console.warn(result)
-  }
-
-}
-
-let list = new List(200);
-list.appendNode(300);
-list.appendNode(400);
-list.appendNode(500);
-list.appendNode(600);
-list.appendNode(700);
-list.traversing();
-list.deleteNode(1);
-list.searchNode(900)
-
-// console.warn(list);
-
-
-
-
-
-
-
-// Maximum occurring character in string
-let str = "hello peter ooo";
-let strObj = {};
-let maxKey = '';
-for (let i = 0; i < str.length; i++) {
-  // console.warn(str[i])
-  let key = str[i];
-  if (!strObj[key]) {
-    strObj[key] = 0;
-  };
-  strObj[key]++;
-  if (maxKey == '' || strObj[key] > strObj[maxKey]) {
-    maxKey = key;
-  }
-}
-console.warn(maxKey)
-console.warn(strObj)
-
-
-//merge_sort
-function merge(arr, l, m, r) {
-  var n1 = m - l + 1;
-  var n2 = r - m;
-
-  // Create temp arrays
-  var L = new Array(n1);
-  var R = new Array(n2);
-
-  for (var i = 0; i < n1; i++) L[i] = arr[l + i];
-  for (var j = 0; j < n2; j++) R[j] = arr[m + 1 + j];
-
-  // Merge the temp arrays back into arr[l..r]
-
-  // Initial index of first subarray
-  var i = 0;
-
-  // Initial index of second subarray
-  var j = 0;
-
-  // Initial index of merged subarray
-  var k = l;
-
-  while (i < n1 && j < n2) {
-    if (L[i] <= R[j]) {
-      arr[k] = L[i];
-      i++;
-    } else {
-      arr[k] = R[j];
-      j++;
-    }
-    k++;
-  }
-
-  // Copy the remaining elements of
-  // L[], if there are any
-  while (i < n1) {
-    arr[k] = L[i];
-    i++;
-    k++;
-  }
-
-  // Copy the remaining elements of
-  // R[], if there are any
-  while (j < n2) {
-    arr[k] = R[j];
-    j++;
-    k++;
-  }
-}
-
-// l is for left index and r is
-// right index of the sub-array
-// of arr to be sorted */
-function mergeSort(arr, l, r) {
-  console.warn(r)
-  if (l >= r) {
-    return; //returns recursively
-  }
-  var m = l + parseInt((r - l) / 2);
-  // console.warn(m)
-  mergeSort(arr, l, m);
-  mergeSort(arr, m + 1, r);
-  merge(arr, l, m, r);
-
-}
-
-var arr = [12, 11, 13, 5, 6, 7];
-var arr_size = arr.length;
-
-mergeSort(arr, 0, arr_size - 1);
-console.warn(arr)
-
-
-//Check String is palindrome or not
-function palindrome(data) {
-  let start = 0;
-  let end = data.length - 1;
-  let result = true;
-  while (end > start) {
-    if (data[start] != data[end]) {
-      result = false;
-    }
-    start++;
-    end--;
-  }
-  return result;
-}
-
-let str = "level";
-console.warn(palindrome(str))
-
-
-//Queue in JavaScript
-
-let queue = [];
-let currentSize = queue.length;
-let maxSize = 5;
-
-function enqueue(newVal) {
-  if (currentSize >= maxSize) {
-    alert("Queue is already full");
-  } else {
-    queue[currentSize] = newVal;
-    currentSize++;
-  }
-}
-
-function display() {
-  console.warn(queue);
-}
-function dequeue() {
-  if (currentSize > 0) {
-    for (let i = 0; i < queue.length; i++) {
-      queue[i] = queue[i + 1];
-    }
-    currentSize--;
-    queue.length = currentSize;
-  } else {
-    alert("queue is already empty");
-  }
-}
-
-enqueue(10);
-enqueue(20);
-enqueue(30);
-
-display();
-
-
-//Circular Queue in Javascript
-class Queue {
-  constructor(size) {
-    this.max = size;
-    this.items = new Array(size);
-    this.currentSize = 0;
-    this.rear = -1;
-    this.front = -1;
-  }
-  enqueue(val) {
-    if (this.currentSize != this.max) {
-      if (this.rear == this.max - 1) {
-        this.rear = 0;
-      } else {
-        this.rear++;
-      }
-      this.items[this.rear] = val;
-      this.currentSize++;
-      if ((this.front == -1)) {
-        this.front = this.rear;
-      }
-    }
-  }
-  dequeue() {
-    if (this.currentSize != 0) {
-      this.items[this.front] = null;
-      if (this.front == this.max - 1) {
-        this.front = 0;
-      } else {
-        this.front++;
-      }
-      this.currentSize--;
-
-    } else {
-      this.front = -1;
-      this.rear = -1;
-      alert("queue is empty")
-    }
-  }
-}
-
-let queue = new Queue(5);
-
-
-//Queue in JavaScript
-let queue = [];
-let currentSize = queue.length;
-let maxSize = 5;
-
-// function enqueue(newVal) {
-//   if (currentSize >= maxSize) {
-//     alert("Queue is already full");
-//   } else {
-//     queue[currentSize] = newVal;
-//     currentSize++;
-//   }
-// }
-
-function enqueueWithBtn() {
-  let newVal = document.getElementById("qEl").value;
-  if (currentSize >= maxSize) {
-    alert("Queue is already full");
-  } else {
-    queue[currentSize] = newVal;
-    currentSize++;
-  }
-}
-
-function display() {
-  console.warn(queue);
-}
-function dequeue() {
-  if (!isEmpty()) {
-    for (let i = 0; i < queue.length; i++) {
-      queue[i] = queue[i + 1];
-    }
-    currentSize--;
-    queue.length = currentSize;
-  } else {
-    alert("queue is already empty");
-  }
-}
-function front() {
-  if (!isEmpty()) {
-    console.warn(queue[0]);
-  } else {
-    alert("queue is already empty");
-  }
-}
-
-function rear() {
-  if (!isEmpty()) {
-    console.warn(queue[currentSize - 1]);
-  } else {
-    alert("queue is already empty");
-  }
-}
-function isEmpty() {
-  if (currentSize <= 0) {
-    return true;
-  } else {
-    return false;
-  }
-}
-
-// enqueue(10);
-// enqueue(20);
-// enqueue(30);
-
-// front();
-// rear();
-
-// display();
-
-
-// Recursion
-function factorial(item) {
-  if (item == 0) {
-    return 1
-  }
-  return item * factorial(item - 1)
-
-}
-let data = 5
-console.warn(factorial(data))
-
-
-// Recursion Array with Reverse
-let data = [5, 12, 65, 89, 0, 100, 200];
-let temp;
-function customReverse(data, start, end) {
-  console.warn(data)
-  if (start <= end) {
-    temp = data[start];
-    data[start] = data[end];
-    data[end] = temp;
-    customReverse(data, start + 1, end - 1);
-  }
-}
-
-customReverse(data, 0, data.length - 1);
-
-
-// Recursive Binary Search in JavaScript
-let data = [10, 15, 18, 34, 67, 70, 89];
-let start = 0;
-let end = data.length - 1;
-let find = 15;
-let position = undefined;
-function recursiveBinary(data, start, end) {
-  mid = Math.floor((start + end) / 2);
-  if (data[mid] === find) {
-    position = mid;
-    return true;
-  } else if (data[mid] < find) {
-    recursiveBinary(data, mid + 1, end);
-  } else {
-    recursiveBinary(data, start, mid - 1);
-  }
-}
-
-recursiveBinary(data, start, end);
-console.warn(position);
-
-
-
-// Selection Sort with JavaScript
-let items = [20, 12, 53, 3, 56, 78, 0, 5, 89, 34];
-function selectionSort(data) {
-  let minId;
-  for (let i = 0; i < data.length; i++) {
-    minId = i;
-    for (let j = i + 1; j < data.length; j++) {
-      if (data[j] < data[minId]) {
-        minId = j;
-      }
-    }
-    let temp = data[minId];
-    data[minId] = data[i];
-    data[i] = temp;
-  }
-}
-
-selectionSort(items);
-console.warn(items)
-
-
-
-// Set DSA with JavaScript
-let data = new Set(["anil", "peter", "anil"]);
-data.add({ "email": "test@test.com" })
-console.warn(data.has("peter1"))
-data.delete('anil');
-console.warn(data);
-for (x of data) {
-  console.warn(x)
-}
-
-data.forEach((val) => {
-  console.warn(val)
-})
-console.warn(data.entries())
-
-
-
-// Stack in JavaScript
-let data = [];
-let currentSize = data.length;
-let max = 5;
-function push(newVal) {
-  if (currentSize >= max) {
-    alert("Stack is full you can not add" + newVal);
-  }
-  data[currentSize] = newVal;
-  currentSize += 1;
-}
-
-function pop() {
-  if (currentSize > 0) {
-    currentSize -= 1;
-    data.length = currentSize;
-  } else {
-    alert("stack is already empty");
-  }
-}
-
-push(20);
-push(30);
-push(10);
-push(2);
-pop();
-pop();
-pop();
-push(25);
-push(23);
-push(67);
-// pop()
-// pop()
-
-
-
-// Reverse String with Stack in JavaScript
-let data = [];
-let currentSize = data.length;
-function push(newVal) {
-  data[currentSize] = newVal;
-  currentSize += 1;
-}
-function pop() {
-  lastRemovedItem = data[currentSize - 1];
-  currentSize -= 1;
-  data.length = currentSize;
-  return lastRemovedItem;
-}
-
-function reverseStr(item) {
-  for (let i = 0; i < item.length; i++) {
-    push(item[i])
-  }
-  for (let i = 0; i < item.length; i++) {
-    item[i] = pop();
-  }
-
-}
-
-
-let str = "anil";
-str = str.split("");
-reverseStr(str)
-console.warn(str.join(""))
-
-
-//  Stack with class in JavaScript
-class Stack {
-  item = [];
-  currentSize;
-  maxSize;
-  constructor(size) {
-    this.maxSize = size;
-    this.currentSize = this.item.length;
-  }
-  push(newVal) {
-    if (this.currentSize >= this.maxSize) {
-      alert("stack is full");
-    } else {
-      this.item[this.currentSize] = newVal;
-      this.currentSize++;
-    }
-  }
-  pop() {
-    if (this.currentSize > 0) {
-      this.currentSize--;
-      this.item.length = this.currentSize;
-    } else {
-      alert("stack is already empty")
-    }
-  }
-  display() {
-    console.warn(this.item)
-  }
-}
-st1 = new Stack(5);
-//   st1.push(20)
-//   st1.display();
-
-
-
-// Stack in JavaScript
-let data = [];
-let currentSize = data.length;
-let max = 5;
-function push() {
-  let newVal = document.getElementById('newEl').value;
-  if (currentSize >= max) {
-    alert("Stack is full you can not add" + newVal);
-  } else {
-    data[currentSize] = newVal;
-    currentSize += 1;
-    document.getElementById('newEl').value = "";
-    console.warn("element added")
-  }
-}
-
-function pop() {
-  if (currentSize > 0) {
-    currentSize -= 1;
-    data.length = currentSize;
-  } else {
-    alert("stack is already empty");
-  }
-}
-function display() {
-  for (let i = 0; i <= currentSize - 1; i++) {
-    console.warn("el. no", i, "and value is ", data[i])
-  }
-}
-
-
-
-
 // ==========================================================================================================================================================
 
 // 🧩 Step 1: What is an Array?
@@ -2049,406 +1230,7 @@ addAward("John", "Best Team Player");
 
 console.log(awards); // Awards received by each employee
 
-// =========================================================================================================
 
-// 📚 Stack কী? (What is Stack?)
-/*
-Stack হল একটি LIFO (Last In, First Out) ডেটা স্ট্রাকচার।
-মানে:
-👉 শেষে যেটা ঢুকবে, সেটাই সবার আগে বের হবে।
-
-🎯 বাস্তব জীবনের উদাহরণ (Real Life Examples)
-উদাহরণ	Stack ব্যাখ্যা
-🥣 প্লেটের স্ট্যাক	শেষ প্লেট আগে তুলতে হয়
-↩️ Undo / Redo	শেষ কাজ Undo হয়
-🌐 ব্রাউজার হিস্ট্রি	Back বাটন চাপলে শেষ ওয়েবসাইটে যাওয়া যায়
-🧠 ফাংশনের কল Stack	JS ফাংশন কল হলে Stack এ Push হয়
-
-*/
-
-// Ques 1 : Given an input string s, reverse the order of the words
-
-// Input: "the sky is blue"     ----->>>>>     Output: "blue is sky the"
-// Input: "  hello world  "     ----->>>>>     Output: "world hello"
-// Input: "a good   example"    ----->>>>>     Output: "example good a"
-
-// "the sky is blue" => [the,sky,is,blue]
-// [] => [the,sky,is,blue] => blue is sky the
-
-const reverseWords = function (s) {
-  const splitS = s.split(" ");
-  const stack = [];
-
-  for (let i of splitS) {
-    stack.push(i);
-  }
-
-  let finalS = "";
-
-  while (stack.length) {
-    const current = stack.pop();
-
-    if (current) {
-      finalS += " " + current;
-    }
-  }
-
-  return finalS.trim();
-};
-
-console.log(reverseWords("the sky is blue"));
-console.log(reverseWords("a good   example"));
-
-// Time Complexity = O(n)
-// Space Complexity = O(n)
-
-
-
-// Ques 2 : Given a string s containing just the characters '(', ')', '{', '}', '[' and ']',
-//          determine if the input string is valid.
-// Open brackets must be closed by the same type of brackets.
-// Open brackets must be closed in the correct order.
-// Every close bracket has a corresponding open bracket of the same type.
-
-// Input: "()"             ----->>>>>        Output: true
-// Input: "([]{})"         ----->>>>>        Output: true
-// Input: "(]"             ----->>>>>        Output: false
-
-function isValid(s) {
-  const stack = [];
-
-  for (let i = 0; i < s.length; i++) {
-    const char = s[i];
-
-    if (char === "(" || char === "[" || char === "{") {
-      stack.push(char);
-    } else if (char === ")" || char === "]" || char === "}") {
-      if (isEmpty(stack)) {
-        return false;
-      }
-
-      const top = stack.pop();
-      if (
-        (char === ")" && top !== "(") ||
-        (char === "]" && top !== "[") ||
-        (char === "}" && top !== "{")
-      ) {
-        return false;
-      }
-    }
-  }
-
-  return isEmpty(stack);
-}
-
-function isEmpty(stack) {
-  return stack.length === 0;
-}
-
-const string1 = "([{})";
-console.log(isValid(string1));
-
-// Time Complexity = O(n)
-// Space Complexity = O(n)
-
-
-
-// ======================================================================================================
-
-/*
-🔰 Queue কী?
-👉 Queue মানে হলো লাইন — যে আগে আসে, সে আগে যায় (FIFO = First In First Out)।
-যেমন:
-
-বাসে চড়ার লাইন
-
-প্রিন্টারের জব
-
-কাস্টমার সার্ভিস সিস্টেম
-
-*/
-
-
-
-// Ques 1 : Circular Queue Implementation
-// Design your implementation of the circular queue. The circular queue is a
-// linear data structure in which the operations are performed based on First In First Out
-// principle, and the last position is connected back to the first position to make a circle.
-
-var MyCircularQueue = function (k) {
-  this.queue = [];
-  this.size = k;
-};
-
-MyCircularQueue.prototype.enQueue = function (value) {
-  if (this.size === this.queue.length) return false;
-  this.queue.push(value);
-  return true;
-};
-
-MyCircularQueue.prototype.deQueue = function () {
-  if (this.queue.length === 0) return false;
-  this.queue.shift();
-  return true;
-};
-
-MyCircularQueue.prototype.Front = function () {
-  if (this.queue.length === 0) return -1;
-  return this.queue[0];
-};
-
-MyCircularQueue.prototype.Rear = function () {
-  if (this.queue.length === 0) return -1;
-  return this.queue[this.queue.length - 1];
-};
-
-MyCircularQueue.prototype.isEmpty = function () {
-  return this.queue.length === 0;
-};
-
-MyCircularQueue.prototype.isFull = function () {
-  return this.size === this.queue.length;
-};
-
-// [2,5,72]
-
-var obj = new MyCircularQueue(3);
-obj.enQueue(1);
-obj.enQueue(4);
-obj.enQueue(2);
-obj.deQueue();
-obj.enQueue(5);
-obj.deQueue();
-obj.enQueue(72);
-
-console.log(obj.Front(), obj.Rear());
-
-
-
-
-// Ques 2 : Implement Stack using Queues
-// Implement a last -in -first - out(LIFO) stack using only two queues.
-// The implemented stack should support all the functions of a stack (push, top, pop, and empty).
-
-var MyStack = function () {
-  this.q1 = [];
-  this.q2 = [];
-};
-
-// q1 - [4,2,3,5]
-// q2 - []
-
-MyStack.prototype.push = function (x) {
-  while (this.q1.length !== 0) {
-    this.q2.push(this.q1.shift());
-  }
-  this.q1.push(x);
-  while (this.q2.length !== 0) {
-    this.q1.push(this.q2.shift());
-  }
-};
-
-MyStack.prototype.pop = function () {
-  return this.q1.shift();
-};
-
-MyStack.prototype.top = function () {
-  return this.q1[0];
-};
-
-MyStack.prototype.empty = function () {
-  return this.q1.length === 0;
-};
-
-var stack = new MyStack();
-stack.push(3);
-stack.push(5);
-stack.push(96);
-stack.push(24);
-stack.pop();
-console.log(stack.top());
-
-
-
-// Ques 3 : Implement Queue using Stacks
-// Implement a first in first out(FIFO) queue using only two stacks.
-// The implemented queue should have all functions of queue(enqueue, front, dequeue, and empty).
-
-var MyQueue = function () {
-  this.stack1 = [];
-  this.stack2 = [];
-};
-
-MyQueue.prototype.enqueue = function (x) {
-  this.stack1.push(x);
-};
-
-// stack1 = [9,10]
-// stack2 = []
-
-MyQueue.prototype.dequeue = function () {
-  if (this.stack2.length === 0) {
-    while (this.stack1.length > 0) {
-      this.stack2.push(this.stack1.pop());
-    }
-  }
-
-  return this.stack2.pop();
-};
-
-MyQueue.prototype.front = function () {
-  if (this.stack2.length === 0) {
-    while (this.stack1.length > 0) {
-      this.stack2.push(this.stack1.pop());
-    }
-  }
-
-  return this.stack2[this.stack2.length - 1];
-};
-
-MyQueue.prototype.empty = function () {
-  return this.stack1.length === 0 && this.stack2.length === 0;
-};
-
-[3, 6, 7];
-
-const queue = new MyQueue();
-queue.enqueue(3);
-queue.enqueue(6);
-queue.enqueue(7);
-queue.dequeue();
-console.log(queue.front());
-
-
-
-// Ques 4 : Sliding Window Maximum
-// You are given an array of integers nums, there is a sliding window of size k which is
-// moving from the very left of the array to the very right.You can only see the k numbers
-// in the window. Each time the sliding window moves right by one position. For each window,
-// take the maximum element and add them to a final result array.
-
-// Input: nums = [1, 3, -1, -3, 5, 3, 6, 7], k = 3
-// Output: [3, 3, 5, 5, 6, 7]
-
-// Brute Force Solution
-const maxSlidingWindowNaive = function (nums, k) {
-  const result = [];
-  const n = nums.length;
-
-  for (i = 0; i <= n - k; i++) {
-    // O(n)
-    let max = nums[i];
-    for (j = 1; j < k; j++) {
-      // O(k)
-      if (nums[i + j] > max) {
-        max = nums[j + i];
-      }
-    }
-
-    result.push(max);
-  }
-
-  return result;
-};
-
-// Time Complexity - O(n*k) => O(n^2)
-// Space Complexity - O(n)
-console.log(maxSlidingWindowNaive([1, 3, -1, -3, 5, 3, 6, 7], 3));
-
-// Optimised Solution - Deque
-const maxSlidingWindowQueue = function (nums, k) {
-  const result = [];
-  const deque = [];
-
-  for (let i = 0; i < nums.length; i++) {
-    // O(n)
-    if (deque.length > 0 && deque[0] <= i - k) {
-      deque.shift();
-    }
-
-    while (deque.length > 0 && nums[deque[deque.length - 1]] < nums[i]) {
-      deque.pop();
-    }
-
-    deque.push(i);
-
-    if (i >= k - 1) {
-      result.push(nums[deque[0]]);
-    }
-  }
-
-  return result;
-};
-
-// Time Complexity - O(n)
-// Space Complexity - O(n)
-console.log(maxSlidingWindowQueue([1, 3, -1, -3, 5, 3, 6, 7], 3));
-
-// =======================================================================================================
-
-
-// Ques 4 : Sliding Window Maximum
-// You are given an array of integers nums, there is a sliding window of size k which is
-// moving from the very left of the array to the very right.You can only see the k numbers
-// in the window. Each time the sliding window moves right by one position. For each window,
-// take the maximum element and add them to a final result array.
-
-// Input: nums = [1, 3, -1, -3, 5, 3, 6, 7], k = 3
-// Output: [3, 3, 5, 5, 6, 7]
-
-// Brute Force Solution
-const maxSlidingWindowNaive = function (nums, k) {
-  const result = [];
-  const n = nums.length;
-
-  for (i = 0; i <= n - k; i++) {
-    // O(n)
-    let max = nums[i];
-    for (j = 1; j < k; j++) {
-      // O(k)
-      if (nums[i + j] > max) {
-        max = nums[j + i];
-      }
-    }
-
-    result.push(max);
-  }
-
-  return result;
-};
-
-// Time Complexity - O(n*k) => O(n^2)
-// Space Complexity - O(n)
-console.log(maxSlidingWindowNaive([1, 3, -1, -3, 5, 3, 6, 7], 3));
-
-// Optimised Solution - Deque
-const maxSlidingWindowQueue = function (nums, k) {
-  const result = [];
-  const deque = [];
-
-  for (let i = 0; i < nums.length; i++) {
-    // O(n)
-    if (deque.length > 0 && deque[0] <= i - k) {
-      deque.shift();
-    }
-
-    while (deque.length > 0 && nums[deque[deque.length - 1]] < nums[i]) {
-      deque.pop();
-    }
-
-    deque.push(i);
-
-    if (i >= k - 1) {
-      result.push(nums[deque[0]]);
-    }
-  }
-
-  return result;
-};
-
-// Time Complexity - O(n)
-// Space Complexity - O(n)
-console.log(maxSlidingWindowQueue([1, 3, -1, -3, 5, 3, 6, 7], 3));
 
 
 //========================================================================================================
@@ -2558,374 +1340,6 @@ function sumDigits(n) {
 }
 
 console.log(sumDigits(1234)); // Output: 10
-
-
-// ===========================================================================================================
-
-// Ques 1: Implement Linear Search in JavaScript
-// Write a function to search "target" in nums. If target exists, then return its index.
-// Otherwise, return -1. You must write an algorithm with O(n) runtime complexity.
-
-// Input: nums = [4,5,6,7,0,1,2], target = 0  ----->>>>>  Output:  4
-// Input: nums = [4,5,6,7,0,1,2], target = 3  ----->>>>>  Output: -1
-
-const linearSearch = (nums, target) => {
-  for (let i = 0; i < nums.length; i++) {
-    if (target === nums[i]) {
-      return i;
-    }
-  }
-  return -1;
-};
-
-// Time Complexity  - O(n)
-// Space Complexity - O(1)
-// console.log(linearSearch([4, 5, 6, 7, 0, 1, 2], 0));
-// console.log(linearSearch([4, 5, 6, 7, 0, 1, 2], 3));
-
-// Global Linear Search
-
-const globalLinearSearch = (nums, target) => {
-  const result = [];
-  for (let i = 0; i < nums.length; i++) {
-    if (target === nums[i]) {
-      result.push(i);
-    }
-  }
-  if (result.length === 0) return -1;
-  return result;
-};
-
-// Time Complexity  - O(n)
-// Space Complexity - O(n)
-console.log(globalLinearSearch([4, 5, 0, 7, 0, 1, 2], 0));
-
-
-
-// Ques 2: Implement Binary Search in JavaScript
-// Given an array of integers nums which is sorted in ascending order, and an integer target,
-// Write a function to search target in nums. If target exists, then return its index.
-// Otherwise, return -1. You must write an algorithm with O(log n) runtime complexity.
-
-// Input: nums = [-1,0,3,5,9,12], target = 9  ----->>>>>  Output:  4
-// Input: nums = [-1,0,3,5,9,12], target = 2  ----->>>>>  Output: -1
-
-function search(nums, target) {
-  let start = 0;
-  let end = nums.length - 1;
-
-  while (start <= end) {
-    let middle = Math.floor((start + end) / 2);
-
-    if (nums[middle] === target) {
-      return middle;
-    } else if (nums[middle] < target) {
-      start = middle + 1;
-    } else {
-      end = middle - 1;
-    }
-  }
-
-  return -1;
-}
-
-// Time Complexity  - O(logn)
-// Space Complexity - O(1)
-console.log(search([-1, 0, 3, 5, 9, 12], 9));
-console.log(search([-1, 0, 3, 5, 9, 12], 69));
-
-
-// Ques 3: Kth Missing Positive Number
-// Given an array arr of positive integers sorted in a strictly increasing order,
-// and an integer k. Return the kth positive integer that is missing from this array.
-
-// Input: arr = [2,3,4,7,11], k = 5  ----->>>>>  Output: 9
-// Explanation: The missing positive integers are [1,5,6,8,9,10,12,13,...].
-//              The 5th missing positive integer is 9.
-
-// arr = [2,3,4,7,11], k = 5
-// count = 4
-// 11 <= 9
-function findKthPositive(arr, k) {
-  let count = 0;
-  for (let i = 0; i < arr.length; i++) {
-    if (arr[i] <= k + count) {
-      count++;
-    }
-  }
-
-  return k + count;
-}
-
-console.log(findKthPositive([2, 3, 4, 7, 11], 5));
-
-
-
-// Ques 4: Maximum Count of Positive Integer and Negative Integer
-// Given an array nums sorted in non-decreasing order, return the maximum between
-// the number of positive integers and the number of negative integers.
-
-// Input: nums = [-2,-1,-1,1,2,3]  ----->>>>>  Output: 3
-// Explanation: There are 3 positive integers and 3 negative integers.
-//              The maximum count among them is 3.
-
-function maximumCount(nums) {
-  return Math.max(upperBound(nums), lowerBound(nums));
-}
-
-// [-2,-1,-1,1,2,3]
-// low = 2 , high = 2
-// mid = 3 => nums[3] = 1
-function upperBound(nums) {
-  let low = 0,
-    high = nums.length - 1;
-
-  while (low < high) {
-    let mid = Math.ceil((low + high) / 2);
-    if (nums[mid] < 0) low = mid;
-    else high = mid - 1;
-  }
-
-  return nums[0] >= 0 ? 0 : low + 1;
-}
-
-function lowerBound(nums) {
-  let low = 0,
-    high = nums.length - 1;
-
-  while (low < high) {
-    let mid = Math.floor((low + high) / 2);
-    if (nums[mid] > 0) high = mid;
-    else low = mid + 1;
-  }
-
-  return nums[nums.length - 1] <= 0 ? 0 : nums.length - low;
-}
-
-console.log(maximumCount([-2, -1, -1, 1, 2, 3]));
-
-//==========================================================================================================
-
-
-Sorting 
-
-// Ques 1: Implement Bubble Sort in JavaScript
-// Write a function to sort the given array nums in ascending order.
-
-// Input: nums = [29,10,14,37,14] ----->>>>>  Output: [10,14,14,29,37]
-
-const bubbleSort = (arr) => {
-  const n = arr.length;
-  for (let i = 0; i < n; i++) {
-    for (j = 0; j < n - i - 1; j++) {
-      if (arr[j] > arr[j + 1]) {
-        [arr[j], arr[j + 1]] = [arr[j + 1], arr[j]];
-      }
-    }
-  }
-
-  return arr;
-};
-
-console.log(bubbleSort([29, 10, 14, 37, 14]));
-
-// Best Time Complexity = O(n)
-// Worst Time Complexity = O(n^2)
-// Average Time Complexity = O(n^2)
-
-// Space Complexity = O(1)
-
-// Ques 2: Implement Selection Sort in JavaScript
-// Write a function to sort the given array nums in ascending order.
-
-// Input: nums = [29,10,14,37,14]  ----->>>>>  Output: [10,14,14,29,37]
-
-const selectionSort = (arr) => {
-  const n = arr.length;
-  for (let i = 0; i < n - 1; i++) {
-    // n
-    let minIndex = i;
-    for (let j = i + 1; j < n; j++) {
-      // n
-      if (arr[j] < arr[minIndex]) {
-        minIndex = j;
-      }
-    }
-    if (minIndex !== i) {
-      [arr[i], arr[minIndex]] = [arr[minIndex], arr[i]];
-    }
-  }
-
-  return arr;
-};
-
-console.log(selectionSort([29, 10, 14, 37, 14]));
-
-// Time Complexity = O(n^2)
-// Space Complexity = O(1)
-
-
-// Ques 3: Implement Insertion Sort in JavaScript
-// Write a function to sort the given array nums in ascending order.
-
-// Input: nums = [29,10,14,37,14,33,8,11] ----->>>>>  Output: [8,10,11,14,14,29,33,37]
-
-function insertionSort(arr) {
-  const n = arr.length;
-
-  for (let i = 1; i < n; i++) {
-    // n
-    const key = arr[i];
-    let j = i - 1;
-    while (j >= 0 && arr[j] > key) {
-      // n
-      arr[j + 1] = arr[j];
-      j--;
-    }
-    arr[j + 1] = key;
-  }
-
-  return arr;
-}
-
-console.log(insertionSort([29, 10, 14, 37, 14, 33, 8, 11]));
-
-// Best Case Time Complexity = O(n)
-// Worst Case Time Complexity = O(n^2)
-// Average Case Time Complexity = O(n^2)
-// Space Complexity = O(1)
-
-
-
-// Ques 3: Implement Insertion Sort in JavaScript
-// Write a function to sort the given array nums in ascending order.
-
-// Input: nums = [29,10,14,37,14,33,8,11] ----->>>>>  Output: [8,10,11,14,14,29,33,37]
-
-function insertionSort(arr) {
-  const n = arr.length;
-
-  for (let i = 1; i < n; i++) {
-    // n
-    const key = arr[i];
-    let j = i - 1;
-    while (j >= 0 && arr[j] > key) {
-      // n
-      arr[j + 1] = arr[j];
-      j--;
-    }
-    arr[j + 1] = key;
-  }
-
-  return arr;
-}
-
-console.log(insertionSort([29, 10, 14, 37, 14, 33, 8, 11]));
-
-// Best Case Time Complexity = O(n)
-// Worst Case Time Complexity = O(n^2)
-// Average Case Time Complexity = O(n^2)
-// Space Complexity = O(1)
-
-
-
-// Ques 6: Implement Quick Sort in JavaScript
-// Write a function to sort the given array nums in ascending order.
-
-// Input: nums = [8,3,5,4,7,6,1,2]  ----->>>>>  Output: [1,2,3,4,5,6,7,8]
-
-function quickSort(arr) {
-  if (arr.length <= 1) {
-    return arr;
-  }
-
-  const pivot = arr[0];
-  const left = [];
-  const right = [];
-
-  for (let i = 1; i < arr.length; i++) {
-    if (arr[i] < pivot) {
-      left.push(arr[i]);
-    } else {
-      right.push(arr[i]);
-    }
-  }
-
-  return [...quickSort(left), pivot, ...quickSort(right)];
-}
-
-// Time Complexity -
-// Average Case - O(nlog n)
-// Best Case - O(nlog n)
-// Worst Case - O(n^2)
-
-// Space Complexity -
-// Average Case - O(log n)
-// Worst Case - O(n)
-console.log(quickSort([5, 2, 9, 3, 6, 1, 8, 7]));
-
-// Approach 2 - Without using left and right Arrays
-function quickSort(arr, start = 0, end = arr.length - 1) {
-  if (start < end) {
-    const pivotIndex = pivot(arr, start, end);
-    quickSort(arr, start, pivotIndex - 1);
-    quickSort(arr, pivotIndex + 1, end);
-  }
-
-  return arr;
-}
-
-function pivot(arr, start = 0, end = arr.length - 1) {
-  function swap(array, i, j) {
-    let temp = array[i];
-    array[i] = array[j];
-    array[j] = temp;
-  }
-
-  let pivot = arr[start];
-  let swapIdx = start;
-
-  for (let i = start + 1; i < arr.length; i++) {
-    if (arr[i] < pivot) {
-      swapIdx++;
-      swap(arr, swapIdx, i);
-    }
-  }
-
-  swap(arr, start, swapIdx);
-  return swapIdx;
-}
-//===========================================================================================================
-
-
-// Ques 1 : Given the head of a singly linked list, return true if it is
-// a palindrome or false otherwise
-
-// Input: head = [1,2,2,1]      ----->>>>>      Output: true;
-// Input: head = [1,2]          ----->>>>>      Output: false;
-
-/**
- * Definition for singly-linked list.
- * function ListNode(val, next) {
- *     this.val = (val===undefined ? 0 : val)
- *     this.next = (next===undefined ? null : next)
- * }
- */
-var isPalindrome = function (head) {
-  let string1 = (string2 = "");
-  let node = head;
-
-  while (node != null) {
-    string1 = `${string1}${node.val}`;
-    string2 = `${node.val}${string2}`;
-    node = node.next;
-  }
-  return string1 === string2;
-};
-
-
-
-
 
 
 //===========================================================================================================
@@ -3057,91 +1471,285 @@ Inner Loop	প্রতিটি লাইনের ভিতরে স্টা
 */
 
 
-// ================================================================================================================
-
-
-// 🧠 1. Sorting মানে কি?
-// Sorting মানে হচ্ছে কোন array বা list কে ধারাবাহিকভাবে সাজানো (ascending বা descending):
-
-// Example:
-
-// Input: [5, 1, 4, 2, 3]
-
-// Output: [1, 2, 3, 4, 5] (Ascending)
-
-
-// 🌀 3. Bubble Sort – Step by Step
-// Logic: পাশের দুটো এলিমেন্ট compare করে বড়টাকে পিছনে পাঠায়। (Bar bar ঘুরে)
-
-function bubbleSort(arr) {
-  let n = arr.length;
-  for (let i = 0; i < n - 1; i++) {
-    for (let j = 0; j < n - i - 1; j++) {
-      if (arr[j] > arr[j + 1]) {
-        // swap
-        [arr[j], arr[j + 1]] = [arr[j + 1], arr[j]];
-      }
-    }
-  }
-  return arr;
-}
-
-console.log(bubbleSort([5, 3, 1, 4, 2]));
-
-/*
-✅ Execution:
-i=0: [3, 1, 4, 2, 5]
-i=1: [1, 3, 2, 4, 5]
-i=2: [1, 2, 3, 4, 5]
-i=3: [1, 2, 3, 4, 5]
-*/
-
-
-// 🧲 4. Selection Sort
-// Logic: প্রতি iteration-এ সবচেয়ে ছোটটা বের করে সামনে বসায়
-function selectionSort(arr) {
-  let n = arr.length;
-  for (let i = 0; i < n; i++) {
-    let minIndex = i;
-
-    for (let j = i + 1; j < n; j++) {
-      if (arr[j] < arr[minIndex]) {
-        minIndex = j;
-      }
-    }
-
-    // swap
-    [arr[i], arr[minIndex]] = [arr[minIndex], arr[i]];
-  }
-  return arr;
-}
-
-
-// 🖊️ 5. Insertion Sort
-// Logic: প্রতিটা এলিমেন্ট ধরে ধরে আগে যতগুলো ছোট আছে, তাদের পিছনে বসায়
-
-function insertionSort(arr) {
-  for (let i = 1; i < arr.length; i++) {
-    let current = arr[i];
-    let j = i - 1;
-
-    while (j >= 0 && arr[j] > current) {
-      arr[j + 1] = arr[j]; // shift
-      j--;
-    }
-
-    arr[j + 1] = current; // insert
-  }
-  return arr;
-}
-
-
-// 🔥 6. Built-in Sort in JavaScript
-
-let arr = [5, 2, 1, 4, 3];
-
-arr.sort((a, b) => a - b); // Ascending
-arr.sort((a, b) => b - a); // Descending
-
 
 // ===============================================================================================================
+
+📚 Linked List কী?
+Linked List হলো এমন একটা ডেটা স্ট্রাকচার যেখানে প্রতিটি এলিমেন্ট (যাকে আমরা Node বলি) একটা value/data রাখে এবং পরবর্তী Node-এর address (reference/pointer) রাখে।
+
+মানে: একটার সঙ্গে একটা লিংক করে রেখে data store করা হয়।
+
+🆚 Array vs Linked List
+🔷 Array	🔶 Linked List
+Memory contiguous (একসাথে জায়গা নেয়)	Memory scattered (যেখানে খুশি জায়গা নেয়)
+Size fix করতে হয়	Dynamic size
+Insert/Delete কষ্টকর	Insert/Delete সহজ (নোড অ্যাড্রেস চেঞ্জ করলেই হয়)
+
+//Class base example
+
+// Node Class
+class TaskNode {
+  constructor(task) {
+    this.task = task;
+    this.next = null;
+  }
+}
+
+// Linked List Class
+class TaskList {
+  constructor() {
+    this.head = null;
+  }
+
+  // ✅ Add Task at end
+  addTask(task) {
+    const newNode = new TaskNode(task);
+    if (!this.head) {
+      this.head = newNode;
+    } else {
+      let current = this.head;
+      while (current.next !== null) {
+        current = current.next;
+      }
+      current.next = newNode;
+    }
+    console.log(`✅ Task added: "${task}"`);
+  }
+
+  // ✅ Delete Task by value
+  deleteTask(task) {
+    if (!this.head) return console.log("❌ No tasks to delete.");
+
+    if (this.head.task === task) {
+      this.head = this.head.next;
+      console.log(`🗑️ Deleted task: "${task}"`);
+      return;
+    }
+
+    let current = this.head;
+    let prev = null;
+
+    while (current !== null && current.task !== task) {
+      prev = current;
+      current = current.next;
+    }
+
+    if (current === null) {
+      console.log(`❌ Task not found: "${task}"`);
+    } else {
+      prev.next = current.next;
+      console.log(`🗑️ Deleted task: "${task}"`);
+    }
+  }
+
+  // ✅ Show all tasks
+  printTasks() {
+    if (!this.head) return console.log("📭 No tasks in the list.");
+
+    let current = this.head;
+    let i = 1;
+    console.log("📝 Your Tasks:");
+    while (current !== null) {
+      console.log(`${i++}. ${current.task}`);
+      current = current.next;
+    }
+  }
+}
+
+// ✅ Test It:
+const myTasks = new TaskList();
+
+myTasks.addTask("✅ Learn JavaScript");
+myTasks.addTask("✅ Understand Linked List");
+myTasks.addTask("✅ Crack Interview");
+myTasks.printTasks();
+
+console.log("\n--- Now deleting one task ---\n");
+myTasks.deleteTask("✅ Understand Linked List");
+myTasks.printTasks();
+
+✅ Output (Console):
+✅ Task added: "✅ Learn JavaScript"
+✅ Task added: "✅ Understand Linked List"
+✅ Task added: "✅ Crack Interview"
+📝 Your Tasks:
+1. ✅ Learn JavaScript
+2. ✅ Understand Linked List
+3. ✅ Crack Interview
+
+--- Now deleting one task ---
+
+🗑️ Deleted task: "✅ Understand Linked List"
+📝 Your Tasks:
+1. ✅ Learn JavaScript
+2. ✅ Crack Interview
+
+
+ // Mini Project: Music Playlist Manager (Console Based)
+একটা music player বানাবো, যেখানে তুমি:
+
+🎵 নতুন গান playlist-এ যোগ করতে পারবে
+
+⏭️ পরের গান শুনতে পারবে
+
+⏮️ আগের গান শুনতে পারবে
+
+🗑️ একটা গান ডিলিট করতে পারবে
+
+📜 Playlist পুরোটা দেখতে পারবে
+
+// 🔹 Node creator
+const createSong = (title, prev = null, next = null) => ({
+  title,
+  prev,
+  next,
+});
+
+let head = null;
+let current = null;
+
+// ✅ Add new song
+const addSong = (title) => {
+  const newSong = createSong(title, current);
+  if (current) current.next = newSong;
+  else head = newSong;
+
+  current = newSong;
+  console.log(`🎵 Added: "${title}"`);
+};
+
+// ✅ Play next song
+const playNext = () => {
+  if (current?.next) {
+    current = current.next;
+    console.log(`⏭️ Now playing: "${current.title}"`);
+  } else {
+    console.log("🚫 No next song.");
+  }
+};
+
+// ✅ Play previous song
+const playPrevious = () => {
+  if (current?.prev) {
+    current = current.prev;
+    console.log(`⏮️ Now playing: "${current.title}"`);
+  } else {
+    console.log("🚫 No previous song.");
+  }
+};
+
+// ✅ Delete current song
+const deleteCurrentSong = () => {
+  if (!current) return console.log("🚫 No song to delete.");
+
+  console.log(`🗑️ Deleted: "${current.title}"`);
+
+  const prev = current.prev;
+  const next = current.next;
+
+  if (prev) prev.next = next;
+  if (next) next.prev = prev;
+
+  if (prev) current = prev;
+  else if (next) current = next;
+  else {
+    head = null;
+    current = null;
+  }
+};
+
+// ✅ Show full playlist
+const showPlaylist = () => {
+  if (!head) return console.log("📭 Empty playlist!");
+
+  let song = head;
+  let index = 1;
+  console.log("\n🎶 Playlist:");
+  while (song) {
+    const marker = song === current ? "🎧" : "   ";
+    console.log(`${marker} ${index++}. ${song.title}`);
+    song = song.next;
+  }
+};
+
+✅ Example Usage:
+addSong("Let Her Go");
+addSong("Believer");
+addSong("Shape of You");
+showPlaylist();
+playPrevious(); // Believer
+deleteCurrentSong(); // Delete Believer
+playPrevious(); // Let Her Go
+showPlaylist();
+
+✅ Output:
+🎵 Added: "Let Her Go"
+🎵 Added: "Believer"
+🎵 Added: "Shape of You"
+
+🎶 Playlist:
+    1. Let Her Go
+    2. Believer
+🎧 3. Shape of You
+
+⏮️ Now playing: "Believer"
+🗑️ Deleted: "Believer"
+⏮️ Now playing: "Let Her Go"
+
+🎶 Playlist:
+🎧 1. Let Her Go
+    2. Shape of You
+
+
+// ==================================================================================================================================================================
+
+📚 1. Stack (স্ট্যাক) — LIFO
+
+🛠️ JavaScript দিয়ে Stack বানানো (Without class)
+const stack = [];
+
+// Push
+stack.push("📘 Book 1");
+stack.push("📗 Book 2");
+stack.push("📕 Book 3");
+
+// Pop
+console.log(stack.pop()); // 📕 Book 3
+console.log(stack.pop()); // 📗 Book 2
+
+// Peek (last item)
+console.log(stack[stack.length - 1]); // 📘 Book 1
+
+
+🔁 Custom Stack Function (Functional Style)
+const createStack = () => {
+  let items = [];
+
+  return {
+    push: (item) => {
+      items.push(item);
+      console.log(`📦 Pushed: ${item}`);
+    },
+    pop: () => {
+      const popped = items.pop();
+      console.log(`📤 Popped: ${popped}`);
+      return popped;
+    },
+    peek: () => {
+      return items[items.length - 1];
+    },
+    isEmpty: () => items.length === 0,
+    print: () => console.log("Stack:", items.join(" -> ")),
+  };
+};
+
+// Usage
+const myStack = createStack();
+myStack.push("A");
+myStack.push("B");
+myStack.pop(); // B
+myStack.print(); // A
+
+
+
+
