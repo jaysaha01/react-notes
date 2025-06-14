@@ -1704,6 +1704,8 @@ showPlaylist();
 // ==================================================================================================================================================================
 
 📚 1. Stack (স্ট্যাক) — LIFO
+✅ Full Form: Last In First Out
+যেটা শেষে ঢুকেছে, সেটা সবার আগে বের হয় — একদম একটা প্লেটের স্ট্যাকের মতো।
 
 🛠️ JavaScript দিয়ে Stack বানানো (Without class)
 const stack = [];
@@ -1751,5 +1753,303 @@ myStack.pop(); // B
 myStack.print(); // A
 
 
+✅ Project: Undo/Redo Text Editor Simulation (Using Two Stacks)
+const createTextEditor = () => {
+  let text = "";
+  const undoStack = [];
+  const redoStack = [];
 
+  return {
+    write: (newText) => {
+      undoStack.push(text);
+      text = newText;
+      redoStack.length = 0; // Clear redo stack after new write
+      console.log(`📝 Written: "${text}"`);
+    },
+    undo: () => {
+      if (undoStack.length > 0) {
+        redoStack.push(text);
+        text = undoStack.pop();
+        console.log(`↩️ Undo -> "${text}"`);
+      } else {
+        console.log("🚫 Nothing to undo.");
+      }
+    },
+    redo: () => {
+      if (redoStack.length > 0) {
+        undoStack.push(text);
+        text = redoStack.pop();
+        console.log(`↪️ Redo -> "${text}"`);
+      } else {
+        console.log("🚫 Nothing to redo.");
+      }
+    },
+    currentText: () => {
+      console.log(`📄 Current Text: "${text}"`);
+    }
+  };
+};
+
+✅ Usage
+const editor = createTextEditor();
+
+editor.write("Hello");
+editor.write("Hello World");
+editor.write("Hello World from Ranajay");
+
+editor.undo(); // Back to "Hello World"
+editor.undo(); // Back to "Hello"
+editor.redo(); // Forward to "Hello World"
+editor.write("New Start");
+editor.undo(); // Back to "Hello World"
+editor.currentText(); // Show current
+
+
+✅ Output
+📝 Written: "Hello"
+📝 Written: "Hello World"
+📝 Written: "Hello World from Ranajay"
+↩️ Undo -> "Hello World"
+↩️ Undo -> "Hello"
+↪️ Redo -> "Hello World"
+📝 Written: "New Start"
+↩️ Undo -> "Hello World"
+📄 Current Text: "Hello World"
+
+
+// ================================================================================================================================
+
+📚 Queue (কিউ) কি?
+✅ Full Form: First In First Out (FIFO)
+👉 যে জিনিসটা সবার আগে ঢুকেছে, সেটা সবার আগে বের হবে।
+
+🧠 JavaScript দিয়ে কিউ কিভাবে বানাই?
+const queue = [];
+
+// Enqueue (লাইনে ঢোকা)
+queue.push("👨 Customer 1");
+queue.push("👩 Customer 2");
+
+// Dequeue (লাইনের বাইরে যাওয়া)
+console.log(queue.shift()); // 👨 Customer 1
+console.log(queue.shift()); // 👩 Customer 2
+
+
+✅ Custom Queue (Functional Style)
+
+const createQueue = () => {
+  let items = [];
+
+  return {
+    enqueue: (item) => {
+      items.push(item);
+      console.log(`🚶 Joined queue: ${item}`);
+    },
+    dequeue: () => {
+      if (items.length === 0) return console.log("🚫 Queue is empty");
+      const removed = items.shift();
+      console.log(`🏃 Left queue: ${removed}`);
+      return removed;
+    },
+    peek: () => {
+      console.log(`👀 First in queue: ${items[0]}`);
+    },
+    isEmpty: () => items.length === 0,
+    size: () => console.log(`📏 Queue Size: ${items.length}`),
+    print: () => console.log("📋 Queue:", items.join(" <- "))
+  };
+};
+
+// ✅ Usage
+const bankQueue = createQueue();
+bankQueue.enqueue("Customer A");
+bankQueue.enqueue("Customer B");
+bankQueue.dequeue();
+bankQueue.print();
+
+
+🛠️ Mini Project: Call Center Queue System. 🎯 Goal: Incoming calls are added to queue. Agent picks the next call (dequeue).
+
+const createCallCenter = () => {
+  let callQueue = [];
+
+  return {
+    receiveCall: (caller) => {
+      callQueue.push(caller);
+      console.log(`📞 New Call from: ${caller}`);
+    },
+    answerCall: () => {
+      if (callQueue.length === 0) {
+        console.log("☎️ No calls in queue.");
+        return;
+      }
+      const caller = callQueue.shift();
+      console.log(`✅ Answering call from: ${caller}`);
+    },
+    showWaitingCalls: () => {
+      if (callQueue.length === 0) {
+        console.log("📭 No waiting calls.");
+      } else {
+        console.log("📋 Waiting Calls:", callQueue.join(" <- "));
+      }
+    }
+  };
+};
+
+// ✅ Usage
+const callCenter = createCallCenter();
+
+callCenter.receiveCall("👤 Caller 1");
+callCenter.receiveCall("👤 Caller 2");
+callCenter.receiveCall("👤 Caller 3");
+
+callCenter.answerCall(); // Caller 1
+callCenter.showWaitingCalls(); // Caller 2 <- Caller 3
+
+// =============================================================================================================================================================
+
+🌳 Tree Data Structure কি?
+  ✅ Basic Concept:
+Tree হলো hierarchical data structure, যেখানে node গুলি parent-child relationship এ থাকে।
+
+একে non-linear data structure বলা হয়, কারণ data sequential না হয়ে branches (sub-nodes) এর মতো থাকে।
+
+✅ Real-life Example:
+File System: যেভাবে আপনার কম্পিউটারে ফোল্ডার এবং সাবফোল্ডার থাকে, সেভাবেই tree structure।
+
+Company Org Chart: CEO → Manager → Employees.
+
+🧩 Code Example: Basic Binary Tree
+class Node {
+  constructor(data) {
+    this.data = data;    // Node এর data
+    this.left = null;     // Left child
+    this.right = null;    // Right child
+  }
+}
+
+class BinaryTree {
+  constructor() {
+    this.root = null;    // Tree এর root
+  }
+
+  // Add a new node to the tree
+  insert(data) {
+    const newNode = new Node(data);
+
+    if (this.root === null) {
+      this.root = newNode; // Root node যদি null হয়, তাহলে এটা root হয়ে যাবে
+    } else {
+      this.insertNode(this.root, newNode); // Recursively insert at the right place
+    }
+  }
+
+  insertNode(node, newNode) {
+    if (newNode.data < node.data) {
+      // Left subtree
+      if (node.left === null) {
+        node.left = newNode;
+      } else {
+        this.insertNode(node.left, newNode);
+      }
+    } else {
+      // Right subtree
+      if (node.right === null) {
+        node.right = newNode;
+      } else {
+        this.insertNode(node.right, newNode);
+      }
+    }
+  }
+
+  // Traverse tree in-order (Left, Root, Right)
+  inOrder(node) {
+    if (node !== null) {
+      this.inOrder(node.left);
+      console.log(node.data);
+      this.inOrder(node.right);
+    }
+  }
+}
+
+// Example usage
+const tree = new BinaryTree();
+tree.insert(15);
+tree.insert(25);
+tree.insert(10);
+tree.insert(30);
+tree.insert(20);
+
+console.log("In-order Traversal:");
+tree.inOrder(tree.root);
+
+
+In-order Traversal:
+10
+15
+20
+25
+30
+
+
+📁 Project Goal: আমরা একটা ফোল্ডার সিস্টেম বানাবো যেখানে:
+
+প্রতিটি folder বা file একটা node হবে।
+
+folder-এর ভেতরে child node থাকবে (recursively)।
+
+function createNode(name, type) {
+  return {
+    name,
+    type, // "file" or "folder"
+    children: type === "folder" ? [] : null,
+  };
+}
+
+✅ 2. Tree Structure বানানো (ফোল্ডার + ফাইল):
+const root = createNode("root", "folder");
+
+const src = createNode("src", "folder");
+const indexJs = createNode("index.js", "file");
+const appJs = createNode("App.js", "file");
+
+const assets = createNode("assets", "folder");
+const logo = createNode("logo.png", "file");
+const styles = createNode("styles.css", "file");
+
+assets.children.push(logo, styles);
+src.children.push(indexJs, appJs, assets);
+
+const readme = createNode("README.md", "file");
+
+root.children.push(src, readme);
+
+
+✅ 3. Tree Display Function (Recursively):
+function displayTree(node, indent = "") {
+  console.log(`${indent}${node.type === "folder" ? "📁" : "📄"} ${node.name}`);
+  
+  if (node.type === "folder" && node.children) {
+    node.children.forEach(child => {
+      displayTree(child, indent + "   ");
+    });
+  }
+}
+
+
+displayTree(root);
+
+
+✅ Output:
+📁 root
+   📁 src
+      📄 index.js
+      📄 App.js
+      📁 assets
+         📄 logo.png
+         📄 styles.css
+   📄 README.md
+
+
+// ==============================================================================================================================================================
 
