@@ -4,43 +4,69 @@ src/
 ├── index.css
 └── main.jsx
 
+
+
 🧠 Step 3: Create Theme Context (ThemeContext.jsx)
 This file will manage dark/light theme and store it in localStorage.
 
-// ThemeContext.jsx
+
+
+  // ThemeContext.jsx
+
 import React, { createContext, useContext, useEffect, useState } from "react";
 
-// Create a context
+// 1️⃣ Create a new Theme Context
+// This is like a container that will hold our theme data
 const ThemeContext = createContext();
 
-// Custom hook to use theme easily
-export const useTheme = () => useContext(ThemeContext);
+// 2️⃣ Create a shortcut (custom hook) to easily access the theme context
+export const useTheme = () => {
+  // useContext helps us read the value from ThemeContext
+  return useContext(ThemeContext);
+};
 
-// ThemeProvider component
+// 3️⃣ Create a ThemeProvider component
+// This will wrap our App and provide the theme value to all components
 export const ThemeProvider = ({ children }) => {
+  // Create a state to keep track of the current theme (light/dark)
   const [theme, setTheme] = useState("light");
 
-  // Load theme from localStorage when app starts
+  // 🔁 This will run only once when the app starts (like componentDidMount)
   useEffect(() => {
-    const savedTheme = localStorage.getItem("theme") || "light";
-    setTheme(savedTheme);
-    document.body.className = savedTheme;
+    // Try to get saved theme from localStorage (if user visited before)
+    const savedTheme = localStorage.getItem("theme");
+
+    // If we found a saved theme, use it. Otherwise, use "light"
+    const initialTheme = savedTheme || "light";
+
+    setTheme(initialTheme); // Set the state
+    document.body.className = initialTheme; // Apply it to the body
   }, []);
 
-  // Function to toggle theme
+  // 🌗 This function toggles between light and dark mode
   const toggleTheme = () => {
+    // If current theme is light, switch to dark — and vice versa
     const newTheme = theme === "light" ? "dark" : "light";
+
+    // Update the state with new theme
     setTheme(newTheme);
+
+    // Save the new theme in localStorage so it stays after refresh
     localStorage.setItem("theme", newTheme);
+
+    // Apply the new theme to the body
     document.body.className = newTheme;
   };
 
+  // 🔁 Return the ThemeContext.Provider
+  // It will give "theme" and "toggleTheme" to all components inside it
   return (
     <ThemeContext.Provider value={{ theme, toggleTheme }}>
-      {children}
+      {children} {/* Render the child components */}
     </ThemeContext.Provider>
   );
 };
+
 
 
 
