@@ -632,6 +632,7 @@ function isPangram(sentence) {
 
 console.log(isPangram("The quick brown fox jumps over the lazy dog")); // true
 
+
 //   🔹 1. Group Anagrams (Like Gmail Threading)🔥🔥❌📝
 function groupAnagrams(words) {
   const map = {};
@@ -646,6 +647,8 @@ function groupAnagrams(words) {
 }
 
 console.log(groupAnagrams(["eat", "tea", "tan", "ate", "nat", "bat"]));
+
+
 
 //   🔹 2. Longest Substring Without Repeating Characters 🔥🔥❌📝
 function longestUniqueSubstring(s) { 
@@ -667,7 +670,7 @@ function longestUniqueSubstring(s) {
 
 console.log(longestUniqueSubstring("abcabcbb")); // 3 → "abc"
 
-//   🔹 3. Valid Parentheses (Like Formatted HTML or Code) 🔥🔥❌📝
+//   🔹 3. Valid Parentheses (Like Formatted HTML or Code) 
 function isValidBrackets(s) {
   const stack = [];
   const map = { ")": "(", "}": "{", "]": "[" };
@@ -679,13 +682,12 @@ function isValidBrackets(s) {
       if (stack.pop() !== map[char]) return false;
     }
   }
-
   return stack.length === 0;
 }
-
 console.log(isValidBrackets("{[()]}")); // true
 
-//   🔹 4. Find All Occurrences of a Word in Text 🔥🔥❌📝
+
+//   🔹 4. Find All Occurrences of a Word in Text 
 function findOccurrences(text, word) {
   const regex = new RegExp(word, "gi");
   return [...text.matchAll(regex)].map((match) => match.index);
@@ -705,24 +707,31 @@ console.log(getSuggestions(["apple", "apricot", "banana", "app"], "ap"));
 // ["apple", "apricot", "app"]
 
 //   🔹 7. Most Frequent Word
-function mostFrequentWord(text) {
-  const words = text.toLowerCase().match(/\w+/g);
-  const map = {};
-  let max = 0,
-    result = "";
+function findMostFrequestWords(str) {
+    let mydurblicatets=[]
+    let finalObj = {}
+    
+    let myArrayWords = str.split(" ");
 
-  for (let word of words) {
-    map[word] = (map[word] || 0) + 1;
-    if (map[word] > max) {
-      max = map[word];
-      result = word;
+    for (let i = 0; i < myArrayWords.length; i++) {
+
+        if (finalObj[myArrayWords[i]]) {
+            finalObj[myArrayWords[i]]++
+        }else{
+            finalObj[myArrayWords[i]] = 1
+        }
     }
-  }
 
-  return result;
+    for(let i in finalObj){
+        if(finalObj[i] > 1){
+            mydurblicatets.push(i)
+        }
+    }
+
+    console.log (mydurblicatets)
 }
 
-console.log(mostFrequentWord("React is great and React is fast"));
+findMostFrequestWords("React is great great great and React  fast") //[ 'React', 'great' ]
 
 //   🔹 8. Remove Duplicate Letters and Keep Lexical Order 🔥🔥❌📝
 function removeDuplicateLetters(s) {
