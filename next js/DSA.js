@@ -1244,3 +1244,367 @@ console.log(awards); // Awards received by each employee
 
 //========================================================================================================
 
+Array Object
+
+🚀 1️⃣ Merge customer orders by customer id
+
+let customers = [
+  { id: 1, name: "Alice" },
+  { id: 2, name: "Bob" }
+];
+
+let orders = [
+  { customerId: 1, product: "Laptop" },
+  { customerId: 2, product: "Mouse" },
+  { customerId: 1, product: "Keyboard" }
+];
+
+
+let result = customers.map(cust => ({
+  ...cust,
+  orders: orders.filter(order => order.customerId === cust.id)
+}));
+
+console.log(result);
+// [
+//   { id:1, name:"Alice", orders:[{...}, {...}] },
+//   { id:2, name:"Bob", orders:[{...}] }
+// ]
+
+
+🚀 2️⃣ Find duplicate values in array of numbers Return [2,3].
+
+  let seen = new Set();
+let duplicates = new Set();
+
+nums.forEach(n => {
+  if (seen.has(n)) duplicates.add(n);
+  else seen.add(n);
+});
+
+console.log([...duplicates]);
+
+
+🚀 3️⃣ Validate that array of objects has unique property
+let users = [
+  { username: "alice" },
+  { username: "bob" },
+  { username: "alice" }
+];
+
+let unique = new Set(users.map(u => u.username));
+console.log(unique.size === users.length ? "All unique" : "Duplicates found");
+
+
+🚀 4️⃣ Remove users who are inactive for more than 30 days Today = 2025-07-08
+let users = [
+  { name: "Alice", lastLogin: "2025-06-01" },
+  { name: "Bob", lastLogin: "2025-07-05" }
+];
+
+let today = new Date("2025-07-08");
+let active = users.filter(u => 
+  (today - new Date(u.lastLogin)) / (1000*60*60*24) <= 30
+);
+
+console.log(active);
+// Only Bob remains
+
+🚀 5️⃣ Sum total quantities in nested orders
+let orders = [
+  { id:1, items: [{qty:2}, {qty:3}] },
+  { id:2, items: [{qty:1}, {qty:4}] }
+];
+
+let totalQty = orders.reduce((sum, order) => 
+  sum + order.items.reduce((s,i)=>s+i.qty,0), 0);
+
+console.log(totalQty); // 10
+
+
+🚀 6️⃣ Find the most frequent item
+let arr = ["apple","banana","apple","orange","banana","apple"];
+
+let freq = {};
+arr.forEach(item => freq[item] = (freq[item]||0)+1);
+let mostFrequent = Object.entries(freq).reduce((a,b)=>a[1]>b[1]?a:b)[0];
+console.log(mostFrequent);
+
+
+🚀 7️⃣ Find all employees without manager (parent/child relation)
+📝 Problem
+let employees = [
+  { id:1, name:"CEO", managerId: null },
+  { id:2, name:"Alice", managerId:1 },
+  { id:3, name:"Bob", managerId:2 }
+];
+
+let top = employees.filter(e => e.managerId === null);
+console.log(top);
+
+
+🚀 8️⃣ Build parent->child hierarchy tree
+📝 Problem
+let flat = [
+  { id:1, name:"CEO", managerId: null },
+  { id:2, name:"Alice", managerId:1 },
+  { id:3, name:"Bob", managerId:2 }
+];
+
+function buildTree(list, parentId=null){
+  return list
+    .filter(item => item.managerId === parentId)
+    .map(item => ({...item, children: buildTree(list, item.id)}));
+}
+
+console.log(JSON.stringify(buildTree(flat),null,2));
+
+
+🚀 9️⃣ Compare two lists and find added/removed items
+📝 Problem
+let oldList = [1,2,3];
+let newList = [2,3,4];
+
+✅ Solution
+let added = newList.filter(x => !oldList.includes(x));
+let removed = oldList.filter(x => !newList.includes(x));
+
+console.log({added, removed}); // { added:[4], removed:[1] }
+
+
+🚀 🔟 Sort complex data by multiple rules (score DESC, then name ASC)
+📝 Problem
+let players = [
+  { name:"Bob", score:100 },
+  { name:"Alice", score:100 },
+  { name:"Eve", score:90 }
+];
+
+players.sort((a,b)=> b.score - a.score || a.name.localeCompare(b.name));
+console.log(players);
+
+
+🚀 1️⃣1️⃣ Flatten deeply nested array
+let nested = [1, [2, [3, [4]]]];
+
+let flat = nested.flat(Infinity);
+console.log(flat); // [1,2,3,4]
+
+
+🚀 1️⃣2️⃣ Deep merge two objects (recursive)
+let a = { x:1, y:{ z:2 }};
+let b = { y:{ z:3, w:4 }};
+
+function deepMerge(obj1, obj2){
+  let result = {...obj1};
+  for(let key in obj2){
+    if(obj2[key] instanceof Object && key in obj1)
+      result[key] = deepMerge(obj1[key], obj2[key]);
+    else
+      result[key] = obj2[key];
+  }
+  return result;
+}
+console.log(deepMerge(a,b));
+// { x:1, y:{ z:3, w:4 }}
+
+
+🚀 1️⃣3️⃣ Group items by property and count
+let people = [
+  { age: 20 }, { age: 20 }, { age: 30 }
+];
+
+
+let grouped = people.reduce((acc, p)=>{
+  acc[p.age] = (acc[p.age]||0)+1;
+  return acc;
+},{});
+console.log(grouped); // {20:2, 30:1}
+
+
+🚀 1️⃣4️⃣ Find longest increasing sequence
+let nums = [1,3,5,4,7];
+
+let max = 0, count = 0;
+for(let i=0; i<nums.length; i++){
+  if(i===0 || nums[i]>nums[i-1]) count++;
+  else count=1;
+  max = Math.max(max,count);
+}
+console.log(max); // 3
+
+
+🚀 1️⃣5️⃣ Validate all passwords meet criteria
+let users = [
+  { username:"alice", password:"1234" },
+  { username:"bob", password:"pass" }
+];
+
+let allValid = users.every(u => u.password.length >= 4);
+console.log(allValid); // true
+
+
+🚀 1️⃣6️⃣ Find median of array
+let nums = [5,3,1,2,4];
+
+✅ Solution
+nums.sort((a,b)=>a-b);
+let median = nums.length % 2 
+  ? nums[Math.floor(nums.length/2)]
+  : (nums[nums.length/2-1]+nums[nums.length/2])/2;
+console.log(median); // 3
+
+
+🚀 1️⃣7️⃣ Filter nested objects by property
+let data = [
+  { id:1, posts:[{published:true}, {published:false}] },
+  { id:2, posts:[{published:false}] }
+];
+✅ Solution
+let filtered = data.map(u => ({
+  ...u, posts: u.posts.filter(p => p.published)
+})).filter(u => u.posts.length>0);
+
+console.log(filtered);
+// [{ id:1, posts:[{published:true}] }]
+
+🚀 1️⃣8️⃣ Extract only unique tags from nested lists
+let articles = [
+  { tags: ["js", "node"] },
+  { tags: ["js", "react"] }
+];
+
+
+✅ Solution
+let tags = [...new Set(articles.flatMap(a => a.tags))];
+console.log(tags); // ["js","node","react"]
+
+
+🚀 1️⃣9️⃣ Find intersection of multiple sets
+let a = new Set([1,2,3]);
+let b = new Set([2,3,4]);
+let c = new Set([3,4,5]);
+
+✅ Solution
+let intersection = [...a].filter(x => b.has(x) && c.has(x));
+console.log(intersection); // [3]
+
+
+🚀 2️⃣0️⃣ Find first duplicate in array
+let arr = [2,5,1,2,3,5,1];
+
+✅ Solution
+let seen = new Set(), firstDup = null;
+for(let n of arr){
+  if(seen.has(n)){ firstDup=n; break; }
+  seen.add(n);
+}
+console.log(firstDup); // 2
+
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------
+
+🔥 Given an integer array nums, find the subarray with the largest sum, and return its sum.
+
+Example 1:
+
+Input: nums = [-2,1,-3,4,-1,2,1,-5,4]
+Output: 6
+Explanation: The subarray [4,-1,2,1] has the largest sum 6.
+Example 2:
+
+Input: nums = [1]
+Output: 1
+Explanation: The subarray [1] has the largest sum 1.
+Example 3:
+
+Input: nums = [5,4,-1,7,8]
+Output: 23
+Explanation: The subarray [5,4,-1,7,8] has the largest sum 23.
+ 
+//✅solutions
+function maxSubArray(nums) {
+    let currentSum = nums[0];
+    let maxSum = nums[0];
+
+    for (let i = 1; i < nums.length; i++) {
+        currentSum = Math.max(nums[i], currentSum + nums[i]);
+        maxSum = Math.max(maxSum, currentSum);
+    }
+
+    return maxSum;
+}
+
+console.log(maxSubArray([-2,1,-3,4,-1,2,1,-5,4])); // 6
+console.log(maxSubArray([1]));                      // 1
+console.log(maxSubArray([5,4,-1,7,8]));             // 23
+
+=======================================================================================================================================================================
+
+
+Input: nums = [1,2,3,4,6], target = 6
+Output: [2,4]  // because 2 + 4 = 6
+
+//✅solutions
+function findPairWithSum(nums, target) {
+    let left = 0;
+    let right = nums.length - 1;
+
+    while (left < right) {
+        let sum = nums[left] + nums[right];
+        if (sum === target) {
+            return [nums[left], nums[right]];
+        } else if (sum < target) {
+            left++;  // increase sum
+        } else {
+            right--; // decrease sum
+        }
+    }
+
+    return []; // no pair found
+}
+
+console.log(findPairWithSum([1,2,3,4,6], 6)); // [2,4]
+console.log(findPairWithSum([2,3,5,8,12], 10)); // [2,8]
+console.log(findPairWithSum([1,2,3,9], 8)); // []
+
+=================================================================================================================================
+
+  🚀 Problem summary
+Given an array nums, size n,
+return the majority element, i.e., the element that appears more than ⌊n/2⌋ times.
+
+📝 Examples
+
+js
+Copy
+Edit
+Input: nums = [3,2,3]
+Output: 3
+
+Input: nums = [2,2,1,1,1,2,2]
+Output: 2
+
+//✅solutions
+function majorityElement(nums) {
+    let count = 0;
+    let candidate = null;
+
+    for (let num of nums) {
+        if (count === 0) {
+            candidate = num;
+        }
+        count += (num === candidate) ? 1 : -1;
+    }
+
+    return candidate;
+}
+
+console.log(majorityElement([3,2,3]));          // Output: 3
+console.log(majorityElement([2,2,1,1,1,2,2]));  // Output: 2
+
+========================================================================================================================
+
+
+
+
